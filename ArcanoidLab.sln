@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33328.57
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArcanoidLab", "ArcanoidLab\ArcanoidLab.csproj", "{509AD2C7-EFBA-41DE-ABE5-9A2AAE4300F9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{509AD2C7-EFBA-41DE-ABE5-9A2AAE4300F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{509AD2C7-EFBA-41DE-ABE5-9A2AAE4300F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{509AD2C7-EFBA-41DE-ABE5-9A2AAE4300F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{509AD2C7-EFBA-41DE-ABE5-9A2AAE4300F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {276B91CA-BB49-4A70-930C-F3400583F250}
+	EndGlobalSection
+EndGlobal
