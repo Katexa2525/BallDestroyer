@@ -8,25 +8,18 @@ namespace ArcanoidLab
   /// <summary> Класс платформы для отбития мяча </summary>
   public class Platform : DisplayObject
   {
-    private Sprite sprite;
     private int delay = 0;
     private Vector2f position;
     private List<Bullet> bullets = new List<Bullet>();
 
     public const float PLATFORM_SPEED = 6f;
-
-    public int SpriteWidth { get; set; } = 0;
-    public int SpriteHeight { get; set; } = 0;
-    public Sprite Sprite { get { return sprite; } }
-
-    public int Score { get; set; } = 0;
+    //public Vector2f Position { get; set; } = new Vector2f();
 
     public Platform(VideoMode mode)
     {
-      this.sprite = new Sprite();
-      this.sprite.Texture = TextureManager.PlayerTexture; // рисунок платформы
-      this.SpriteWidth = this.sprite.TextureRect.Width; // ширина платформы
-      this.SpriteHeight = this.sprite.TextureRect.Height; // высота платформы
+      this.Sprite.Texture = TextureManager.PlayerTexture; // рисунок платформы
+      this.SpriteWidth = this.Sprite.TextureRect.Width; // ширина платформы
+      this.SpriteHeight = this.Sprite.TextureRect.Height; // высота платформы
 
       // начальная позиция платформы
       StartPosition(mode);
@@ -40,7 +33,7 @@ namespace ArcanoidLab
     public override void Update(VideoMode mode)
     {
       this.KeyHandler(mode);
-      this.sprite.Position = position;
+      this.Sprite.Position = position;
 
       for (int i = 0; i < this.bullets.Count; i++)
       {
@@ -55,7 +48,7 @@ namespace ArcanoidLab
     public override void Draw(RenderTarget window, VideoMode mode)
     {
       Update(mode);
-      window.Draw(this.sprite);
+      window.Draw(this.Sprite);
 
       foreach (var bullet in this.bullets)
       {
@@ -80,8 +73,6 @@ namespace ArcanoidLab
           position.X -= PLATFORM_SPEED;
         if (moveRight && position.X + PLATFORM_SPEED < mode.Width - this.SpriteWidth)
           position.X += PLATFORM_SPEED;
-        //if (moveUp) position.Y -= PLAYER_SPEED;
-        //if (moveDown) position.Y += PLAYER_SPEED;
       }
 
       bool isFire = Keyboard.IsKeyPressed(Keyboard.Key.Space);

@@ -8,7 +8,6 @@ namespace ArcanoidLab
   /// <summary> Класс для создание картинок жизни и потери жизни в виде сердца и черепа соответсвенно </summary>
   public class HeartScull : DisplayObject
   {
-    //private static int LIFE_TOTAL = 3;
     private List<Sprite> sprite;
     private Vector2f position;
 
