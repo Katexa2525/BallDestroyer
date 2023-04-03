@@ -39,13 +39,14 @@ namespace ArcanoidLab
       mode = new VideoMode(width, height);
       this.window = new RenderWindow(this.mode, title);
 
-      this.window.SetVerticalSyncEnabled(true);
+      this.window.SetVerticalSyncEnabled(true); 
       this.window.SetFramerateLimit(60);
 
       this.window.Closed += (sender, args) =>
       {
         this.window.Close();
       };
+      // экземпляр класса для работы с текстом
       textManager = new TextManager();
 
       // загрузка изображений
@@ -60,14 +61,17 @@ namespace ArcanoidLab
       block = new Block(mode);
       ball = new Ball(mode);
       heartScull = new HeartScull();
-      ballManager = new BallManager(ball, heartScull);
+
+      // в поле positionObject объекта DisplayObject заношу координаты шара
+      ball.positionObject = ball.Sprite.Position;
     }
 
+    // метод запуска игрового процесса
     public void Run()
     {
       while (this.window.IsOpen)
       {
-        if (heartScull.LifeCount > 0)
+        if (heartScull.LifeCount > 0) 
         {
           HandleEvents();
           Update();
@@ -92,10 +96,18 @@ namespace ArcanoidLab
     {
       KeyHandler();
       UpdateScore();
-      ballManager.Update(block, ball, platform, heartScull, mode, this.window);
-      
+      // вызываю проверку коллизии, т.е. пересечения фигур
+      ball.CheckCollision(ball.Sprite.Position.X, ball.Sprite.Position.Y, block.Blocks, platform, heartScull, mode, window);
+      if (!ball.IsStart) // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
+      {
+        ball.StartPosition(mode);
+        platform.StartPosition(mode);
+        ball.positionObject = ball.Sprite.Position;
+      }
+      ball.Sprite.Position = ball.positionObject; // новые координаты шарика
     }
 
+    // метод отрисовки объектов
     private void Draw()
     {
       this.window.Clear(Color.Blue);
@@ -117,16 +129,17 @@ namespace ArcanoidLab
       background.Texture = TextureManager.BackgroundTexture;
     }
 
+    // метод обработчик нажатия клавиш
     private void KeyHandler()
     {
-      if (!ballManager.IsStart) // если игра не началась, то проверяем нажатие, иначе нет
-        ballManager.IsStart = Keyboard.IsKeyPressed(Keyboard.Key.Space);
+      if (!ball.IsStart) // если игра не началась, то проверяем нажатие, иначе нет
+        ball.IsStart = Keyboard.IsKeyPressed(Keyboard.Key.Space);
 
       if (Keyboard.IsKeyPressed(Keyboard.Key.F5)) // новая игра
       {
-        ballManager.IsStart = true;
+        ball.IsStart = true;
         heartScull.LifeCount = heartScull.LIFE_TOTAL;
-        platform.Score = 0;
+        ball.Score = 0;
         block.Update(mode);
       }
 
@@ -136,9 +149,10 @@ namespace ArcanoidLab
       }
     }
 
+    // метод обновления очков на экране через класс работы с текстом
     private void UpdateScore()
     {
-      textManager.TypeText("Очки: ", platform.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
+      textManager.TypeText("Очки: ", ball.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
     }
   }
 }

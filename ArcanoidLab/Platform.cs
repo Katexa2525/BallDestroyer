@@ -13,7 +13,6 @@ namespace ArcanoidLab
     private List<Bullet> bullets = new List<Bullet>();
 
     public const float PLATFORM_SPEED = 6f;
-    //public Vector2f Position { get; set; } = new Vector2f();
 
     public Platform(VideoMode mode)
     {
@@ -75,6 +74,7 @@ namespace ArcanoidLab
           position.X += PLATFORM_SPEED;
       }
 
+      // это при нажатии на пробел идет стрельба. В будущем можно бонус какой-нибудь добавить
       bool isFire = Keyboard.IsKeyPressed(Keyboard.Key.Space);
       if (isFire) this.Fire();
     }

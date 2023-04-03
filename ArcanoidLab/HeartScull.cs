@@ -11,9 +11,6 @@ namespace ArcanoidLab
     private List<Sprite> sprite;
     private Vector2f position;
 
-    public int LIFE_TOTAL { get; } = 3;
-    public int LifeCount { get; set; } = 3;
-
     public override void StartPosition(VideoMode mode) { }
 
     private Sprite HeartScullPosition(VideoMode mode, int pos)
