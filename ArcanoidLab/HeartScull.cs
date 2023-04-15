@@ -16,7 +16,7 @@ namespace ArcanoidLab
     private Sprite HeartScullPosition(VideoMode mode, int pos)
     {
       Sprite spriteHS = new Sprite();
-      if (LIFE_TOTAL - LifeCount == 0 || LIFE_TOTAL - LifeCount < pos)
+      if (GameSetting.LIFE_TOTAL - GameSetting.LifeCount == 0 || GameSetting.LIFE_TOTAL - GameSetting.LifeCount < pos)
         spriteHS.Texture = TextureManager.HeartTexture; // рисунок сердца
       else
         spriteHS.Texture = TextureManager.ScullTexture; // рисунок черепа
@@ -29,7 +29,7 @@ namespace ArcanoidLab
     public override void Update(VideoMode mode)
     {
       sprite = new List<Sprite>();
-      for (int i = 1; i <= LIFE_TOTAL; i++)
+      for (int i = 1; i <= GameSetting.LIFE_TOTAL; i++)
       {
         sprite.Add(HeartScullPosition(mode, i));
       }

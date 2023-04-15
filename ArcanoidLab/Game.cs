@@ -19,7 +19,6 @@ namespace ArcanoidLab
     private Block block;
     private Ball ball;
     private HeartScull heartScull;
-    private BallManager ballManager;
     private TextManager textManager;
 
     // конструктор по умолчанию
@@ -71,7 +70,7 @@ namespace ArcanoidLab
     {
       while (this.window.IsOpen)
       {
-        if (heartScull.LifeCount > 0) 
+        if (GameSetting.LifeCount > 0) 
         {
           HandleEvents();
           Update();
@@ -98,7 +97,7 @@ namespace ArcanoidLab
       UpdateScore();
       // вызываю проверку коллизии, т.е. пересечения фигур
       ball.CheckCollision(ball.Sprite.Position.X, ball.Sprite.Position.Y, block.Blocks, platform, heartScull, mode, window);
-      if (!ball.IsStart) // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
+      if (!GameSetting.IsStart) // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
       {
         ball.StartPosition(mode);
         platform.StartPosition(mode);
@@ -132,14 +131,14 @@ namespace ArcanoidLab
     // метод обработчик нажатия клавиш
     private void KeyHandler()
     {
-      if (!ball.IsStart) // если игра не началась, то проверяем нажатие, иначе нет
-        ball.IsStart = Keyboard.IsKeyPressed(Keyboard.Key.Space);
+      if (!GameSetting.IsStart) // если игра не началась, то проверяем нажатие, иначе нет
+        GameSetting.IsStart = Keyboard.IsKeyPressed(Keyboard.Key.Space);
 
       if (Keyboard.IsKeyPressed(Keyboard.Key.F5)) // новая игра
       {
-        ball.IsStart = true;
-        heartScull.LifeCount = heartScull.LIFE_TOTAL;
-        ball.Score = 0;
+        GameSetting.IsStart = true;
+        GameSetting.LifeCount = GameSetting.LIFE_TOTAL;
+        GameSetting.Score = 0;
         block.Update(mode);
       }
 
@@ -152,7 +151,7 @@ namespace ArcanoidLab
     // метод обновления очков на экране через класс работы с текстом
     private void UpdateScore()
     {
-      textManager.TypeText("Очки: ", ball.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
+      textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
     }
   }
 }

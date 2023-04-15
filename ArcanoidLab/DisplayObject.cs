@@ -15,18 +15,10 @@ namespace ArcanoidLab
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
     
-    public int Score { get; set; } = 0; // свойство для подсчета очков
-    public bool IsStart { get; set; } = false; // свойство, что игра запущена
-
-    public int LIFE_TOTAL { get; } = 3; // общее кол-во жизней в игре
-    public int LifeCount { get; set; } = 3; // начальное кол-во жизней в игре
-
     public float dx { get; set; } = 6; // смещение дельта х
     public float dy { get; set; } = 5; // смещение дельта y
     public float x { get; set; } = 0; // // координата х фигуры для метода пересечения
     public float y { get; set; } = 0; // координата у фигуры для метода пересечения
-
-    public const int SCORE_STEP = 10; // шаг для подсчета очков
 
     public abstract void StartPosition(VideoMode mode);
     public abstract void Update(VideoMode mode);
@@ -41,7 +33,7 @@ namespace ArcanoidLab
       y = Y; // позиция спрайта (шарика) по у
       Random random = new Random(); 
 
-      if (IsStart)
+      if (GameSetting.IsStart)
       {
         int n = Blocks.Count;
 
@@ -56,7 +48,7 @@ namespace ArcanoidLab
             Blocks.RemoveAt(i);
             n = Blocks.Count;
             dx = -dx;
-            Score += SCORE_STEP; // вывод результата
+            GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
           }
         }
 
@@ -71,7 +63,7 @@ namespace ArcanoidLab
             Blocks.RemoveAt(i);
             n = Blocks.Count;
             dy = -dy;
-            Score += SCORE_STEP; // вывод результата
+            GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
           }
         }
 
@@ -87,10 +79,11 @@ namespace ArcanoidLab
         // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
         if (y > mode.Height || Blocks.Count == 0)
         {
-          IsStart = false;
+          GameSetting.IsStart = false;
           dx = 6; dy = 5;
           x = X; y = Y;
-          heartScull.LifeCount--; // минус жизнь
+          //heartScull.LifeCount--; // минус жизнь
+          GameSetting.LifeCount--;// минус жизнь
           heartScull.Draw(window, mode); // перерисовываю после минусования жизни
         }
 

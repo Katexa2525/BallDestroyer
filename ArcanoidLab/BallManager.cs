@@ -32,7 +32,8 @@ namespace ArcanoidLab
             block.Blocks.RemoveAt(i);
             n = block.Blocks.Count;
             dx = -dx;
-            platform.Score += 10; // вывод результата
+            //platform.Score += 10; // вывод результата
+            GameSetting.Score += 10; // вывод результата
           }
         }
 
@@ -45,7 +46,8 @@ namespace ArcanoidLab
             block.Blocks.RemoveAt(i);
             n = block.Blocks.Count;
             dy = -dy;
-            platform.Score += 10; // вывод результата
+            //platform.Score += 10; // вывод результата
+            GameSetting.Score += 10; // вывод результата
           }
         }
 
@@ -62,7 +64,8 @@ namespace ArcanoidLab
           platform.StartPosition(mode);
           dx = 6; dy = 5;
           x = ball.Sprite.Position.X; y = ball.Sprite.Position.Y;
-          heartScull.LifeCount--; // минус жизнь
+          //heartScull.LifeCount--; // минус жизнь
+          GameSetting.LifeCount += 10; // вывод результата
           heartScull.Draw(window, mode); // перерисовываю после минусования жизни
         }
 
