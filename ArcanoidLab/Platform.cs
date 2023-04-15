@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System;
 using System.Collections.Generic;
 
 namespace ArcanoidLab
@@ -12,13 +13,17 @@ namespace ArcanoidLab
     private Vector2f position;
     private List<Bullet> bullets = new List<Bullet>();
 
-    public const float PLATFORM_SPEED = 6f;
-
     public Platform(VideoMode mode)
     {
+      // первоначально платформа в левом нижнем углу игрового поля
+      this.x1 = 0; this.y1 = 9; // координаты левого верхнего угла
+      this.x2 = 90; this.y2 = 0; // координаты правого нижнего угла
+
       this.Sprite.Texture = TextureManager.PlayerTexture; // рисунок платформы
-      this.SpriteWidth = this.Sprite.TextureRect.Width; // ширина платформы
-      this.SpriteHeight = this.Sprite.TextureRect.Height; // высота платформы
+      //this.SpriteWidth = this.Sprite.TextureRect.Width; // ширина платформы
+      //this.SpriteHeight = this.Sprite.TextureRect.Height; // высота платформы
+      this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
+      this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока
 
       // начальная позиция платформы
       StartPosition(mode);
@@ -68,10 +73,10 @@ namespace ArcanoidLab
 
       if (isMove)
       {
-        if (moveLeft && position.X - PLATFORM_SPEED >= 0) 
-          position.X -= PLATFORM_SPEED;
-        if (moveRight && position.X + PLATFORM_SPEED < mode.Width - this.SpriteWidth)
-          position.X += PLATFORM_SPEED;
+        if (moveLeft && position.X - GameSetting.PLATFORM_SPEED >= 0) 
+          position.X -= GameSetting.PLATFORM_SPEED;
+        if (moveRight && position.X + GameSetting.PLATFORM_SPEED < mode.Width - this.SpriteWidth)
+          position.X += GameSetting.PLATFORM_SPEED;
       }
 
       // это при нажатии на пробел идет стрельба. В будущем можно бонус какой-нибудь добавить

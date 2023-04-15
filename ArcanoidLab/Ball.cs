@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System;
 
 namespace ArcanoidLab
 {
@@ -12,9 +13,15 @@ namespace ArcanoidLab
 
     public Ball(VideoMode mode)
     {
+      // первоначально мячик в левом нижнем углу игрового поля
+      this.x1 = 0; this.y1 = 12; // координаты левого верхнего угла
+      this.x2 = 12; this.y2 = 0; // координаты правого нижнего угла
+
       this.Sprite.Texture = TextureManager.BallTexture; // рисунок мячика
-      this.SpriteWidth = this.Sprite.TextureRect.Width; // ширина мячика
-      this.SpriteHeight = this.Sprite.TextureRect.Height; // высота мячика
+      //this.SpriteWidth = this.Sprite.TextureRect.Width; // ширина мячика
+      //this.SpriteHeight = this.Sprite.TextureRect.Height; // высота мячика
+      this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
+      this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока
       // создаю экземпляры объектов
       this.platform = new Platform(mode);
       // начальная позиция мячика
@@ -23,9 +30,11 @@ namespace ArcanoidLab
 
     public override void StartPosition(VideoMode mode)
     {
+      // ставлю мячик в середину игрового поля
       position.X = (mode.Width / 2) - (this.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
       position.Y = mode.Height - platform.SpriteHeight - this.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
       this.Sprite.Position = position;
+      //this.SetCoordinates();
     }
 
     public override void Update(VideoMode mode) {  }

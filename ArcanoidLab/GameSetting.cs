@@ -8,5 +8,7 @@
     public static int LIFE_TOTAL { get; } = 3; // общее кол-во жизней в игре
     public static int LifeCount { get; set; } = 3; // начальное кол-во жизней в игре
     public static int SCORE_STEP = 10; // шаг для подсчета очков
+
+    public static float PLATFORM_SPEED = 6f; // скорость движения платформы
   }
 }
