@@ -34,7 +34,12 @@ namespace ArcanoidLab
       position.X = (mode.Width / 2) - (this.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
       position.Y = mode.Height - platform.SpriteHeight - this.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
       this.Sprite.Position = position;
-      //this.SetCoordinates();
+      // устанавливаю координаты фигуры
+      int xx1 = Convert.ToInt32(position.X);
+      int yy1 = Convert.ToInt32(position.Y);
+      int xx2 = Convert.ToInt32(position.X + this.SpriteWidth);
+      int yy2 = Convert.ToInt32(position.Y + this.SpriteHeight);
+      this.SetCoordinates(xx1, yy1, xx2, yy2);
     }
 
     public override void Update(VideoMode mode) {  }

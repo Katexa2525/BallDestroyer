@@ -8,6 +8,9 @@ namespace ArcanoidLab
 {
   public abstract class DisplayObject
   {
+    private int dx = 6; // смещение дельта х
+    private int dy = 5; // смещение дельта y
+
     public Vector2f positionObject; // поле для сохранения позиции объекта, например, шарика после смещения
 
     // свойства, общие для всех наследуемых объектов
@@ -15,8 +18,6 @@ namespace ArcanoidLab
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
     
-    public float dx { get; set; } = 6; // смещение дельта х
-    public float dy { get; set; } = 5; // смещение дельта y
     public float x { get; set; } = 0; // // координата х фигуры для метода пересечения
     public float y { get; set; } = 0; // координата у фигуры для метода пересечения
 
@@ -34,6 +35,61 @@ namespace ArcanoidLab
     public virtual void SetCoordinates(int xx1, int yy1, int xx2, int yy2)
     {
       x1 = xx1; y1 = yy1; x2 = xx2; y2 = yy2;
+    }
+
+    /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
+    public virtual void ObjectIntersection(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
+                                           VideoMode mode, RenderTarget window)
+    {
+      Random random = new Random();
+
+      if (GameSetting.IsStart)
+      {
+        int n = blocks.Count; // кол-во блоков
+
+        ball.x1 += dx; //ball.x2 = ball.x1 + ball.SpriteWidth + dx;
+        ball.y1 -= dy; //ball.y2 -= ball.y1 + ball.SpriteHeight - dy;
+
+        // если столкновение о стенки игрового экрана слева и справа
+        if (ball.x1 < 0)
+        {
+          dx = dx < 0 ? -dx : dx;
+        }
+        if (ball.x2 > mode.Width)
+        { 
+          dx = dx > 0 ? -dx : dx; 
+        }
+
+        // если столкновение о верх игрового экрана
+        if (ball.y1 < 0) 
+          dy = -dy;
+
+        // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
+        if (ball.y2 > mode.Height || blocks.Count == 0)
+        {
+          GameSetting.IsStart = false;
+          dx = 6; dy = 5;
+          // ставлю мячик в середину игрового поля
+          ball.x1 = (int)(mode.Width / 2) - (ball.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
+          ball.y1 = (int)mode.Height - platform.SpriteHeight - ball.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
+          // минус жизнь
+          GameSetting.LifeCount--;
+          heartScull.Draw(window, mode); // перерисовываю после минусования жизни
+        }
+
+        // определение отскока dу при пересечении с платформой
+        if (ball.y2 > platform.y1 /*&& ball.x2 >= platform.x1 && ball.x2 <= platform.x2*/)
+          dy = (random.Next() % 5 + 2);
+
+
+        // новые координаты объекта в поле 
+        positionObject = new Vector2f(ball.x1, ball.y1);
+        int xx1 = Convert.ToInt32(positionObject.X);
+        int yy1 = Convert.ToInt32(positionObject.Y);
+        int xx2 = Convert.ToInt32(positionObject.X + ball.SpriteWidth);
+        int yy2 = Convert.ToInt32(positionObject.Y + ball.SpriteHeight);
+        ball.SetCoordinates(xx1, yy1, xx2, yy2);
+      }
     }
 
     // virtual - чтобы можно было в классах наследниках или переопределить этот метод, или пользоваться базовым, т.е. этим

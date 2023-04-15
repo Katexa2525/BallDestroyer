@@ -32,6 +32,13 @@ namespace ArcanoidLab
     {
       position.X = (mode.Width / 2) - (this.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине платформа была
       position.Y = mode.Height - this.SpriteHeight - 2;      // вычисляю позицию по оси Y, чтобы платформа над нижней частью окна была
+      this.Sprite.Position = position;
+      // устанавливаю координаты фигуры
+      int xx1 = Convert.ToInt32(position.X);
+      int yy1 = Convert.ToInt32(position.Y);
+      int xx2 = Convert.ToInt32(position.X + this.SpriteWidth);
+      int yy2 = Convert.ToInt32(position.Y + this.SpriteHeight);
+      this.SetCoordinates(xx1, yy1, xx2, yy2);
     }
 
     public override void Update(VideoMode mode)
