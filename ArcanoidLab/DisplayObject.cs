@@ -17,9 +17,6 @@ namespace ArcanoidLab
     public int SpriteWidth { get; set; } = 0; // свойство ширины объекта
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
-    
-    public float x { get; set; } = 0; // // координата х фигуры для метода пересечения
-    public float y { get; set; } = 0; // координата у фигуры для метода пересечения
 
     public int x1 { get; set; } = 0; // // координата х1 фигуры верхнего левого угла
     public int y1 { get; set; } = 0; // координата у1 фигуры верхнего левого угла
@@ -45,23 +42,49 @@ namespace ArcanoidLab
 
       if (GameSetting.IsStart)
       {
-        int n = blocks.Count; // кол-во блоков
+        int n = blocks.Count; // кол-во блоков в массиве blocks
 
-        ball.x1 += dx; //ball.x2 = ball.x1 + ball.SpriteWidth + dx;
-        ball.y1 -= dy; //ball.y2 -= ball.y1 + ball.SpriteHeight - dy;
+        ball.x1 += dx; 
+        ball.y1 -= dy;
+        SetNewSetCoordinates(ball.x1, ball.y1, ball);
+        for (int i = 0; i < n; i++)
+        {
+          // если есть пересечение, то удаление блока из коллекции, определение dx, т.е. отскока по оси х
+          if (IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
+                         blocks[i].x1, blocks[i].y1 + blocks[i].SpriteHeight, blocks[i].x2, blocks[i].y2) ||
+              IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
+                         blocks[i].x1 + blocks[i].SpriteWidth, blocks[i].y1, blocks[i].x2, blocks[i].y2) ||
+              IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
+                         blocks[i].x1, blocks[i].y1, blocks[i].x2, blocks[i].y2 - blocks[i].SpriteWidth) ||
+              IsCrossing(ball.x1, ball.y1 + ball.SpriteHeight, ball.x2, ball.y2 - ball.SpriteHeight,
+                         blocks[i].x1, blocks[i].y1, blocks[i].x2, blocks[i].y2 - blocks[i].SpriteHeight))
+          {
+            blocks[i].Sprite.Position = new Vector2f(-100, 0);
+            if (ball.x1 < blocks[i].x1) // левая стенка блока
+              dx = dx > 0 ? -dx : dx;
+            if (ball.x2 > blocks[i].x2) // правая стенка блока
+              dx = dx < 0 ? -dx : dx;
+            if (ball.y1 < blocks[i].y2) // если столкновение о нижнюю часть блока
+              dy = -dy;
+            // удаляю блок после столкновения из массива
+            blocks.RemoveAt(i);
+            n = blocks.Count;
+            GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
+          }
+        }
 
         // если столкновение о стенки игрового экрана слева и справа
-        if (ball.x1 < 0)
+        if (ball.x1 < 0) // слева 
         {
           dx = dx < 0 ? -dx : dx;
         }
-        if (ball.x2 > mode.Width)
-        { 
-          dx = dx > 0 ? -dx : dx; 
+        if (ball.x2 > mode.Width) // справа
+        {
+          dx = dx > 0 ? -dx : dx;
         }
 
         // если столкновение о верх игрового экрана
-        if (ball.y1 < 0) 
+        if (ball.y1 < 0)
           dy = -dy;
 
         // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
@@ -78,86 +101,53 @@ namespace ArcanoidLab
         }
 
         // определение отскока dу при пересечении с платформой
-        if (ball.y2 > platform.y1 /*&& ball.x2 >= platform.x1 && ball.x2 <= platform.x2*/)
-          dy = (random.Next() % 5 + 2);
-
-
-        // новые координаты объекта в поле 
-        positionObject = new Vector2f(ball.x1, ball.y1);
-        int xx1 = Convert.ToInt32(positionObject.X);
-        int yy1 = Convert.ToInt32(positionObject.Y);
-        int xx2 = Convert.ToInt32(positionObject.X + ball.SpriteWidth);
-        int yy2 = Convert.ToInt32(positionObject.Y + ball.SpriteHeight);
-        ball.SetCoordinates(xx1, yy1, xx2, yy2);
+        if (IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
+                       platform.x1, platform.y1, platform.x2, platform.y2 - platform.SpriteHeight))
+          dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
       }
     }
 
-    // virtual - чтобы можно было в классах наследниках или переопределить этот метод, или пользоваться базовым, т.е. этим
-    public virtual void CheckCollision(float X, float Y, List<DisplayObject> Blocks, DisplayObject platform, DisplayObject heartScull,
-                                       VideoMode mode, RenderTarget window)
+    /// <summary> Метод определения пересечения двух отрезков </summary>
+    /// Параметры - координаты 2-х отрезков: 
+    /// (x1,y1,x2,y2) - координаты прямой прямоугольника шарика
+    /// (x3,y3,x4,y4) - координаты прямой прямоугольника блока или др объекта для столкновения с шариком
+    /// Возврат: true - прямые пересекаются, или совпадают, т.е. есть столкновение; false - не пересекаются
+    private bool IsCrossing(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
     {
-      x = X; // позиция спрайта (шарика) по х
-      y = Y; // позиция спрайта (шарика) по у
-      Random random = new Random(); 
+      float Ua, Ub, numerator_a, numerator_b, denominator;
 
-      if (GameSetting.IsStart)
+      denominator = (y4 - y3) * (x1 - x2) - (x4 - x3) * (y1 - y2);
+
+      if (denominator == 0)
       {
-        int n = Blocks.Count;
+        if ((x1 * y2 - x2 * y1) * (x4 - x3) - (x3 * y4 - x4 * y3) * (x2 - x1) == 0 &&
+            (x1 * y2 - x2 * y1) * (y4 - y3) - (x3 * y4 - x4 * y3) * (y2 - y1) == 0)
+          return true;
+        else
+          return false;
+      }
+      else
+      {
+        numerator_a = (x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2);
+        numerator_b = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2);
+        Ua = numerator_a / denominator;
+        Ub = numerator_b / denominator;
 
-        // определение пересечения шарика с координатами (x,y) с блоком со своими координатами из массива блоков для оси х
-        x += dx;
-        for (int i = 0; i < n; i++)
-        {
-          // если есть пересечение, то удаление блока из коллекции, определение dx, т.е. отскока по оси х
-          if (new FloatRect(x + 3, y + 3, 6, 6).Intersects(Blocks[i].Sprite.GetGlobalBounds()))
-          {
-            Blocks[i].Sprite.Position = new Vector2f(-100, 0);
-            Blocks.RemoveAt(i);
-            n = Blocks.Count;
-            dx = -dx;
-            GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
-          }
-        }
-
-        // определение пересечения шарика с координатами (x,y) с блоком со своими координатами из массива блоков для оси у
-        y += dy;
-        for (int i = 0; i < n; i++)
-        {
-          // если есть пересечение, то удаление блока из коллекции, определение dy, т.е. отскока по оси y
-          if (new FloatRect(x + 3, y + 3, 6, 6).Intersects(Blocks[i].Sprite.GetGlobalBounds()))
-          {
-            Blocks[i].Sprite.Position = new Vector2f(-100, 0);
-            Blocks.RemoveAt(i);
-            n = Blocks.Count;
-            dy = -dy;
-            GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
-          }
-        }
-
-        // если столкновение о стенки игрового экрана слева и справа
-        if (x < 0 || x > mode.Width) dx = -dx; 
-
-        // если столкновение о верх игрового экрана
-        if (y < 0) dy = -dy;
-
-        // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
-        if (y > mode.Height || Blocks.Count == 0)
-        {
-          GameSetting.IsStart = false;
-          dx = 6; dy = 5;
-          x = X; y = Y;
-          GameSetting.LifeCount--;// минус жизнь
-          heartScull.Draw(window, mode); // перерисовываю после минусования жизни
-        }
-
-        // определение отскока dу при пересечении с платформой
-        if (new FloatRect(x, y, 12, 12).Intersects(platform.Sprite.GetGlobalBounds()))
-          dy = -(random.Next() % 5 + 2);
-
-        // новые координаты объекта в поле 
-        positionObject = new Vector2f(x, y);
+        if (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1)
+          return true;
+        return false;
       }
     }
 
+    /// <summary> Установка новых координат объекта </summary>
+    public void SetNewSetCoordinates(int x1, int y1, DisplayObject displayObject)
+    {
+      positionObject = new Vector2f(x1, y1);
+      int xx1 = Convert.ToInt32(positionObject.X);
+      int yy1 = Convert.ToInt32(positionObject.Y);
+      int xx2 = Convert.ToInt32(positionObject.X + displayObject.SpriteWidth);
+      int yy2 = Convert.ToInt32(positionObject.Y + displayObject.SpriteHeight);
+      displayObject.SetCoordinates(xx1, yy1, xx2, yy2);
+    }
   }
 }

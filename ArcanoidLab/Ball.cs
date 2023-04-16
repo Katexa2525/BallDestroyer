@@ -35,11 +35,7 @@ namespace ArcanoidLab
       position.Y = mode.Height - platform.SpriteHeight - this.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
       this.Sprite.Position = position;
       // устанавливаю координаты фигуры
-      int xx1 = Convert.ToInt32(position.X);
-      int yy1 = Convert.ToInt32(position.Y);
-      int xx2 = Convert.ToInt32(position.X + this.SpriteWidth);
-      int yy2 = Convert.ToInt32(position.Y + this.SpriteHeight);
-      this.SetCoordinates(xx1, yy1, xx2, yy2);
+      Coordinates();
     }
 
     public override void Update(VideoMode mode) {  }
@@ -50,5 +46,15 @@ namespace ArcanoidLab
     }
 
     public override void Draw(RenderTarget window, VideoMode mode) { }
+
+    private void Coordinates()
+    {
+      // устанавливаю координаты фигуры
+      int xx1 = Convert.ToInt32(position.X);
+      int yy1 = Convert.ToInt32(position.Y);
+      int xx2 = Convert.ToInt32(position.X + this.SpriteWidth);
+      int yy2 = Convert.ToInt32(position.Y + this.SpriteHeight);
+      this.SetCoordinates(xx1, yy1, xx2, yy2);
+    }
   }
 }

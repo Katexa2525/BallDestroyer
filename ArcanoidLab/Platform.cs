@@ -20,8 +20,6 @@ namespace ArcanoidLab
       this.x2 = 90; this.y2 = 0; // координаты правого нижнего угла
 
       this.Sprite.Texture = TextureManager.PlayerTexture; // рисунок платформы
-      //this.SpriteWidth = this.Sprite.TextureRect.Width; // ширина платформы
-      //this.SpriteHeight = this.Sprite.TextureRect.Height; // высота платформы
       this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
       this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока
 
@@ -31,21 +29,20 @@ namespace ArcanoidLab
     public override void StartPosition(VideoMode mode)
     {
       position.X = (mode.Width / 2) - (this.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине платформа была
-      position.Y = mode.Height - this.SpriteHeight - 2;      // вычисляю позицию по оси Y, чтобы платформа над нижней частью окна была
+      position.Y = mode.Height - this.SpriteHeight - 4;      // вычисляю позицию по оси Y, чтобы платформа над нижней частью окна была
       this.Sprite.Position = position;
       // устанавливаю координаты фигуры
-      int xx1 = Convert.ToInt32(position.X);
-      int yy1 = Convert.ToInt32(position.Y);
-      int xx2 = Convert.ToInt32(position.X + this.SpriteWidth);
-      int yy2 = Convert.ToInt32(position.Y + this.SpriteHeight);
-      this.SetCoordinates(xx1, yy1, xx2, yy2);
+      Coordinates();
     }
 
     public override void Update(VideoMode mode)
     {
       this.KeyHandler(mode);
       this.Sprite.Position = position;
+      // устанавливаю координаты фигуры
+      Coordinates();
 
+      // для пуль на будущее, может пригодиться
       for (int i = 0; i < this.bullets.Count; i++)
       {
         this.bullets[i].Update();
@@ -87,8 +84,8 @@ namespace ArcanoidLab
       }
 
       // это при нажатии на пробел идет стрельба. В будущем можно бонус какой-нибудь добавить
-      bool isFire = Keyboard.IsKeyPressed(Keyboard.Key.Space);
-      if (isFire) this.Fire();
+      //bool isFire = Keyboard.IsKeyPressed(Keyboard.Key.Space);
+      //if (isFire) this.Fire();
     }
 
     private void Fire()
@@ -101,6 +98,16 @@ namespace ArcanoidLab
         this.bullets.Add(new Bullet(positionOfSecondBullet));
         this.delay = 0;
       }
+    }
+
+    private void Coordinates()
+    {
+      // устанавливаю координаты фигуры
+      int xx1 = Convert.ToInt32(position.X);
+      int yy1 = Convert.ToInt32(position.Y);
+      int xx2 = Convert.ToInt32(position.X + this.SpriteWidth);
+      int yy2 = Convert.ToInt32(position.Y + this.SpriteHeight);
+      this.SetCoordinates(xx1, yy1, xx2, yy2);
     }
   }
 }

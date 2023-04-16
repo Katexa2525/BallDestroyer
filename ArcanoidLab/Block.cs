@@ -53,7 +53,6 @@ namespace ArcanoidLab
           Blocks[n].y2 = Blocks[n].y1 + this.SpriteHeight;
           // заполняю Sprite объектом из рисунка
           Blocks[n].Sprite = new Sprite(TextureManager.BlockTexture);
-          //Blocks[n].Sprite.Position = new Vector2f(i * this.SpriteWidth, j * this.SpriteHeight);
           Blocks[n].Sprite.Position = new Vector2f(i * Math.Abs(Blocks[n].x1 - Blocks[n].x2), j * Math.Abs(Blocks[n].y1 - Blocks[n].y2));
           n++;
         }
