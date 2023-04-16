@@ -49,7 +49,6 @@ namespace ArcanoidLab
         SetNewSetCoordinates(ball.x1, ball.y1, ball);
         for (int i = 0; i < n; i++)
         {
-          // если есть пересечение, то удаление блока из коллекции, определение dx, т.е. отскока по оси х
           if (IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
                          blocks[i].x1, blocks[i].y1 + blocks[i].SpriteHeight, blocks[i].x2, blocks[i].y2) ||
               IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
@@ -112,6 +111,8 @@ namespace ArcanoidLab
     /// (x1,y1,x2,y2) - координаты прямой прямоугольника шарика
     /// (x3,y3,x4,y4) - координаты прямой прямоугольника блока или др объекта для столкновения с шариком
     /// Возврат: true - прямые пересекаются, или совпадают, т.е. есть столкновение; false - не пересекаются
+    /// https://www.kakprosto.ru/kak-18137-kak-nayti-tochku-peresecheniya-otrezkov
+    /// https://habr.com/ru/articles/523440/
     private bool IsCrossing(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
     {
       float Ua, Ub, numerator_a, numerator_b, denominator;
