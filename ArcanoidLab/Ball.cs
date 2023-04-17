@@ -18,8 +18,6 @@ namespace ArcanoidLab
       this.x2 = 12; this.y2 = 0; // координаты правого нижнего угла
 
       this.Sprite.Texture = TextureManager.BallTexture; // рисунок мячика
-      //this.SpriteWidth = this.Sprite.TextureRect.Width; // ширина мячика
-      //this.SpriteHeight = this.Sprite.TextureRect.Height; // высота мячика
       this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
       this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока
       // создаю экземпляры объектов
