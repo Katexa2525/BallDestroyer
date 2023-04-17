@@ -49,14 +49,11 @@ namespace ArcanoidLab
         SetNewSetCoordinates(ball.x1, ball.y1, ball);
         for (int i = 0; i < n; i++)
         {
-          if (IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
-                         blocks[i].x1, blocks[i].y1 + blocks[i].SpriteHeight, blocks[i].x2, blocks[i].y2) ||
-              IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
-                         blocks[i].x1 + blocks[i].SpriteWidth, blocks[i].y1, blocks[i].x2, blocks[i].y2) ||
-              IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
-                         blocks[i].x1, blocks[i].y1, blocks[i].x2, blocks[i].y2 - blocks[i].SpriteWidth) ||
-              IsCrossing(ball.x1, ball.y1 + ball.SpriteHeight, ball.x2, ball.y2 - ball.SpriteHeight,
-                         blocks[i].x1, blocks[i].y1, blocks[i].x2, blocks[i].y2 - blocks[i].SpriteHeight))
+          if ((ball.y1 <= blocks[i].y2 && ball.y1 >= blocks[i].y1 && ball.x1 >= blocks[i].x1 && ball.x1 <= blocks[i].x2) || // подлет снизу к блоку
+              (ball.x1 <= blocks[i].x2 && ball.x1 >= blocks[i].x1 && ball.y1 >= blocks[i].y1 && ball.y1 <= blocks[i].y2) || // подлет к правой стенке блока
+              (ball.x2 >= blocks[i].x1 && ball.x2 <= blocks[i].x2 && ball.y1 >= blocks[i].y1 && ball.y1 <= blocks[i].y2) || // подлет к левой стенке блока
+              (ball.y2 >= blocks[i].y1 && ball.y2 <= blocks[i].y2 && ball.x2 >= blocks[i].x1 && ball.x2 <= blocks[i].x2)  // подлет сверху в вверх блока
+             )
           {
             blocks[i].Sprite.Position = new Vector2f(-100, 0);
             if (ball.x1 < blocks[i].x1) // левая стенка блока
@@ -100,43 +97,8 @@ namespace ArcanoidLab
         }
 
         // определение отскока dу при пересечении с платформой
-        if (IsCrossing(ball.x1, ball.y1, ball.x2, ball.y2, 
-                       platform.x1, platform.y1, platform.x2, platform.y2 - platform.SpriteHeight))
+        if (ball.y2 >= platform.y1 && ball.y2 <= platform.y2 && ball.x2 >= platform.x1 && ball.x2 <= platform.x2)
           dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
-      }
-    }
-
-    /// <summary> Метод определения пересечения двух отрезков </summary>
-    /// Параметры - координаты 2-х отрезков: 
-    /// (x1,y1,x2,y2) - координаты прямой прямоугольника шарика
-    /// (x3,y3,x4,y4) - координаты прямой прямоугольника блока или др объекта для столкновения с шариком
-    /// Возврат: true - прямые пересекаются, или совпадают, т.е. есть столкновение; false - не пересекаются
-    /// https://www.kakprosto.ru/kak-18137-kak-nayti-tochku-peresecheniya-otrezkov
-    /// https://habr.com/ru/articles/523440/
-    private bool IsCrossing(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
-    {
-      float Ua, Ub, numerator_a, numerator_b, denominator;
-
-      denominator = (y4 - y3) * (x1 - x2) - (x4 - x3) * (y1 - y2);
-
-      if (denominator == 0)
-      {
-        if ((x1 * y2 - x2 * y1) * (x4 - x3) - (x3 * y4 - x4 * y3) * (x2 - x1) == 0 &&
-            (x1 * y2 - x2 * y1) * (y4 - y3) - (x3 * y4 - x4 * y3) * (y2 - y1) == 0)
-          return true;
-        else
-          return false;
-      }
-      else
-      {
-        numerator_a = (x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2);
-        numerator_b = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2);
-        Ua = numerator_a / denominator;
-        Ub = numerator_b / denominator;
-
-        if (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1)
-          return true;
-        return false;
       }
     }
 
