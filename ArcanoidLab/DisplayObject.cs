@@ -34,6 +34,24 @@ namespace ArcanoidLab
       x1 = xx1; y1 = yy1; x2 = xx2; y2 = yy2;
     }
 
+    public bool CheckIntersection(List<DisplayObject> staticDO, List<DisplayObject> dynamicDO)
+    {
+      for (int i = 0; i < staticDO.Count; i++)
+      {
+        for (int k = 0; k < dynamicDO.Count; k++)
+        {
+          if ((dynamicDO[k].y1 <= staticDO[i].y2 && dynamicDO[k].y1 >= staticDO[i].y1 && dynamicDO[k].x1 >= staticDO[i].x1 && dynamicDO[k].x1 <= staticDO[i].x2) || // подлет снизу к объекту
+              (dynamicDO[k].x1 <= staticDO[i].x2 && dynamicDO[k].x1 >= staticDO[i].x1 && dynamicDO[k].y1 >= staticDO[i].y1 && dynamicDO[k].y1 <= staticDO[i].y2) || // подлет к правой стенке объекту
+              (dynamicDO[k].x2 >= staticDO[i].x1 && dynamicDO[k].x2 <= staticDO[i].x2 && dynamicDO[k].y1 >= staticDO[i].y1 && dynamicDO[k].y1 <= staticDO[i].y2) || // подлет к левой стенке объекту
+              (dynamicDO[k].y2 >= staticDO[i].y1 && dynamicDO[k].y2 <= staticDO[i].y2 && dynamicDO[k].x2 >= staticDO[i].x1 && dynamicDO[k].x2 <= staticDO[i].x2)) // подлет сверху в вверх объекту
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
     public virtual void ObjectIntersection(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
                                            VideoMode mode, RenderTarget window)
