@@ -27,14 +27,14 @@ namespace ArcanoidLab
     // начальные настройки класса
     private void BeginSetting()
     {
+      this.Sprite.Texture = TextureManager.BlockTexture; // рисунок блока
+
       // первоначально блок в левом нижнем углу игрового поля
-      this.x1 = 0; this.y1 = 20; // координаты левого верхнего угла
-      this.x2 = 42; this.y2 = 0; // координаты правого нижнего угла
+      this.x1 = 0; this.y1 = (int)this.Sprite.Texture.Size.Y; //20; // координаты левого верхнего угла
+      this.x2 = (int)this.Sprite.Texture.Size.X /*42*/; this.y2 = 0; // координаты правого нижнего угла
 
       this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
       this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока
-
-      this.Sprite.Texture = TextureManager.BlockTexture; // рисунок блока
     }
 
     public override void StartPosition(VideoMode mode) 

@@ -13,11 +13,13 @@ namespace ArcanoidLab
 
     public Ball(VideoMode mode)
     {
-      // первоначально мячик в левом нижнем углу игрового поля
-      this.x1 = 0; this.y1 = 12; // координаты левого верхнего угла
-      this.x2 = 12; this.y2 = 0; // координаты правого нижнего угла
-
       this.Sprite.Texture = TextureManager.BallTexture; // рисунок мячика
+      this.Sprite.Scale = new Vector2f(1.0f, 1.0f);
+
+      // первоначально мячик в левом нижнем углу игрового поля
+      this.x1 = 0; this.y1 = (int)this.Sprite.Texture.Size.Y; //12; // координаты левого верхнего угла
+      this.x2 = (int)this.Sprite.Texture.Size.X /*12*/; this.y2 = 0; // координаты правого нижнего угла
+
       this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
       this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока
       // создаю экземпляры объектов
@@ -54,5 +56,7 @@ namespace ArcanoidLab
       int yy2 = Convert.ToInt32(position.Y + this.SpriteHeight);
       this.SetCoordinates(xx1, yy1, xx2, yy2);
     }
+
+
   }
 }

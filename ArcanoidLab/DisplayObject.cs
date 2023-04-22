@@ -19,7 +19,7 @@ namespace ArcanoidLab
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
 
     public int x1 { get; set; } = 0; // // координата х1 фигуры верхнего левого угла
-    public int y1 { get; set; } = 0; // координата у1 фигуры верхнего левого угла
+    public int y1 { get; set; } =  0; // координата у1 фигуры верхнего левого угла
     public int x2 { get; set; } = 0; // // координата х2 фигуры нижнего правого угла
     public int y2 { get; set; } = 0; // координата у2 фигуры нижнего правого угла
 
