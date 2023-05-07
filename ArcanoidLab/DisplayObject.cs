@@ -60,6 +60,8 @@ namespace ArcanoidLab
       return false;
     }
 
+    /// <summary> Метод для определения смещения после отскока от рамок игрового экрана </summary>
+    /// <param name="dynamicObject"></param>
     private void ReboundAfterScreenCollision(DisplayObject dynamicObject)
     {
       if (dynamicObject.x1 < 0) // если столкновение о стенки игрового экрана слева 
@@ -91,108 +93,28 @@ namespace ArcanoidLab
         dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
     }
 
-    /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
-    public virtual void ObjectIntersection_1(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
-                                             VideoMode mode, RenderTarget window)
+    private void EndRoundGame()
     {
-      Random random = new Random();
 
-      if (GameSetting.IsStart)
-      {
-        int n = blocks.Count; // кол-во блоков в массиве blocks
-
-        ball.x1 += dx;
-        ball.y1 -= dy;
-        SetNewSetCoordinates(ball.x1, ball.y1, ball);
-
-        List<DisplayObject> dynamicDO = new List<DisplayObject>();
-        dynamicDO.Add(ball);
-        List<DisplayObject> staticDO;
-        staticDO = blocks;
-        staticDO.Add(platform);
-        bool www = (CheckIntersection(staticDO, dynamicDO));
-
-        // если столкновение о стенки игрового экрана слева и справа
-        //if (ball.x1 < 0) // слева 
-        //{
-        //  dx = dx < 0 ? -dx : dx;
-        //}
-        //if (ball.x2 > mode.Width) // справа
-        //{
-        //  dx = dx > 0 ? -dx : dx;
-        //}
-
-        //// если столкновение о верх игрового экрана
-        //if (ball.y1 < 0)
-        //  dy = -dy;
-
-        // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
-        if (ball.y2 > mode.Height || blocks.Count == 0)
-        {
-          GameSetting.IsStart = false;
-          dx = 6; dy = 5;
-          // ставлю мячик в середину игрового поля
-          ball.x1 = (int)(mode.Width / 2) - (ball.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
-          ball.y1 = (int)mode.Height - platform.SpriteHeight - ball.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
-          // минус жизнь
-          GameSetting.LifeCount--;
-          heartScull.Draw(window, mode); // перерисовываю после минусования жизни
-        }
-
-        
-        //if (ball.y2 >= platform.y1 && ball.y2 <= platform.y2 && ball.x2 >= platform.x1 && ball.x2 <= platform.x2)
-        //  dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
-      }
     }
 
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
     public virtual void ObjectIntersection(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
-                                           VideoMode mode, RenderTarget window)
+                                             VideoMode mode, RenderTarget window)
     {
-      Random random = new Random();
-
       if (GameSetting.IsStart)
       {
-        int n = blocks.Count; // кол-во блоков в массиве blocks
-
-        ball.x1 += dx; 
+        ball.x1 += dx;
         ball.y1 -= dy;
         SetNewSetCoordinates(ball.x1, ball.y1, ball);
-        for (int i = 0; i < n; i++)
-        {
-          if ((ball.y1 <= blocks[i].y2 && ball.y1 >= blocks[i].y1 && ball.x1 >= blocks[i].x1 && ball.x1 <= blocks[i].x2) || // подлет снизу к блоку
-              (ball.x1 <= blocks[i].x2 && ball.x1 >= blocks[i].x1 && ball.y1 >= blocks[i].y1 && ball.y1 <= blocks[i].y2) || // подлет к правой стенке блока
-              (ball.x2 >= blocks[i].x1 && ball.x2 <= blocks[i].x2 && ball.y1 >= blocks[i].y1 && ball.y1 <= blocks[i].y2) || // подлет к левой стенке блока
-              (ball.y2 >= blocks[i].y1 && ball.y2 <= blocks[i].y2 && ball.x2 >= blocks[i].x1 && ball.x2 <= blocks[i].x2)  // подлет сверху в вверх блока
-             )
-          {
-            blocks[i].Sprite.Position = new Vector2f(-100, 0);
-            if (ball.x1 < blocks[i].x1) // левая стенка блока
-              dx = dx > 0 ? -dx : dx;
-            if (ball.x2 > blocks[i].x2) // правая стенка блока
-              dx = dx < 0 ? -dx : dx;
-            if (ball.y1 < blocks[i].y2) // если столкновение о нижнюю часть блока
-              dy = -dy;
-            // удаляю блок после столкновения из массива
-            blocks.RemoveAt(i);
-            n = blocks.Count;
-            GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
-          }
-        }
 
-        // если столкновение о стенки игрового экрана слева и справа
-        if (ball.x1 < 0) // слева 
-        {
-          dx = dx < 0 ? -dx : dx;
-        }
-        if (ball.x2 > mode.Width) // справа
-        {
-          dx = dx > 0 ? -dx : dx;
-        }
+        // формирую спиские статических и динамических объектов для проверки на столкновение
+        List<DisplayObject> dynamicDO = new List<DisplayObject>();
+        dynamicDO.Add(ball);
+        List<DisplayObject> staticDO = blocks;
+        staticDO.Add(platform);
 
-        // если столкновение о верх игрового экрана
-        if (ball.y1 < 0)
-          dy = -dy;
+        bool checkInt = CheckIntersection(staticDO, dynamicDO);
 
         // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
         if (ball.y2 > mode.Height || blocks.Count == 0)
@@ -206,10 +128,6 @@ namespace ArcanoidLab
           GameSetting.LifeCount--;
           heartScull.Draw(window, mode); // перерисовываю после минусования жизни
         }
-
-        // определение отскока dу при пересечении с платформой
-        if (ball.y2 >= platform.y1 && ball.y2 <= platform.y2 && ball.x2 >= platform.x1 && ball.x2 <= platform.x2)
-          dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
       }
     }
 

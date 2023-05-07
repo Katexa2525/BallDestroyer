@@ -96,7 +96,7 @@ namespace ArcanoidLab
       KeyHandler();
       UpdateScore();
       // вызываю проверку коллизии, т.е. пересечения фигур
-      ball.ObjectIntersection_1(ball, block.Blocks, platform, heartScull, mode, window);
+      ball.ObjectIntersection(ball, block.Blocks, platform, heartScull, mode, window);
       if (!GameSetting.IsStart) // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
       {
         ball.StartPosition(mode);
