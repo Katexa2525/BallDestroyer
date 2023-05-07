@@ -14,7 +14,7 @@ namespace ArcanoidLab
     public Ball(VideoMode mode)
     {
       this.Sprite.Texture = TextureManager.BallTexture; // рисунок мячика
-      this.Sprite.Scale = new Vector2f(1.0f, 1.0f);
+      this.Sprite.Scale = new Vector2f(1.5f, 1.5f);
 
       // первоначально мячик в левом нижнем углу игрового поля
       this.x1 = 0; this.y1 = (int)this.Sprite.Texture.Size.Y; //12; // координаты левого верхнего угла

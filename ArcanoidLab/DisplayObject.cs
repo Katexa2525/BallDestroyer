@@ -36,20 +36,113 @@ namespace ArcanoidLab
 
     public bool CheckIntersection(List<DisplayObject> staticDO, List<DisplayObject> dynamicDO)
     {
-      for (int i = 0; i < staticDO.Count; i++)
+      for (int i = 0; i < dynamicDO.Count; i++)
       {
-        for (int k = 0; k < dynamicDO.Count; k++)
+        for (int k = 0; k < staticDO.Count; k++)
         {
-          if ((dynamicDO[k].y1 <= staticDO[i].y2 && dynamicDO[k].y1 >= staticDO[i].y1 && dynamicDO[k].x1 >= staticDO[i].x1 && dynamicDO[k].x1 <= staticDO[i].x2) || // подлет снизу к объекту
-              (dynamicDO[k].x1 <= staticDO[i].x2 && dynamicDO[k].x1 >= staticDO[i].x1 && dynamicDO[k].y1 >= staticDO[i].y1 && dynamicDO[k].y1 <= staticDO[i].y2) || // подлет к правой стенке объекту
-              (dynamicDO[k].x2 >= staticDO[i].x1 && dynamicDO[k].x2 <= staticDO[i].x2 && dynamicDO[k].y1 >= staticDO[i].y1 && dynamicDO[k].y1 <= staticDO[i].y2) || // подлет к левой стенке объекту
-              (dynamicDO[k].y2 >= staticDO[i].y1 && dynamicDO[k].y2 <= staticDO[i].y2 && dynamicDO[k].x2 >= staticDO[i].x1 && dynamicDO[k].x2 <= staticDO[i].x2)) // подлет сверху в вверх объекту
+          if ((dynamicDO[i].y1 <= staticDO[k].y2 && dynamicDO[i].y1 >= staticDO[k].y1 && dynamicDO[i].x1 >= staticDO[k].x1 && dynamicDO[i].x1 <= staticDO[k].x2) || // подлет снизу к объекту
+              (dynamicDO[i].x1 <= staticDO[k].x2 && dynamicDO[i].x1 >= staticDO[k].x1 && dynamicDO[i].y1 >= staticDO[k].y1 && dynamicDO[i].y1 <= staticDO[k].y2) || // подлет к правой стенке объекту
+              (dynamicDO[i].x2 >= staticDO[k].x1 && dynamicDO[i].x2 <= staticDO[k].x2 && dynamicDO[i].y1 >= staticDO[k].y1 && dynamicDO[i].y1 <= staticDO[k].y2) || // подлет к левой стенке объекту
+              (dynamicDO[i].y2 >= staticDO[k].y1 && dynamicDO[i].y2 <= staticDO[k].y2 && dynamicDO[i].x2 >= staticDO[k].x1 && dynamicDO[i].x2 <= staticDO[k].x2))   // подлет сверху в вверх объекту
           {
+            ReboundAfterCollision(staticDO[k], dynamicDO[i], staticDO);
+            return true;
+          }
+          else if ((dynamicDO[i].x1 < 0) || //столкновение о стенки игрового экрана слева 
+                   (dynamicDO[i].x2 > 800) || //столкновение о стенки игрового экрана справа
+                   (dynamicDO[i].y1 < 0)) //столкновение о вверх игрового экрана
+          {
+            ReboundAfterScreenCollision(dynamicDO[i]);
             return true;
           }
         }
       }
       return false;
+    }
+
+    private void ReboundAfterScreenCollision(DisplayObject dynamicObject)
+    {
+      if (dynamicObject.x1 < 0) // если столкновение о стенки игрового экрана слева 
+        dx = dx < 0 ? -dx : dx;
+      if (dynamicObject.x2 > 800) // если столкновение о стенки игрового экрана справа
+        dx = dx > 0 ? -dx : dx;
+      if (dynamicObject.y1 < 0) // если столкновение о верх игрового экрана
+        dy = -dy;
+    }
+
+    /// <summary> Метод для определения отскока после столкновения </summary>
+    private void ReboundAfterCollision(DisplayObject staticObject, DisplayObject dynamicObject, List<DisplayObject> staticDO)
+    {
+      Random random = new Random();
+      if (staticObject is Block)
+      {
+        staticObject.Sprite.Position = new Vector2f(-100, 0);
+        if (dynamicObject.x1 < staticObject.x1) // левая стенка блока
+          dx = dx > 0 ? -dx : dx;
+        if (dynamicObject.x2 > staticObject.x2) // правая стенка блока
+          dx = dx < 0 ? -dx : dx;
+        if (dynamicObject.y1 < staticObject.y2) // если столкновение о нижнюю часть блока
+          dy = -dy;
+        // удаляю блок после столкновения из массива
+        staticDO.Remove(staticObject);
+        GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
+      }
+      else if (staticObject is Platform) 
+        dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
+    }
+
+    /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
+    public virtual void ObjectIntersection_1(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
+                                             VideoMode mode, RenderTarget window)
+    {
+      Random random = new Random();
+
+      if (GameSetting.IsStart)
+      {
+        int n = blocks.Count; // кол-во блоков в массиве blocks
+
+        ball.x1 += dx;
+        ball.y1 -= dy;
+        SetNewSetCoordinates(ball.x1, ball.y1, ball);
+
+        List<DisplayObject> dynamicDO = new List<DisplayObject>();
+        dynamicDO.Add(ball);
+        List<DisplayObject> staticDO;
+        staticDO = blocks;
+        staticDO.Add(platform);
+        bool www = (CheckIntersection(staticDO, dynamicDO));
+
+        // если столкновение о стенки игрового экрана слева и справа
+        //if (ball.x1 < 0) // слева 
+        //{
+        //  dx = dx < 0 ? -dx : dx;
+        //}
+        //if (ball.x2 > mode.Width) // справа
+        //{
+        //  dx = dx > 0 ? -dx : dx;
+        //}
+
+        //// если столкновение о верх игрового экрана
+        //if (ball.y1 < 0)
+        //  dy = -dy;
+
+        // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
+        if (ball.y2 > mode.Height || blocks.Count == 0)
+        {
+          GameSetting.IsStart = false;
+          dx = 6; dy = 5;
+          // ставлю мячик в середину игрового поля
+          ball.x1 = (int)(mode.Width / 2) - (ball.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
+          ball.y1 = (int)mode.Height - platform.SpriteHeight - ball.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
+          // минус жизнь
+          GameSetting.LifeCount--;
+          heartScull.Draw(window, mode); // перерисовываю после минусования жизни
+        }
+
+        
+        //if (ball.y2 >= platform.y1 && ball.y2 <= platform.y2 && ball.x2 >= platform.x1 && ball.x2 <= platform.x2)
+        //  dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
+      }
     }
 
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
