@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System;
 
 namespace ArcanoidLab
 {
@@ -110,7 +111,11 @@ namespace ArcanoidLab
     private void Draw()
     {
       this.window.Clear(Color.Blue);
-      
+      // доп данные
+      textManager.TypeText("Игрок: ", "Петя", 14, Color.Yellow, new Vector2f(100f, 0f));
+      textManager.TypeText("", DateTime.Now.ToString(), 14, Color.Yellow, new Vector2f(220f, 0f));
+      textManager.TypeText("Уровень: ", "Easy", 14, Color.Yellow, new Vector2f(400f, 0f));
+
       this.platform.Draw(this.window, mode);
       this.block.Draw(this.window);
       this.ball.Draw(this.window);

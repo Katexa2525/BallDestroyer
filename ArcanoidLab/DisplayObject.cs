@@ -8,8 +8,8 @@ namespace ArcanoidLab
 {
   public abstract class DisplayObject
   {
-    private int dx = 6; // смещение дельта х
-    private int dy = 5; // смещение дельта y
+    private int dx = 2; // смещение дельта х
+    private int dy = 1; // смещение дельта y
 
     public Vector2f positionObject; // поле для сохранения позиции объекта, например, шарика после смещения
 

@@ -5,7 +5,7 @@ using SFML.Window;
 namespace ArcanoidLab
 {
   /// <summary> Класс кнопки для игрового меню </summary>
-  public class ButtonMenu
+  public class ButtonMenu : Drawable
   {
     private RectangleShape shape;
     private Text label;
