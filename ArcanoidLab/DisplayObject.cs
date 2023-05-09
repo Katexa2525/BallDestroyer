@@ -17,6 +17,7 @@ namespace ArcanoidLab
     public int SpriteWidth { get; set; } = 0; // свойство ширины объекта
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
+    public Shape Shape { get; set; } // сам объект (блок, шарик, платформа)
 
     public int x1 { get; set; } = 0; // // координата х1 фигуры верхнего левого угла
     public int y1 { get; set; } =  0; // координата у1 фигуры верхнего левого угла
