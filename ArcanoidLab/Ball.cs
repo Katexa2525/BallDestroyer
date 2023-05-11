@@ -18,6 +18,7 @@ namespace ArcanoidLab
       this.Sprite.Texture = TextureManager.BallTexture; // рисунок мячика
       this.Sprite.Texture.Smooth = this.SmoothTexture; // сглаживание краев текстуры
       this.Sprite.Scale = new Vector2f(this.Scale, this.Scale);
+      this.Sprite.Color = Color.Yellow;
 
       // первоначально мячик в левом нижнем углу игрового поля
       this.x1 = 0; 

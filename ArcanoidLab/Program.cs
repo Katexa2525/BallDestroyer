@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using System;
+using System.Timers;
 
 namespace ArcanoidLab
 {
@@ -11,5 +12,6 @@ namespace ArcanoidLab
       //Game game = new Game();
       game.Run();
     }
+  
   }
 }

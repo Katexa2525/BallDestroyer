@@ -20,7 +20,8 @@ namespace ArcanoidLab
     private Block block;
     private Ball ball;
     private HeartScull heartScull;
-    private TextManager textManager;
+    private TextManager textManager; 
+    private Secundomer secundomer;
 
     // конструктор по умолчанию
     public Game()
@@ -64,6 +65,7 @@ namespace ArcanoidLab
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
+      secundomer = new Secundomer();
     }
 
     // метод запуска игрового процесса
@@ -71,6 +73,7 @@ namespace ArcanoidLab
     {
       while (this.window.IsOpen)
       {
+        secundomer.OnStart(); // запуск секундомера
         if (GameSetting.LifeCount > 0) 
         {
           HandleEvents();
@@ -112,9 +115,10 @@ namespace ArcanoidLab
     {
       this.window.Clear(Color.Blue);
       // доп данные
-      textManager.TypeText("Игрок: ", "Петя", 14, Color.Yellow, new Vector2f(100f, 0f));
-      textManager.TypeText("", DateTime.Now.ToString(), 14, Color.Yellow, new Vector2f(220f, 0f));
-      textManager.TypeText("Уровень: ", "Easy", 14, Color.Yellow, new Vector2f(400f, 0f));
+      textManager.TypeText("Игрок: ", "Катя", 14, Color.Yellow, new Vector2f(100f, 0f));
+      //textManager.TypeText("", DateTime.Now.ToString(), 14, Color.Yellow, new Vector2f(220f, 0f));
+      textManager.TypeText("", secundomer.GetElapsedTime(), 14, Color.Yellow, new Vector2f(220f, 0f));
+      textManager.TypeText("Уровень: ", "Easy", 14, Color.Yellow, new Vector2f(450f, 0f));
 
       this.platform.Draw(this.window, mode);
       this.block.Draw(this.window);
