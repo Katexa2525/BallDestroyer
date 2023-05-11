@@ -15,12 +15,15 @@ namespace ArcanoidLab
 
     public Platform(VideoMode mode)
     {
+      this.Scale = 1.5f;
       this.Sprite.Texture = TextureManager.PlayerTexture; // рисунок платформы
-      this.Sprite.Scale = new Vector2f(1.3f, 1.3f);
+      this.Sprite.Scale = new Vector2f(this.Scale, this.Scale);
 
       // первоначально платформа в левом нижнем углу игрового поля
-      this.x1 = 0; this.y1 = (int)this.Sprite.Texture.Size.Y; //9; // координаты левого верхнего угла
-      this.x2 = (int)this.Sprite.Texture.Size.X /*90*/; this.y2 = 0; // координаты правого нижнего угла
+      this.x1 = 0; 
+      this.y1 = (int)(this.Sprite.Texture.Size.Y * this.Scale); //9; // координаты левого верхнего угла
+      this.x2 = (int)(this.Sprite.Texture.Size.X * this.Scale) /*90*/;
+      this.y2 = 0; // координаты правого нижнего угла
 
       this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
       this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока

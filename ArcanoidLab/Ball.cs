@@ -13,12 +13,15 @@ namespace ArcanoidLab
 
     public Ball(VideoMode mode)
     {
+      this.Scale = 2.0f;
       this.Sprite.Texture = TextureManager.BallTexture; // рисунок мячика
-      this.Sprite.Scale = new Vector2f(1.5f, 1.5f);
+      this.Sprite.Scale = new Vector2f(this.Scale, this.Scale);
 
       // первоначально мячик в левом нижнем углу игрового поля
-      this.x1 = 0; this.y1 = (int)this.Sprite.Texture.Size.Y; //12; // координаты левого верхнего угла
-      this.x2 = (int)this.Sprite.Texture.Size.X /*12*/; this.y2 = 0; // координаты правого нижнего угла
+      this.x1 = 0; 
+      this.y1 = (int)(this.Sprite.Texture.Size.Y * this.Scale); //12; // координаты левого верхнего угла
+      this.x2 = (int)(this.Sprite.Texture.Size.X * this.Scale) /*12*/;
+      this.y2 = 0; // координаты правого нижнего угла
 
       this.SpriteWidth = Math.Abs(this.x1 - this.x2); // ширина блока
       this.SpriteHeight = Math.Abs(this.y1 - this.y2); // высота блока
@@ -32,7 +35,7 @@ namespace ArcanoidLab
     {
       // ставлю мячик в середину игрового поля
       position.X = (mode.Width / 2) - (this.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
-      position.Y = mode.Height - platform.SpriteHeight - this.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
+      position.Y = mode.Height - platform.SpriteHeight - this.SpriteHeight - 4; // вычисляю позицию по оси Y, чтобы мячик над платформой был
       this.Sprite.Position = position;
       // устанавливаю координаты фигуры
       Coordinates();

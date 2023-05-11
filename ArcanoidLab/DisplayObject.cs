@@ -16,6 +16,7 @@ namespace ArcanoidLab
     // свойства, общие для всех наследуемых объектов
     public int SpriteWidth { get; set; } = 0; // свойство ширины объекта
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
+    public float Scale { get; set; } = 1; // масштаб фигуры во сколько раз увеличить
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
 
     public int x1 { get; set; } = 0; // // координата х1 фигуры верхнего левого угла
