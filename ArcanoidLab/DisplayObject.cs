@@ -8,8 +8,8 @@ namespace ArcanoidLab
 {
   public abstract class DisplayObject
   {
-    private int dx = 2; // смещение дельта х
-    private int dy = 1; // смещение дельта y
+    private int dx = GameSetting.BALL_DELTA_X; // смещение дельта х
+    private int dy = GameSetting.BALL_DELTA_Y; // смещение дельта y
 
     public Vector2f positionObject; // поле для сохранения позиции объекта, например, шарика после смещения
 
@@ -17,7 +17,7 @@ namespace ArcanoidLab
     public int SpriteWidth { get; set; } = 0; // свойство ширины объекта
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
     public float Scale { get; set; } = 1; // масштаб фигуры во сколько раз увеличить
-    public bool SmoothTexture { get; set; } = false; // масштаб фигуры во сколько раз увеличить
+    public bool SmoothTexture { get; set; } = false; // сглаживание текстуры по умолчанию
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
 
     public int x1 { get; set; } = 0; // // координата х1 фигуры верхнего левого угла
@@ -122,7 +122,7 @@ namespace ArcanoidLab
         if (ball.y2 > mode.Height || blocks.Count == 0)
         {
           GameSetting.IsStart = false;
-          dx = 6; dy = 5;
+          dx = GameSetting.BALL_DELTA_X; dy = GameSetting.BALL_DELTA_Y;
           // ставлю мячик в середину игрового поля
           ball.x1 = (int)(mode.Width / 2) - (ball.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
           ball.y1 = (int)mode.Height - platform.SpriteHeight - ball.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
