@@ -16,7 +16,9 @@ namespace ArcanoidLab
     public Platform(VideoMode mode)
     {
       this.Scale = 1.5f;
+      this.SmoothTexture = true;
       this.Sprite.Texture = TextureManager.PlayerTexture; // рисунок платформы
+      this.Sprite.Texture.Smooth = this.SmoothTexture; // сглаживание краев текстуры
       this.Sprite.Scale = new Vector2f(this.Scale, this.Scale);
 
       // первоначально платформа в левом нижнем углу игрового поля
