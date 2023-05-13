@@ -4,6 +4,7 @@
   {
     public static int Score { get; set; } = 0; // свойство для подсчета очков
     public static bool IsStart { get; set; } = false; // свойство, что игра запущена
+    public static bool IsVisibleMenu { get; set; } = true; // свойство, что меню видно
 
     public static int LIFE_TOTAL { get; } = 3; // общее кол-во жизней в игре
     public static int LifeCount { get; set; } = 3; // начальное кол-во жизней в игре

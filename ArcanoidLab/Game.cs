@@ -22,6 +22,7 @@ namespace ArcanoidLab
     private HeartScull heartScull;
     private TextManager textManager; 
     private Secundomer secundomer;
+    private GameMenu gameMenu;
 
     // конструктор по умолчанию
     public Game()
@@ -62,6 +63,7 @@ namespace ArcanoidLab
       block = new Block(mode);
       ball = new Ball(mode);
       heartScull = new HeartScull();
+      gameMenu = new GameMenu(mode);
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
@@ -74,7 +76,16 @@ namespace ArcanoidLab
       while (this.window.IsOpen)
       {
         secundomer.OnStart(); // запуск секундомера
-        if (GameSetting.LifeCount > 0) 
+        // отрисовка элементов меню, если меню отображается
+        if (GameSetting.IsVisibleMenu)
+        {
+          HandleEvents();
+          KeyHandler();
+          window.Clear();
+          gameMenu.Draw(window);
+          window.Display();
+        }
+        else if (GameSetting.LifeCount > 0) 
         {
           HandleEvents();
           Update();
@@ -140,6 +151,8 @@ namespace ArcanoidLab
     // метод обработчик нажатия клавиш
     private void KeyHandler()
     {
+      Vector2i mousePosition = Mouse.GetPosition(window); // координаты мыши
+
       if (!GameSetting.IsStart) // если игра не началась, то проверяем нажатие, иначе нет
         GameSetting.IsStart = Keyboard.IsKeyPressed(Keyboard.Key.Space);
 
@@ -150,10 +163,37 @@ namespace ArcanoidLab
         GameSetting.Score = 0;
         block.Update(mode);
       }
-
-      if (Keyboard.IsKeyPressed(Keyboard.Key.F12)) // выход
+      else if (Keyboard.IsKeyPressed(Keyboard.Key.F12)) // выход
       {
         exitProgram = true;
+      }
+      else if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) // вызов меню
+      {
+        GameSetting.IsVisibleMenu = true;
+      }  
+
+      // проверка, наведена ли мышь на пункт меню
+      for (int i = 0; i < gameMenu.ButtonMenus.Count; i++)
+      {
+        // проверяем, находится ли курсор мыши над прямоугольником меню
+        if (gameMenu.ButtonMenus[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
+        {
+          // курсор мыши находится над прямоугольником пункта меню 
+          gameMenu.ButtonMenus[i].SetColorButton(Color.Magenta); // меняю цвет пункта
+          gameMenu.ButtonMenus[i].SetColorTextButton(Color.Black); // меняю цвет текста
+          if (Mouse.IsButtonPressed(Mouse.Button.Left) && i == 0) // проверяю, было ли нажатие, тогда начало игры
+          {
+            GameSetting.IsVisibleMenu = false;
+          } 
+          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && i == gameMenu.ButtonMenus.Count - 1) // выход из игры через меню
+            window.Close(); 
+        }
+        else
+        {
+          gameMenu.ButtonMenus[i].SetColorButton(Color.Green);
+          gameMenu.ButtonMenus[i].SetColorTextButton(Color.Red);
+        }
+        gameMenu.ButtonMenus[i].Draw(window);
       }
     }
 

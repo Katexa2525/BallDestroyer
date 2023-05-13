@@ -1,121 +1,54 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System.IO;
 
 namespace ArcanoidLab
 {
   /// <summary> Класс кнопки для игрового меню </summary>
-  public class ButtonMenu : Drawable
+  public class ButtonMenu
   {
-    private RectangleShape shape;
-    private Text label;
+    private string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";
 
-    public ButtonMenu(string text, Font font, uint fontSize)
-    {
-      // Создаем фигуру прямоугольника для кнопки
-      shape = new RectangleShape(new Vector2f(200, 50));
-      shape.Origin = new Vector2f(shape.Size.X / 2, shape.Size.Y / 2);
-      shape.FillColor = Color.Green;
-      shape.OutlineColor = Color.Black;
-      shape.OutlineThickness = 2;
-      shape.Position = new Vector2f(0, 0);
+    public RectangleShape MenuItemRect { get; set; }
+    public Text MenuItemText { get; set; } 
 
-      // Создаем текст для надписи на кнопке
-      label = new Text(text, font, fontSize);
-      label.Position = new Vector2f(shape.Position.X - label.GetGlobalBounds().Width / 2, shape.Position.Y - label.GetGlobalBounds().Height / 2);
-    }
-    
-    /// <summary> Получаю размер кнопки </summary>
-    /// <returns></returns>
-    public Vector2f GetSize()
+    public Vector2f Position { get; set; }
+
+    public ButtonMenu(string textButton, uint fontSize, string fontName, float coorY, Color colorText, Color colorButton, VideoMode mode)
     {
-      return shape.Size;
+      // Созданию объектов текста и прямоугольников для каждого пункта меню
+      MenuItemRect = new RectangleShape(new Vector2f(250, 50));
+      MenuItemRect.FillColor = colorButton;
+      MenuItemRect.OutlineColor = Color.Black;
+      MenuItemRect.OutlineThickness = 2;
+      MenuItemRect.Position = new Vector2f((int)((mode.Width / 2) - MenuItemRect.Size.X / 2), coorY);
+
+      MenuItemText = new Text(textButton, new Font(FONT_PATH + fontName + ".ttf"), fontSize);
+      MenuItemText.FillColor = colorText;
+      MenuItemText.Position = new Vector2f((int)((mode.Width / 2) - MenuItemRect.Size.X / 2) + 30, coorY);
     }
 
-    /// <summary> Проверяю, нажата ли кнопка  </summary>
-    /// <returns></returns>
-    public bool IsPressed()
+    /// <summary> Установка цвета для кнопки </summary>
+    /// <param name="colorButton">Цвет кнопки</param>
+    public void SetColorButton(Color colorButton)
     {
-      // Получаем позицию курсора
-      Vector2i mousePosition = Mouse.GetPosition();
+      MenuItemRect.FillColor = colorButton;
+    }
 
-      // Проверяем, был ли клик мышью на кнопке
-      if (shape.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y) && Mouse.IsButtonPressed(Mouse.Button.Left))
-      {
-        return true;
-      }
-
-      return false;
+    /// <summary> Установка цвета для текста кнопки </summary>
+    /// <param name="colorText">Цвет текста</param>
+    public void SetColorTextButton(Color colorText)
+    {
+      MenuItemText.FillColor = colorText;
     }
 
     /// <summary> Отображаю кнопку на экране </summary>
-    /// <param name="target"></param>
-    /// <param name="states"></param>
-    public void Draw(RenderTarget target, RenderStates states)
+    public void Draw(RenderTarget window)
     {
       // Рисую прямоугольник и текст на кнопке
-      target.Draw(shape, states);
-      target.Draw(label, states);
+      window.Draw(MenuItemRect);
+      window.Draw(MenuItemText);
     }
   }
 }
-
-/*
-namespace GameMenu
-{
-  class Program
-  {
-    static void Main(string[] args)
-    {
-      // Создаем окно с размерами 800x600 и заголовком "Игровое меню"
-      RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Игровое меню");
-
-      // Создаем шрифт для текста
-      Font font = new Font("Arial.ttf");
-
-      // Создаем текст для заголовка
-      Text title = new Text("ИГРОВОЕ МЕНЮ", font, 48);
-      title.Position = new Vector2f(window.Size.X / 2 - title.GetGlobalBounds().Width / 2, 50);
-
-      // Создаем кнопку для новой игры
-      ButtonMenu newGameButton = new ButtonMenu("НОВАЯ ИГРА", font, 36);
-      newGameButton.Position = new Vector2f(window.Size.X / 2 - newGameButton.GetSize().X / 2, 200);
-
-      // Создаем кнопку для выхода из приложения
-      ButtonMenu quitButton = new ButtonMenu("ВЫХОД", font, 36);
-      quitButton.Position = new Vector2f(window.Size.X / 2 - quitButton.GetSize().X / 2, 300);
-
-      // Основной цикл приложения
-      while (window.IsOpen)
-      {
-        // Обрабатываем события ввода
-        window.DispatchEvents();
-
-        // Очищаем экран
-        window.Clear(Color.White);
-
-        // Рисуем заголовок и кнопки
-        window.Draw(title);
-        window.Draw(newGameButton);
-        window.Draw(quitButton);
-
-        // Обновляем экран
-        window.Display();
-
-        // Обработка нажатий кнопок
-        if (newGameButton.IsPressed())
-        {
-          // Запуск новой игры
-          Console.WriteLine("Запуск новой игры...");
-        }
-
-        if (quitButton.IsPressed())
-        {
-          // Выход из приложения
-          window.Close();
-        }
-      }
-    }
-  }
-
-  */
