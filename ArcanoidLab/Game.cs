@@ -68,11 +68,11 @@ namespace ArcanoidLab
       block = new Block(mode);
       ball = new Ball(mode);
       heartScull = new HeartScull();
+      secundomer = new Secundomer();
       gameMenu = new GameMenu(mode);
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
-      secundomer = new Secundomer();
     }
 
     // метод запуска игрового процесса
@@ -193,20 +193,38 @@ namespace ArcanoidLab
             window.Close();
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "save") // сохранение в json состояния игры
           {
-            gameState = new GameState(ball);
-            // Сериализация объекта в формат JSON
-            var json = JsonConvert.SerializeObject(gameState);
-            // Запись JSON-строки в файл
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+              Formatting = Formatting.Indented
+            };
+            gameState = new GameState(ball, platform, block.Blocks);
+
+            var json = JsonConvert.SerializeObject(gameState, settings);
+            //Запись JSON-строки в файл
             File.WriteAllText(jsonFilePath, json);
           }
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "load") // загрузка из json состояния игры
           {
             // Чтение JSON-строки из файла
             string json = File.ReadAllText(jsonFilePath);
+            JsonConverter[] converters = { new DOConverter() };
             // Десериализация JSON-строки в объект класса GameState
-            gameState = JsonConvert.DeserializeObject<GameState>(json);
-            ball = gameState.DisplayObject;
-            GameSetting.IsVisibleMenu = false;
+            gameState = JsonConvert.DeserializeObject<GameState>(json, new JsonSerializerSettings() { Converters = converters });
+            // восстановление данных
+            ball = gameState.Ball;
+            platform = gameState.Platform;
+            platform.Sprite.Position = gameState.Platform.positionObject;
+            platform.StartPosition(mode);
+            block.Blocks.Clear();
+            foreach (var item in gameState.Blocks)
+            {
+              item.Sprite.Position = item.positionObject;
+              block.Blocks.Add(item);
+            }
+            GameSetting.Score = gameState.Score;
+            GameSetting.IsStart = gameState.IsStart;
+            GameSetting.IsVisibleMenu = gameState.IsVisibleMenu; 
+            GameSetting.LifeCount = gameState.LifeCount;
           }  
         }
         else

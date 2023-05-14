@@ -2,16 +2,13 @@
 using SFML.System;
 using SFML.Window;
 using System;
-using System.Collections.Generic;
 
 namespace ArcanoidLab
 {
   /// <summary> Класс платформы для отбития мяча </summary>
   public class Platform : DisplayObject
   {
-    private int delay = 0;
     private Vector2f position;
-    private List<Bullet> bullets = new List<Bullet>();
 
     public Platform(VideoMode mode)
     {
@@ -48,27 +45,12 @@ namespace ArcanoidLab
       this.Sprite.Position = position;
       // устанавливаю координаты фигуры
       Coordinates();
-
-      // для пуль на будущее, может пригодиться
-      for (int i = 0; i < this.bullets.Count; i++)
-      {
-        this.bullets[i].Update();
-        if (this.bullets[i].Position.Y < 0)
-        {
-          this.bullets.Remove(this.bullets[i]);
-        }
-      }
     }
 
     public override void Draw(RenderTarget window, VideoMode mode)
     {
       Update(mode);
       window.Draw(this.Sprite);
-
-      foreach (var bullet in this.bullets)
-      {
-        window.Draw(bullet.RectangleBullet);
-      }
     }
 
     public override void Draw(RenderTarget window) { }
@@ -88,22 +70,6 @@ namespace ArcanoidLab
           position.X -= GameSetting.PLATFORM_SPEED;
         if (moveRight && position.X + GameSetting.PLATFORM_SPEED < mode.Width - this.SpriteWidth)
           position.X += GameSetting.PLATFORM_SPEED;
-      }
-
-      // это при нажатии на пробел идет стрельба. В будущем можно бонус какой-нибудь добавить
-      //bool isFire = Keyboard.IsKeyPressed(Keyboard.Key.Space);
-      //if (isFire) this.Fire();
-    }
-
-    private void Fire()
-    {
-      this.delay++;
-      if (this.delay >= 15)
-      {
-        this.bullets.Add(new Bullet(this.position));
-        var positionOfSecondBullet = new Vector2f(this.position.X + 25, this.position.Y);
-        this.bullets.Add(new Bullet(positionOfSecondBullet));
-        this.delay = 0;
       }
     }
 

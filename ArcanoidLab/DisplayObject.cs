@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using Newtonsoft.Json;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
@@ -18,6 +19,7 @@ namespace ArcanoidLab
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
     public float Scale { get; set; } = 1; // масштаб фигуры во сколько раз увеличить
     public bool SmoothTexture { get; set; } = false; // сглаживание текстуры по умолчанию
+    [JsonIgnore]
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
 
     public int x1 { get; set; } = 0;  // координата х1 фигуры верхнего левого угла

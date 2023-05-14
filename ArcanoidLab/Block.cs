@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using Newtonsoft.Json;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
@@ -10,7 +11,9 @@ namespace ArcanoidLab
   public class Block : DisplayObject
   {
     private Vector2f position;
+    public string Alias { set; get; } = "bl";
 
+    [JsonIgnore]
     public List<DisplayObject> Blocks { get; set; } = new List<DisplayObject>();
 
     public Block()
