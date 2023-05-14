@@ -20,10 +20,10 @@ namespace ArcanoidLab
     public bool SmoothTexture { get; set; } = false; // сглаживание текстуры по умолчанию
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
 
-    public int x1 { get; set; } = 0; // // координата х1 фигуры верхнего левого угла
+    public int x1 { get; set; } = 0;  // координата х1 фигуры верхнего левого угла
     public int y1 { get; set; } =  0; // координата у1 фигуры верхнего левого угла
-    public int x2 { get; set; } = 0; // // координата х2 фигуры нижнего правого угла
-    public int y2 { get; set; } = 0; // координата у2 фигуры нижнего правого угла
+    public int x2 { get; set; } = 0;  // координата х2 фигуры нижнего правого угла
+    public int y2 { get; set; } = 0;  // координата у2 фигуры нижнего правого угла
 
     public abstract void StartPosition(VideoMode mode);
     public abstract void Update(VideoMode mode);
@@ -93,11 +93,6 @@ namespace ArcanoidLab
       }
       else if (staticObject is Platform) 
         dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
-    }
-
-    private void EndRoundGame()
-    {
-
     }
 
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>

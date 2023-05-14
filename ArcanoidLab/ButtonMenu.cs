@@ -11,11 +11,12 @@ namespace ArcanoidLab
     private string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";
 
     public RectangleShape MenuItemRect { get; set; }
-    public Text MenuItemText { get; set; } 
+    public Text MenuItemText { get; set; }
+    public string AliasButton { get; set; } // алиас меню, например, "game" - кнопка Играть, "exit" - кнопка Выход и т.д.
 
     public Vector2f Position { get; set; }
 
-    public ButtonMenu(string textButton, uint fontSize, string fontName, float coorY, Color colorText, Color colorButton, VideoMode mode)
+    public ButtonMenu(string textButton, string alias, uint fontSize, string fontName, float coorY, Color colorText, Color colorButton, VideoMode mode)
     {
       // Созданию объектов текста и прямоугольников для каждого пункта меню
       MenuItemRect = new RectangleShape(new Vector2f(250, 50));
@@ -27,6 +28,8 @@ namespace ArcanoidLab
       MenuItemText = new Text(textButton, new Font(FONT_PATH + fontName + ".ttf"), fontSize);
       MenuItemText.FillColor = colorText;
       MenuItemText.Position = new Vector2f((int)((mode.Width / 2) - MenuItemRect.Size.X / 2) + 30, coorY);
+
+      AliasButton = alias;
     }
 
     /// <summary> Установка цвета для кнопки </summary>

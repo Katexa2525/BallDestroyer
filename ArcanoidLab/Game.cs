@@ -1,7 +1,9 @@
-﻿using SFML.Graphics;
+﻿using Newtonsoft.Json;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
+using System.IO;
 
 namespace ArcanoidLab
 {
@@ -23,6 +25,9 @@ namespace ArcanoidLab
     private TextManager textManager; 
     private Secundomer secundomer;
     private GameMenu gameMenu;
+    private GameState gameState;
+
+    private string jsonFilePath = Directory.GetCurrentDirectory() + @"\ball.json";
 
     // конструктор по умолчанию
     public Game()
@@ -127,7 +132,6 @@ namespace ArcanoidLab
       this.window.Clear(Color.Blue);
       // доп данные
       textManager.TypeText("Игрок: ", "Катя", 14, Color.Yellow, new Vector2f(100f, 0f));
-      //textManager.TypeText("", DateTime.Now.ToString(), 14, Color.Yellow, new Vector2f(220f, 0f));
       textManager.TypeText("", secundomer.GetElapsedTime(), 14, Color.Yellow, new Vector2f(220f, 0f));
       textManager.TypeText("Уровень: ", "Easy", 14, Color.Yellow, new Vector2f(450f, 0f));
 
@@ -181,12 +185,29 @@ namespace ArcanoidLab
           // курсор мыши находится над прямоугольником пункта меню 
           gameMenu.ButtonMenus[i].SetColorButton(Color.Magenta); // меняю цвет пункта
           gameMenu.ButtonMenus[i].SetColorTextButton(Color.Black); // меняю цвет текста
-          if (Mouse.IsButtonPressed(Mouse.Button.Left) && i == 0) // проверяю, было ли нажатие, тогда начало игры
+          if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "play") // проверяю, было ли нажатие, тогда начало игры
           {
             GameSetting.IsVisibleMenu = false;
           } 
-          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && i == gameMenu.ButtonMenus.Count - 1) // выход из игры через меню
-            window.Close(); 
+          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "exit") // выход из игры через меню
+            window.Close();
+          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "save") // сохранение в json состояния игры
+          {
+            gameState = new GameState(ball);
+            // Сериализация объекта в формат JSON
+            var json = JsonConvert.SerializeObject(gameState);
+            // Запись JSON-строки в файл
+            File.WriteAllText(jsonFilePath, json);
+          }
+          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "load") // загрузка из json состояния игры
+          {
+            // Чтение JSON-строки из файла
+            string json = File.ReadAllText(jsonFilePath);
+            // Десериализация JSON-строки в объект класса GameState
+            gameState = JsonConvert.DeserializeObject<GameState>(json);
+            ball = gameState.DisplayObject;
+            GameSetting.IsVisibleMenu = false;
+          }  
         }
         else
         {
