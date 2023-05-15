@@ -4,6 +4,9 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.IO;
+using System.Windows.Forms;
+// подключаем атрибут DllImport
+using System.Runtime.InteropServices;
 
 namespace ArcanoidLab
 {
@@ -28,6 +31,11 @@ namespace ArcanoidLab
     private GameState gameState;
 
     private string jsonFilePath = Directory.GetCurrentDirectory() + @"\ball.json";
+    private string txtFilePath = Directory.GetCurrentDirectory() + @"\ball.txt";
+
+    // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
+    [DllImport("user32.dll")]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options); // объявляем метод на C#
 
     // конструктор по умолчанию
     public Game()
@@ -199,32 +207,51 @@ namespace ArcanoidLab
             };
             gameState = new GameState(ball, platform, block.Blocks);
 
-            var json = JsonConvert.SerializeObject(gameState, settings);
-            //Запись JSON-строки в файл
-            File.WriteAllText(jsonFilePath, json);
+            try
+            {
+              var json = JsonConvert.SerializeObject(gameState, settings);
+              //Запись JSON-строки в файл
+              File.WriteAllText(jsonFilePath, json);
+              File.WriteAllText(txtFilePath, json);
+              // Вызываю MessageBox (вызовется функция Windows WinAPI)
+              MessageBox(IntPtr.Zero, "Сохранено!", "Информация", 0);
+            }
+            catch (Exception ex)
+            {
+              MessageBox(IntPtr.Zero, "Ошибка сохранения: "+ ex.Message, "Ошибка", 0);
+            }
           }
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "load") // загрузка из json состояния игры
           {
-            // Чтение JSON-строки из файла
-            string json = File.ReadAllText(jsonFilePath);
-            JsonConverter[] converters = { new DOConverter() };
-            // Десериализация JSON-строки в объект класса GameState
-            gameState = JsonConvert.DeserializeObject<GameState>(json, new JsonSerializerSettings() { Converters = converters });
-            // восстановление данных
-            ball = gameState.Ball;
-            platform = gameState.Platform;
-            platform.Sprite.Position = gameState.Platform.positionObject;
-            platform.StartPosition(mode);
-            block.Blocks.Clear();
-            foreach (var item in gameState.Blocks)
+            try
             {
-              item.Sprite.Position = item.positionObject;
-              block.Blocks.Add(item);
+              // Чтение JSON-строки из файла
+              string json = File.ReadAllText(jsonFilePath);
+              JsonConverter[] converters = { new DOConverter() };
+              // Десериализация JSON-строки в объект класса GameState
+              gameState = JsonConvert.DeserializeObject<GameState>(json, new JsonSerializerSettings() { Converters = converters });
+              // восстановление данных
+              ball = gameState.Ball;
+              platform = gameState.Platform;
+              platform.Sprite.Position = gameState.Platform.positionObject;
+              platform.StartPosition(mode);
+              block.Blocks.Clear();
+              foreach (var item in gameState.Blocks)
+              {
+                item.Sprite.Position = item.positionObject;
+                block.Blocks.Add(item);
+              }
+              GameSetting.Score = gameState.Score;
+              GameSetting.IsStart = gameState.IsStart;
+              GameSetting.IsVisibleMenu = gameState.IsVisibleMenu;
+              GameSetting.LifeCount = gameState.LifeCount;
+              // Вызываю MessageBox (вызовется функция Windows WinAPI)
+              MessageBox(IntPtr.Zero, "Состояние игры загружено!", "Информация", 0);
             }
-            GameSetting.Score = gameState.Score;
-            GameSetting.IsStart = gameState.IsStart;
-            GameSetting.IsVisibleMenu = gameState.IsVisibleMenu; 
-            GameSetting.LifeCount = gameState.LifeCount;
+            catch (Exception ex)
+            {
+              MessageBox(IntPtr.Zero, "Ошибка восстановления: " + ex.Message, "Ошибка", 0);
+            }
           }  
         }
         else
