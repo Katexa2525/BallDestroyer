@@ -29,6 +29,7 @@ namespace ArcanoidLab
     private Secundomer secundomer;
     private GameMenu gameMenu;
     private GameState gameState;
+    private ButtonMenu buttonMainMenu;
 
     private string jsonFilePath = Directory.GetCurrentDirectory() + @"\ball.json";
     private string txtFilePath = Directory.GetCurrentDirectory() + @"\ball.txt";
@@ -81,6 +82,8 @@ namespace ArcanoidLab
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
+      // кнопка для вызова меню на главном окне 
+      buttonMainMenu = new ButtonMenu(50, 15, "Меню", "main", 13, "FreeMonospacedBold", 600, 2, Color.Red, Color.Yellow, mode);
     }
 
     // метод запуска игрового процесса
@@ -101,6 +104,7 @@ namespace ArcanoidLab
         else if (GameSetting.LifeCount > 0) 
         {
           HandleEvents();
+          KeyHandler();
           Update();
           Draw();
         }
@@ -148,6 +152,7 @@ namespace ArcanoidLab
       this.ball.Draw(this.window);
       textManager.Draw(this.window);
       heartScull.Draw(this.window, mode);
+      buttonMainMenu.Draw(this.window);
 
       this.window.Display();
     }
@@ -182,12 +187,30 @@ namespace ArcanoidLab
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) // вызов меню
       {
         GameSetting.IsVisibleMenu = true;
-      }  
+      }
+
+      // проверяю, находится ли курсор мыши над прямоугольником главной кнопки меню
+      if (buttonMainMenu.MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
+      {
+        // курсор мыши находится над прямоугольником пункта меню 
+        buttonMainMenu.SetColorButton(Color.Magenta); // меняю цвет пункта
+        buttonMainMenu.SetColorTextButton(Color.Black); // меняю цвет текста
+        // проверяю, было ли нажатие, тогда вызов экрана с пунктами меню
+        if (Mouse.IsButtonPressed(Mouse.Button.Left) && buttonMainMenu.AliasButton == "main") 
+        {
+          GameSetting.IsVisibleMenu = true;
+        }
+      }
+      else
+      {
+        buttonMainMenu.SetColorButton(Color.Yellow);
+        buttonMainMenu.SetColorTextButton(Color.Red);
+      }
 
       // проверка, наведена ли мышь на пункт меню
       for (int i = 0; i < gameMenu.ButtonMenus.Count; i++)
       {
-        // проверяем, находится ли курсор мыши над прямоугольником меню
+        // проверяю, находится ли курсор мыши над прямоугольником меню
         if (gameMenu.ButtonMenus[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
         {
           // курсор мыши находится над прямоугольником пункта меню 

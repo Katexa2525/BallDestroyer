@@ -16,10 +16,23 @@ namespace ArcanoidLab
 
     public Vector2f Position { get; set; }
 
-    public ButtonMenu(string textButton, string alias, uint fontSize, string fontName, float coorY, Color colorText, Color colorButton, VideoMode mode)
+    /// <summary> Версия конструктора создания кнопки меню с позицией по Х по центру </summary>
+    /// <param name="VecX">Координата х прямоугольника</param>
+    /// <param name="VecY">Координата y прямоугольника</param>
+    /// <param name="textButton">Текст кнопки</param>
+    /// <param name="alias">Алиас кнопки</param>
+    /// <param name="fontSize">Размер шрифта текста кнопки</param>
+    /// <param name="fontName">Название шрифта для текста кнопки</param>
+    /// <param name="coorY">Расположение кнопки по оси у, т.е. чтобы можно было друг под другом распологать</param>
+    /// <param name="colorText">Цвет текста кнопки</param>
+    /// <param name="colorButton">Цвет фона кнопки</param>
+    /// <param name="mode">Ссылка на видео режим</param>
+    public ButtonMenu(float VecX, float VecY, string textButton, string alias, uint fontSize, string fontName, float coorY, 
+                      Color colorText, Color colorButton, VideoMode mode)
     {
       // Созданию объектов текста и прямоугольников для каждого пункта меню
-      MenuItemRect = new RectangleShape(new Vector2f(250, 50));
+      //MenuItemRect = new RectangleShape(new Vector2f(250, 50));
+      MenuItemRect = new RectangleShape(new Vector2f(VecX, VecY));
       MenuItemRect.FillColor = colorButton;
       MenuItemRect.OutlineColor = Color.Black;
       MenuItemRect.OutlineThickness = 2;
@@ -27,7 +40,36 @@ namespace ArcanoidLab
 
       MenuItemText = new Text(textButton, new Font(FONT_PATH + fontName + ".ttf"), fontSize);
       MenuItemText.FillColor = colorText;
-      MenuItemText.Position = new Vector2f((int)((mode.Width / 2) - MenuItemRect.Size.X / 2) + 30, coorY);
+      MenuItemText.Position = new Vector2f((int)((mode.Width / 2) - MenuItemRect.Size.X / 2) + 5, coorY);
+
+      AliasButton = alias;
+    }
+
+    /// <summary> Версия конструктора создания кнопки меню с ручной настройкой </summary>
+    /// <param name="VecX">Координата х прямоугольника</param>
+    /// <param name="VecY">Координата y прямоугольника</param>
+    /// <param name="textButton">Текст кнопки</param>
+    /// <param name="alias">Алиас кнопки</param>
+    /// <param name="fontSize">Размер шрифта текста кнопки</param>
+    /// <param name="fontName">Название шрифта для текста кнопки</param>
+    /// <param name="coorX">Расположение кнопки по оси у, т.е. чтобы можно было друг под другом распологать</param>
+    /// <param name="coorY">Расположение кнопки по оси у, т.е. чтобы можно было друг под другом распологать</param>
+    /// <param name="colorText">Цвет текста кнопки</param>
+    /// <param name="colorButton">Цвет фона кнопки</param>
+    /// <param name="mode">Ссылка на видео режим</param>
+    public ButtonMenu(float VecX, float VecY, string textButton, string alias, uint fontSize, string fontName, float coorX, float coorY,
+                      Color colorText, Color colorButton, VideoMode mode)
+    {
+      // Созданию объектов текста и прямоугольников для каждого пункта меню
+      MenuItemRect = new RectangleShape(new Vector2f(VecX, VecY));
+      MenuItemRect.FillColor = colorButton;
+      MenuItemRect.OutlineColor = Color.Black;
+      MenuItemRect.OutlineThickness = 2;
+      MenuItemRect.Position = new Vector2f(coorX, coorY);
+
+      MenuItemText = new Text(textButton, new Font(FONT_PATH + fontName + ".ttf"), fontSize);
+      MenuItemText.FillColor = colorText;
+      MenuItemText.Position = new Vector2f(coorX + 5, coorY);
 
       AliasButton = alias;
     }
