@@ -81,6 +81,13 @@ namespace ArcanoidLab
       MenuItemRect.FillColor = colorButton;
     }
 
+    /// <summary> Получить цвет кнопки </summary>
+    /// <param name="colorButton"></param>
+    public Color GetColorButton()
+    {
+      return MenuItemRect.FillColor;
+    }
+
     /// <summary> Установка цвета для текста кнопки </summary>
     /// <param name="colorText">Цвет текста</param>
     public void SetColorTextButton(Color colorText)

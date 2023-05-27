@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 // подключаем атрибут DllImport
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace ArcanoidLab
 {
@@ -207,6 +208,7 @@ namespace ArcanoidLab
         buttonMainMenu.SetColorTextButton(Color.Red);
       }
 
+      /////////////// Работа с кнопками меню //////////////////////////////////////////
       // проверка, наведена ли мышь на пункт меню
       for (int i = 0; i < gameMenu.ButtonMenus.Count; i++)
       {
@@ -224,14 +226,14 @@ namespace ArcanoidLab
             window.Close();
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "save") // сохранение в json состояния игры
           {
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-              Formatting = Formatting.Indented
-            };
             gameState = new GameState(ball, platform, block.Blocks);
 
             try
             {
+              JsonSerializerSettings settings = new JsonSerializerSettings
+              {
+                Formatting = Formatting.Indented
+              };
               var json = JsonConvert.SerializeObject(gameState, settings);
               //Запись JSON-строки в файл
               File.WriteAllText(jsonFilePath, json);
