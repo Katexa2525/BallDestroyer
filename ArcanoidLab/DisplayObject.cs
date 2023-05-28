@@ -119,7 +119,8 @@ namespace ArcanoidLab
         if (ball.y2 > mode.Height || blocks.Count == 0)
         {
           GameSetting.IsStart = false;
-          dx = GameSetting.BALL_DELTA_X; dy = GameSetting.BALL_DELTA_Y;
+          dx = GameSetting.BALL_DELTA_X; 
+          dy = GameSetting.BALL_DELTA_Y;
           // ставлю мячик в середину игрового поля
           ball.x1 = (int)(mode.Width / 2) - (ball.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
           ball.y1 = (int)mode.Height - platform.SpriteHeight - ball.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был

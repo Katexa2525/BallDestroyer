@@ -10,9 +10,11 @@
     public static int LifeCount { get; set; } = 3; // начальное кол-во жизней в игре
     public static int SCORE_STEP { get; } = 10; // шаг для подсчета очков
 
-    public static float PLATFORM_SPEED { get; } = 6f; // скорость движения платформы
+    public static float PLATFORM_SPEED { get; set; } = 6f; // скорость движения платформы
 
-    public static int BALL_DELTA_X { get; } = 2; // смещение шарика по оси х
-    public static int BALL_DELTA_Y { get; } = 1; // смещение шарика по оси у
+    public static int BALL_DELTA_X { get; set; } = 2; // смещение шарика по оси х
+    public static int BALL_DELTA_Y { get; set; } = 1; // смещение шарика по оси у
+    public static string LEVEL { get; set; } = "Лёгкий"; // начальный уровень игры
+    public static string PLAYER_NAME { get; set; } = "Катя"; // начальный уровень игры}
   }
 }

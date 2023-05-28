@@ -9,6 +9,7 @@ namespace ArcanoidLab
   {
     public List<ButtonMenu> ButtonMenus = new List<ButtonMenu>();
     public List<ButtonMenu> ButtonLevel = new List<ButtonMenu>();
+    private ButtonMenu buttonPlayer;
 
     public GameMenu(VideoMode mode)
     {
@@ -22,6 +23,9 @@ namespace ArcanoidLab
       ButtonLevel.Add(new ButtonMenu(200, 30, "Легкий уровень ", "easy", 20, "FreeMonospacedBold", 80, 75, Color.Red, Color.Green, mode));
       ButtonLevel.Add(new ButtonMenu(200, 30, "Средний уровень", "medium", 20, "FreeMonospacedBold", 300, 75, Color.Red, Color.Blue, mode));
       ButtonLevel.Add(new ButtonMenu(200, 30, "Тяжелый уровень", "hard", 20, "FreeMonospacedBold", 520, 75, Color.Red, Color.Blue, mode));
+
+      // рисую поле для ввода имени игрока
+      buttonPlayer = new ButtonMenu(200, 30, "Игрок: "+ GameSetting.PLAYER_NAME, "namePlayer", 20, "FreeMonospacedBold", 80, 150, Color.Red, Color.Transparent, mode);
     }
 
     public void Update(RenderTarget window)
@@ -42,29 +46,29 @@ namespace ArcanoidLab
       {
         ButtonLevel[i].Draw(window);
       }
+      buttonPlayer.Draw(window);
     }
 
     public void KeyHandler(RenderTarget window)
     {
       Vector2i mousePosition = Mouse.GetPosition((Window)window); // координаты мыши
+
       /////////////// Работа с кнопками уровней //////////////////////////////////////////
       // проверка, наведена ли мышь на кнопки изменения уровня
       for (int i = 0; i < ButtonLevel.Count; i++)
       {
         // проверяю, находится ли курсор мыши над прямоугольником меню
-        if (ButtonLevel[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
+        if (ButtonLevel[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y) &&
+            Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonLevel[i].GetColorButton() != Color.Green)
         {
           // проверяю, было ли нажатие, тогда меняю цвета кнопок - одна нажата (зеленый), другие нет (синий)
-          if (Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonLevel[i].GetColorButton() != Color.Green)
-          {
-            SetColorPressLevel(ButtonLevel[i], ButtonLevel);
-          }
+          SetColorPressLevel(ButtonLevel[i], ButtonLevel);
         }
       }
     }
 
     // устанавливаю цвета кнопок уровня
-    private void SetColorPressLevel(ButtonMenu buttonMenu, List<ButtonMenu> buttonLevel)
+    public void SetColorPressLevel(ButtonMenu buttonMenu, List<ButtonMenu> buttonLevel)
     {
       // заношу цвет в словарь 
       if (buttonMenu.AliasButton == "easy" && buttonMenu.GetColorButton() != Color.Green)
@@ -72,18 +76,27 @@ namespace ArcanoidLab
         buttonLevel[0].SetColorButton(Color.Green);
         buttonLevel[1].SetColorButton(Color.Blue);
         buttonLevel[2].SetColorButton(Color.Blue);
-      }
+        GameSetting.BALL_DELTA_X = 2; // смещение дельта х
+        GameSetting.BALL_DELTA_Y = 1; // смещение дельта y
+        GameSetting.LEVEL = "Лёгкий";
+  }
       else if (buttonMenu.AliasButton == "medium" && buttonMenu.GetColorButton() != Color.Green)
       {
         buttonLevel[0].SetColorButton(Color.Blue);
         buttonLevel[1].SetColorButton(Color.Green);
         buttonLevel[2].SetColorButton(Color.Blue);
+        GameSetting.BALL_DELTA_X = 6; // смещение дельта х
+        GameSetting.BALL_DELTA_Y = 5; // смещение дельта y
+        GameSetting.LEVEL = "Средний";
       }
       else if (buttonMenu.AliasButton == "hard" && buttonMenu.GetColorButton() != Color.Green)
       {
         buttonLevel[0].SetColorButton(Color.Blue);
         buttonLevel[1].SetColorButton(Color.Blue);
         buttonLevel[2].SetColorButton(Color.Green);
+        GameSetting.BALL_DELTA_X = 9; // смещение дельта х
+        GameSetting.BALL_DELTA_Y = 8; // смещение дельта y
+        GameSetting.LEVEL = "Тяжелый";
       }
     }
 

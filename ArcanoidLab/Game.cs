@@ -1,13 +1,10 @@
-﻿using Newtonsoft.Json;
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
-using System.IO;
-using System.Windows.Forms;
+using System.Globalization;
 // подключаем атрибут DllImport
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 
 namespace ArcanoidLab
 {
@@ -21,6 +18,7 @@ namespace ArcanoidLab
     private VideoMode mode; //размер игрового окна
     private Sprite background;
     private bool exitProgram = false;
+    private string InputText = "";
 
     private Platform platform;
     private Block block;
@@ -31,13 +29,11 @@ namespace ArcanoidLab
     private GameMenu gameMenu;
     private GameState gameState;
     private ButtonMenu buttonMainMenu;
-
-    private string jsonFilePath = Directory.GetCurrentDirectory() + @"\ball.json";
-    private string txtFilePath = Directory.GetCurrentDirectory() + @"\ball.txt";
+    private SaveLoadState saveLoadState;
 
     // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
     [DllImport("user32.dll")]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options); // объявляем метод на C#
+    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options); // объявляем метод на C#
 
     // конструктор по умолчанию
     public Game()
@@ -63,6 +59,15 @@ namespace ArcanoidLab
       {
         this.window.Close();
       };
+
+      // проверка ввода символов
+      this.window.TextEntered += (sender, args) =>
+      {
+        //GameSetting.PLAYER_NAME = GameSetting.PLAYER_NAME.Insert(GameSetting.PLAYER_NAME.Length, args.Unicode);
+        OnTextEntered(sender, args);
+        GameSetting.PLAYER_NAME = InputText;
+      };
+
       // экземпляр класса для работы с текстом
       textManager = new TextManager();
 
@@ -80,11 +85,12 @@ namespace ArcanoidLab
       heartScull = new HeartScull();
       secundomer = new Secundomer();
       gameMenu = new GameMenu(mode);
+      saveLoadState = new SaveLoadState();
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
       // кнопка для вызова меню на главном окне 
-      buttonMainMenu = new ButtonMenu(50, 15, "Меню", "main", 13, "FreeMonospacedBold", 600, 2, Color.Red, Color.Yellow, mode);
+      buttonMainMenu = new ButtonMenu(70, 15, "Меню...", "main", 13, "FreeMonospacedBold", 620, 2, Color.Red, Color.Yellow, mode);
     }
 
     // метод запуска игрового процесса
@@ -144,9 +150,9 @@ namespace ArcanoidLab
     {
       this.window.Clear(Color.Blue);
       // доп данные
-      textManager.TypeText("Игрок: ", "Катя", 14, Color.Yellow, new Vector2f(100f, 0f));
+      textManager.TypeText("Игрок: ", GameSetting.PLAYER_NAME, 14, Color.Yellow, new Vector2f(100f, 0f));
       textManager.TypeText("", secundomer.GetElapsedTime(), 14, Color.Yellow, new Vector2f(220f, 0f));
-      textManager.TypeText("Уровень: ", "Easy", 14, Color.Yellow, new Vector2f(450f, 0f));
+      textManager.TypeText("Уровень: ", GameSetting.LEVEL, 14, Color.Yellow, new Vector2f(450f, 0f));
 
       this.platform.Draw(this.window, mode);
       this.block.Draw(this.window);
@@ -221,63 +227,18 @@ namespace ArcanoidLab
           if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "play") // проверяю, было ли нажатие, тогда начало игры
           {
             GameSetting.IsVisibleMenu = false;
-          } 
+          }
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "exit") // выход из игры через меню
             window.Close();
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "save") // сохранение в json состояния игры
           {
             gameState = new GameState(ball, platform, block.Blocks);
-
-            try
-            {
-              JsonSerializerSettings settings = new JsonSerializerSettings
-              {
-                Formatting = Formatting.Indented
-              };
-              var json = JsonConvert.SerializeObject(gameState, settings);
-              //Запись JSON-строки в файл
-              File.WriteAllText(jsonFilePath, json);
-              File.WriteAllText(txtFilePath, json);
-              // Вызываю MessageBox (вызовется функция Windows WinAPI)
-              MessageBox(IntPtr.Zero, "Сохранено!", "Информация", 0);
-            }
-            catch (Exception ex)
-            {
-              MessageBox(IntPtr.Zero, "Ошибка сохранения: "+ ex.Message, "Ошибка", 0);
-            }
+            saveLoadState.SaveState(gameState);
           }
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "load") // загрузка из json состояния игры
           {
-            try
-            {
-              // Чтение JSON-строки из файла
-              string json = File.ReadAllText(jsonFilePath);
-              JsonConverter[] converters = { new DOConverter() };
-              // Десериализация JSON-строки в объект класса GameState
-              gameState = JsonConvert.DeserializeObject<GameState>(json, new JsonSerializerSettings() { Converters = converters });
-              // восстановление данных
-              ball = gameState.Ball;
-              platform = gameState.Platform;
-              platform.Sprite.Position = gameState.Platform.positionObject;
-              platform.StartPosition(mode);
-              block.Blocks.Clear();
-              foreach (var item in gameState.Blocks)
-              {
-                item.Sprite.Position = item.positionObject;
-                block.Blocks.Add(item);
-              }
-              GameSetting.Score = gameState.Score;
-              GameSetting.IsStart = gameState.IsStart;
-              GameSetting.IsVisibleMenu = gameState.IsVisibleMenu;
-              GameSetting.LifeCount = gameState.LifeCount;
-              // Вызываю MessageBox (вызовется функция Windows WinAPI)
-              MessageBox(IntPtr.Zero, "Состояние игры загружено!", "Информация", 0);
-            }
-            catch (Exception ex)
-            {
-              MessageBox(IntPtr.Zero, "Ошибка восстановления: " + ex.Message, "Ошибка", 0);
-            }
-          }  
+            gameState = saveLoadState.LoadState(ball, platform, block, mode);
+          }
         }
         else
         {
@@ -293,5 +254,29 @@ namespace ArcanoidLab
     {
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
     }
+
+    void OnTextEntered(object sender, TextEventArgs e)
+    {
+      //convert unicode to ascii to check range later
+      string hexValue = (System.Text.Encoding.ASCII.GetBytes(e.Unicode)[0].ToString("X"));
+      int ascii = (int.Parse(hexValue, NumberStyles.HexNumber));
+
+      if (e.Unicode == "\b")
+      {
+        if (InputText.Length > 0)
+        {
+          InputText = InputText.Remove(InputText.Length - 1, 1);
+        }
+      }
+      else if (e.Unicode == "\r")
+      {
+        InputText += "\n";
+      }
+      else if (ascii >= 32 && ascii < 128)
+      { //only add to keystring if actual character
+        InputText += e.Unicode;
+      }
+    }
+
   }
 }
