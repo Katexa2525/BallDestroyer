@@ -18,8 +18,6 @@ namespace ArcanoidLab
     private VideoMode mode; //размер игрового окна
     private Sprite background;
     private bool exitProgram = false;
-    private string InputText = "";
-    bool isNameInputActive = false;
 
     private Platform platform;
     private Block block;
@@ -64,32 +62,18 @@ namespace ArcanoidLab
       // проверка ввода символов
       this.window.TextEntered += (sender, args) =>
       {
-        //GameSetting.PLAYER_NAME = GameSetting.PLAYER_NAME.Insert(GameSetting.PLAYER_NAME.Length, args.Unicode);
-        //OnTextEntered(sender, args);
-        //GameSetting.PLAYER_NAME = InputText;
-        if (isNameInputActive)
-        {
-          if (args.Unicode == "\b" && GameSetting.PLAYER_NAME.Length > 0)
-          {
-            GameSetting.PLAYER_NAME = GameSetting.PLAYER_NAME.Remove(GameSetting.PLAYER_NAME.Length - 1);
-          }
-          else if (args.Unicode.Length > 0)
-          {
-            GameSetting.PLAYER_NAME += args.Unicode;
-          }
-        }
-      };
 
-      window.KeyPressed += (sender, e) =>
-      {
-        if (e.Code == Keyboard.Key.Tab)
+        if (args.Unicode == "\b" && gameMenu.TextBox.ContentText.Length > 0)
         {
-          isNameInputActive = !isNameInputActive;
+          gameMenu.TextBox.ContentText = gameMenu.TextBox.ContentText.Remove(gameMenu.TextBox.ContentText.Length-1);
         }
-        else if (e.Code == Keyboard.Key.Enter)
+        else if (args.Unicode.Length > 0 && gameMenu.TextBox.ContentText.Length < 15)
         {
-          isNameInputActive = false;
+          gameMenu.TextBox.ContentText += args.Unicode;
         }
+        gameMenu.TextBox.SetContentText(gameMenu.TextBox.ContentText, "FreeMonospacedBold", 16, Color.Black, 300, 152);
+        gameMenu.Draw(window);
+        GameSetting.PLAYER_NAME = gameMenu.TextBox.ContentText;
       };
 
       // экземпляр класса для работы с текстом
@@ -175,15 +159,15 @@ namespace ArcanoidLab
       this.window.Clear(Color.Blue);
       // доп данные
       textManager.TypeText("Игрок: ", GameSetting.PLAYER_NAME, 14, Color.Yellow, new Vector2f(100f, 0f));
-      textManager.TypeText("", secundomer.GetElapsedTime(), 14, Color.Yellow, new Vector2f(220f, 0f));
+      textManager.TypeText("", secundomer.GetElapsedTime("Время:"), 14, Color.Yellow, new Vector2f(320f, 0f));
       textManager.TypeText("Уровень: ", GameSetting.LEVEL, 14, Color.Yellow, new Vector2f(450f, 0f));
 
       this.platform.Draw(this.window, mode);
       this.block.Draw(this.window);
       this.ball.Draw(this.window);
-      textManager.Draw(this.window);
-      heartScull.Draw(this.window, mode);
-      buttonMainMenu.Draw(this.window);
+      this.textManager.Draw(this.window);
+      this.heartScull.Draw(this.window, mode);
+      this.buttonMainMenu.Draw(this.window);
 
       this.window.Display();
     }
@@ -277,29 +261,6 @@ namespace ArcanoidLab
     private void UpdateScore()
     {
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
-    }
-
-    void OnTextEntered(object sender, TextEventArgs e)
-    {
-      //convert unicode to ascii to check range later
-      string hexValue = (System.Text.Encoding.ASCII.GetBytes(e.Unicode)[0].ToString("X"));
-      int ascii = (int.Parse(hexValue, NumberStyles.HexNumber));
-
-      if (e.Unicode == "\b")
-      {
-        if (InputText.Length > 0)
-        {
-          InputText = InputText.Remove(InputText.Length - 1, 1);
-        }
-      }
-      else if (e.Unicode == "\r")
-      {
-        InputText += "\n";
-      }
-      else if (ascii >= 32 && ascii < 128)
-      { //only add to keystring if actual character
-        InputText += e.Unicode;
-      }
     }
 
   }

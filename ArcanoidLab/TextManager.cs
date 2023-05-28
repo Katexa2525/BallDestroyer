@@ -9,8 +9,8 @@ namespace ArcanoidLab
   /// <summary> Класс для работы с текстом </summary>
   public class TextManager : DisplayObject
   {
-    private string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";
-    public Font Font;
+    private readonly string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";
+    private Font Font;
 
     private List<Text> texts = new List<Text>();
 

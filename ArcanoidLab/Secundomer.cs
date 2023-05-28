@@ -27,11 +27,11 @@ namespace ArcanoidLab
     }
 
     /// <summary> Вывод прошедшего времени по-секундно</summary>
-    public string GetElapsedTime()
+    public string GetElapsedTime(string label)
     {
-      return "Прошло времени: " + (elapsedTime.Hours > 9 ? elapsedTime.Hours.ToString() : "0"+ elapsedTime.Hours.ToString()) + ":" + 
-                                  (elapsedTime.Minutes > 9 ? elapsedTime.Minutes.ToString() : "0"+ elapsedTime.Minutes.ToString()) + ":" + 
-                                  (elapsedTime.Seconds > 9 ? elapsedTime.Seconds.ToString() : "0"+ elapsedTime.Seconds.ToString());
+      return label + (elapsedTime.Hours > 9 ? elapsedTime.Hours.ToString() : "0"+ elapsedTime.Hours.ToString()) + ":" + 
+                     (elapsedTime.Minutes > 9 ? elapsedTime.Minutes.ToString() : "0"+ elapsedTime.Minutes.ToString()) + ":" + 
+                     (elapsedTime.Seconds > 9 ? elapsedTime.Seconds.ToString() : "0"+ elapsedTime.Seconds.ToString());
     }
   }
 }

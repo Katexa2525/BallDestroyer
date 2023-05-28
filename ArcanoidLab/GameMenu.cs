@@ -2,18 +2,15 @@
 using SFML.System;
 using SFML.Window;
 using System.Collections.Generic;
-using System.IO;
+using System.Text;
 
 namespace ArcanoidLab
 {
   public class GameMenu
   {
-    public List<ButtonMenu> ButtonMenus = new List<ButtonMenu>();
-    public List<ButtonMenu> ButtonLevel = new List<ButtonMenu>();
-    private ButtonMenu buttonPlayer;
-    private TextBox textBox;
-    private Text nameText;
-    Font font = new Font(Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\FreeMonospacedBold.ttf");
+    public List<ButtonMenu> ButtonMenus { get; set; } = new List<ButtonMenu>();
+    public List<ButtonMenu> ButtonLevel { get; set; } = new List<ButtonMenu>();
+    public TextBox TextBox { get; set; }
 
     public GameMenu(VideoMode mode)
     {
@@ -29,11 +26,9 @@ namespace ArcanoidLab
       ButtonLevel.Add(new ButtonMenu(200, 30, "Тяжелый уровень", "hard", 20, "FreeMonospacedBold", 520, 75, Color.Red, Color.Blue, mode));
 
       // рисую поле для ввода имени игрока
-      //buttonPlayer = new ButtonMenu(200, 30, "Игрок: "+ GameSetting.PLAYER_NAME, "namePlayer", 20, "FreeMonospacedBold", 80, 150, Color.Red, Color.Transparent, mode);
-      textBox = new TextBox();
-      nameText = new Text(GameSetting.PLAYER_NAME, font, 16);
-      nameText.Position = new Vector2f(300, 152);
-      nameText.Color = Color.Black;
+      TextBox = new TextBox("Игрок: ", "FreeMonospacedBold", 16, Color.White, 200, 152, //данные надписи
+                            "FreeMonospacedBold", 16, Color.Black, 300, 152, // данные вводимого текста имени игрона
+                            200, 30, 300, 150, Color.White); // данные прямоугольника
     }
 
     public void Update(RenderTarget window)
@@ -54,9 +49,7 @@ namespace ArcanoidLab
       {
         ButtonLevel[i].Draw(window);
       }
-      //buttonPlayer.Draw(window);
-      textBox.Draw(window);
-      window.Draw(nameText);
+      TextBox.Draw(window);
     }
 
     public void KeyHandler(RenderTarget window)

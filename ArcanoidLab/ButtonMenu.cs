@@ -8,7 +8,7 @@ namespace ArcanoidLab
   /// <summary> Класс кнопки для игрового меню </summary>
   public class ButtonMenu
   {
-    private string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";
+    private readonly string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";
 
     public RectangleShape MenuItemRect { get; set; }
     public Text MenuItemText { get; set; }

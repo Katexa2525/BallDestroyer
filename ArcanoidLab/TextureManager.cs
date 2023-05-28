@@ -6,7 +6,7 @@ namespace ArcanoidLab
   /// <summary> Класс текстур игры </summary>
   public class TextureManager
   {
-    static string ASSETS_PATH = Directory.GetCurrentDirectory() + @"\Assets\Textures\";
+    static readonly string ASSETS_PATH = Directory.GetCurrentDirectory() + @"\Assets\Textures\";
     static Texture playerTexture;
     static Texture ballTexture;
     static Texture backgroundTexture;

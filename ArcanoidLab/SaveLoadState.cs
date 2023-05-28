@@ -10,8 +10,8 @@ namespace ArcanoidLab
   /// <summary> Класс для сохранения состояния игры </summary>
   public class SaveLoadState
   {
-    private string jsonFilePath = Directory.GetCurrentDirectory() + @"\ball.json";
-    private string txtFilePath = Directory.GetCurrentDirectory() + @"\ball.txt";
+    private readonly string jsonFilePath = Directory.GetCurrentDirectory() + @"\ball.json";
+    private readonly string txtFilePath = Directory.GetCurrentDirectory() + @"\ball.txt";
 
     // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
     [DllImport("user32.dll")]
