@@ -19,12 +19,13 @@ namespace ArcanoidLab
     private Sprite background;
     private bool exitProgram = false;
     private string InputText = "";
+    bool isNameInputActive = false;
 
     private Platform platform;
     private Block block;
     private Ball ball;
     private HeartScull heartScull;
-    private TextManager textManager; 
+    private TextManager textManager;
     private Secundomer secundomer;
     private GameMenu gameMenu;
     private GameState gameState;
@@ -52,7 +53,7 @@ namespace ArcanoidLab
       mode = new VideoMode(width, height);
       this.window = new RenderWindow(this.mode, title);
 
-      this.window.SetVerticalSyncEnabled(true); 
+      this.window.SetVerticalSyncEnabled(true);
       this.window.SetFramerateLimit(60);
 
       this.window.Closed += (sender, args) =>
@@ -64,8 +65,31 @@ namespace ArcanoidLab
       this.window.TextEntered += (sender, args) =>
       {
         //GameSetting.PLAYER_NAME = GameSetting.PLAYER_NAME.Insert(GameSetting.PLAYER_NAME.Length, args.Unicode);
-        OnTextEntered(sender, args);
-        GameSetting.PLAYER_NAME = InputText;
+        //OnTextEntered(sender, args);
+        //GameSetting.PLAYER_NAME = InputText;
+        if (isNameInputActive)
+        {
+          if (args.Unicode == "\b" && GameSetting.PLAYER_NAME.Length > 0)
+          {
+            GameSetting.PLAYER_NAME = GameSetting.PLAYER_NAME.Remove(GameSetting.PLAYER_NAME.Length - 1);
+          }
+          else if (args.Unicode.Length > 0)
+          {
+            GameSetting.PLAYER_NAME += args.Unicode;
+          }
+        }
+      };
+
+      window.KeyPressed += (sender, e) =>
+      {
+        if (e.Code == Keyboard.Key.Tab)
+        {
+          isNameInputActive = !isNameInputActive;
+        }
+        else if (e.Code == Keyboard.Key.Enter)
+        {
+          isNameInputActive = false;
+        }
       };
 
       // экземпляр класса для работы с текстом
@@ -108,7 +132,7 @@ namespace ArcanoidLab
           gameMenu.Draw(window);
           window.Display();
         }
-        else if (GameSetting.LifeCount > 0) 
+        else if (GameSetting.LifeCount > 0)
         {
           HandleEvents();
           KeyHandler();
@@ -119,7 +143,7 @@ namespace ArcanoidLab
         {
           KeyHandler();
           string strFinish = "Игра окончена!\nДля новой игры нажмите F5\nВыход - F12";
-          textManager.TypeText(strFinish, "", 20, Color.Red, new Vector2f(mode.Width / 2 - 150, mode.Height / 2 -100 ));
+          textManager.TypeText(strFinish, "", 20, Color.Red, new Vector2f(mode.Width / 2 - 150, mode.Height / 2 - 100));
           Draw();
           if (exitProgram) break; // выход из игры
         }
@@ -130,7 +154,7 @@ namespace ArcanoidLab
     {
       this.window.DispatchEvents();
     }
-    private void Update() 
+    private void Update()
     {
       KeyHandler();
       UpdateScore();
@@ -203,7 +227,7 @@ namespace ArcanoidLab
         buttonMainMenu.SetColorButton(Color.Magenta); // меняю цвет пункта
         buttonMainMenu.SetColorTextButton(Color.Black); // меняю цвет текста
         // проверяю, было ли нажатие, тогда вызов экрана с пунктами меню
-        if (Mouse.IsButtonPressed(Mouse.Button.Left) && buttonMainMenu.AliasButton == "main") 
+        if (Mouse.IsButtonPressed(Mouse.Button.Left) && buttonMainMenu.AliasButton == "main")
         {
           GameSetting.IsVisibleMenu = true;
         }
