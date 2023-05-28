@@ -15,7 +15,7 @@ namespace ArcanoidLab
 
     // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
     [DllImport("user32.dll")]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options); // объявляем метод на C#
+    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options); // объявляем метод на C#
     
     /// <summary> Метод сохранения в json и txt файлы состояния игры </summary>
     /// <param name="gameState">Экземпляр класса для состояния</param>

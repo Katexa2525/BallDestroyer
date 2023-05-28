@@ -3,8 +3,8 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Globalization;
-// подключаем атрибут DllImport
-using System.Runtime.InteropServices;
+
+using System.Text;
 
 namespace ArcanoidLab
 {
@@ -29,10 +29,6 @@ namespace ArcanoidLab
     private GameState gameState;
     private ButtonMenu buttonMainMenu;
     private SaveLoadState saveLoadState;
-
-    // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
-    [DllImport("user32.dll")]
-    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options); // объявляем метод на C#
 
     // конструктор по умолчанию
     public Game()
@@ -62,17 +58,21 @@ namespace ArcanoidLab
       // проверка ввода символов
       this.window.TextEntered += (sender, args) =>
       {
+        //преобразовать unicode в ascii, чтобы позже проверить диапазон
+        string hexValue = (Encoding.ASCII.GetBytes(args.Unicode)[0].ToString("X"));
+        int ascii = (int.Parse(hexValue, NumberStyles.HexNumber));
 
         if (args.Unicode == "\b" && gameMenu.TextBox.ContentText.Length > 0)
         {
           gameMenu.TextBox.ContentText = gameMenu.TextBox.ContentText.Remove(gameMenu.TextBox.ContentText.Length-1);
         }
-        else if (args.Unicode.Length > 0 && gameMenu.TextBox.ContentText.Length < 15)
+        //добавлять в строку имени, если фактический символ
+        else if (ascii >= 32 && ascii < 128 && gameMenu.TextBox.ContentText.Length < 15) 
         {
           gameMenu.TextBox.ContentText += args.Unicode;
         }
         gameMenu.TextBox.SetContentText(gameMenu.TextBox.ContentText, "FreeMonospacedBold", 16, Color.Black, 300, 152);
-        gameMenu.Draw(window);
+        gameMenu.Draw(window, ball);
         GameSetting.PLAYER_NAME = gameMenu.TextBox.ContentText;
       };
 
@@ -113,7 +113,7 @@ namespace ArcanoidLab
           HandleEvents();
           KeyHandler();
           window.Clear();
-          gameMenu.Draw(window);
+          gameMenu.Draw(window, ball);
           window.Display();
         }
         else if (GameSetting.LifeCount > 0)
@@ -144,7 +144,8 @@ namespace ArcanoidLab
       UpdateScore();
       // вызываю проверку коллизии, т.е. пересечения фигур
       ball.ObjectIntersection(ball, block.Blocks, platform, heartScull, mode, window);
-      if (!GameSetting.IsStart) // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
+      // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
+      if (!GameSetting.IsStart) 
       {
         ball.StartPosition(mode);
         platform.StartPosition(mode);

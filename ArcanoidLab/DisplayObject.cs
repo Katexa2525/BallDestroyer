@@ -94,7 +94,7 @@ namespace ArcanoidLab
         GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
       }
       else if (staticObject is Platform) 
-        dy = (random.Next() % 5 + 2); // отскок шарика от платформы по оси у
+        dy = (random.Next() % 5 + GameSetting.BALL_DELTA_Y); // отскок шарика от платформы по оси у
     }
 
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
@@ -140,6 +140,14 @@ namespace ArcanoidLab
       int xx2 = Convert.ToInt32(positionObject.X + displayObject.SpriteWidth);
       int yy2 = Convert.ToInt32(positionObject.Y + displayObject.SpriteHeight);
       displayObject.SetCoordinates(xx1, yy1, xx2, yy2);
+    }
+
+    /// <summary>Установка скорости движения объекта </summary>
+    /// <param name="displayObject">объект - шарик например</param>
+    public void SetSpeedDO()
+    {
+      dx = GameSetting.BALL_DELTA_X;
+      dy = GameSetting.BALL_DELTA_Y;
     }
   }
 }
