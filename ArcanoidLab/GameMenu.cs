@@ -15,6 +15,7 @@ namespace ArcanoidLab
 
     public List<ButtonMenu> ButtonMenus { get; set; } = new List<ButtonMenu>();
     public List<ButtonMenu> ButtonLevel { get; set; } = new List<ButtonMenu>();
+    public List<ButtonMenu> ButtonResol { get; set; } = new List<ButtonMenu>();
     public TextBox TextBox { get; set; }
 
     // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
@@ -38,6 +39,12 @@ namespace ArcanoidLab
       TextBox = new TextBox("Игрок: ", "FreeMonospacedBold", 16, Color.White, 200, 152, //данные надписи
                             "FreeMonospacedBold", 16, Color.Black, 300, 152, // данные вводимого текста имени игрона
                             200, 30, 300, 150, Color.White); // данные прямоугольника
+
+      // кнопки для переключения разрешения экрана
+      ButtonResol.Add(new ButtonMenu(210, 30, "800х600 F9", "800", 18, "FreeMonospacedBold", 80, 230, Color.Red, Color.Green, mode));
+      ButtonResol.Add(new ButtonMenu(210, 30, "1152х864 F10", "1152", 18, "FreeMonospacedBold", 300, 230, Color.Red, Color.Blue, mode));
+      ButtonResol.Add(new ButtonMenu(230, 30, "Макс.разр.экрана F11", "fullscreen", 18, "FreeMonospacedBold", 520, 230, Color.Red, Color.Blue, mode));
+
       Game = game;
     }
 
@@ -59,6 +66,10 @@ namespace ArcanoidLab
       {
         ButtonLevel[i].Draw(window);
       }
+      for (int i = 0; i < ButtonResol.Count; i++)
+      {
+        ButtonResol[i].Draw(window);
+      }
       TextBox.Draw(window);
     }
 
@@ -72,6 +83,12 @@ namespace ArcanoidLab
         SetColorPressLevel(ButtonLevel[1], ButtonLevel, displayObject);
       else if (Keyboard.IsKeyPressed(Keyboard.Key.F8) && ButtonLevel[2].GetColorButton() != Color.Green)
         SetColorPressLevel(ButtonLevel[2], ButtonLevel, displayObject);
+      else if (Keyboard.IsKeyPressed(Keyboard.Key.F9) && ButtonResol[0].GetColorButton() != Color.Green) 
+        SetColorPressLevel(ButtonResol[0], ButtonResol, displayObject);
+      else if (Keyboard.IsKeyPressed(Keyboard.Key.F10) && ButtonResol[1].GetColorButton() != Color.Green)
+        SetColorPressLevel(ButtonResol[1], ButtonResol, displayObject);
+      else if (Keyboard.IsKeyPressed(Keyboard.Key.F11) && ButtonResol[2].GetColorButton() != Color.Green)
+        SetColorPressLevel(ButtonResol[2], ButtonResol, displayObject);
 
       /////////////// Работа с кнопками уровней //////////////////////////////////////////
       // проверка, наведена ли мышь на кнопки изменения уровня
@@ -85,17 +102,30 @@ namespace ArcanoidLab
           SetColorPressLevel(ButtonLevel[i], ButtonLevel, displayObject);
         }
       }
+
+      /////////////// Работа с кнопками разрешения //////////////////////////////////////////
+      // проверка, наведена ли мышь на кнопки изменения уровня
+      for (int i = 0; i < ButtonResol.Count; i++)
+      {
+        // проверяю, находится ли курсор мыши над прямоугольником меню
+        if (ButtonResol[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y) &&
+            Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonResol[i].GetColorButton() != Color.Green)
+        {
+          // проверяю, было ли нажатие, тогда меняю цвета кнопок - одна нажата (зеленый), другие нет (синий)
+          SetColorPressLevel(ButtonResol[i], ButtonResol, displayObject);
+        }
+      }
     }
 
     // устанавливаю цвета кнопок уровня
-    public void SetColorPressLevel(ButtonMenu buttonMenu, List<ButtonMenu> buttonLevel, DisplayObject displayObject)
+    public void SetColorPressLevel(ButtonMenu buttonMenu, List<ButtonMenu> buttonList, DisplayObject displayObject)
     {
       // заношу цвет в словарь 
       if (buttonMenu.AliasButton == "easy" && buttonMenu.GetColorButton() != Color.Green)
       {
-        buttonLevel[0].SetColorButton(Color.Green);
-        buttonLevel[1].SetColorButton(Color.Blue);
-        buttonLevel[2].SetColorButton(Color.Blue);
+        buttonList[0].SetColorButton(Color.Green);
+        buttonList[1].SetColorButton(Color.Blue);
+        buttonList[2].SetColorButton(Color.Blue);
         GameSetting.BALL_DELTA_X = 2; // смещение дельта х
         GameSetting.BALL_DELTA_Y = 1; // смещение дельта y
         GameSetting.LEVEL = "Лёгкий";
@@ -103,24 +133,47 @@ namespace ArcanoidLab
       }
       else if (buttonMenu.AliasButton == "medium" && buttonMenu.GetColorButton() != Color.Green)
       {
-        buttonLevel[0].SetColorButton(Color.Blue);
-        buttonLevel[1].SetColorButton(Color.Green);
-        buttonLevel[2].SetColorButton(Color.Blue);
+        buttonList[0].SetColorButton(Color.Blue);
+        buttonList[1].SetColorButton(Color.Green);
+        buttonList[2].SetColorButton(Color.Blue);
         GameSetting.BALL_DELTA_X = 6; // смещение дельта х
         GameSetting.BALL_DELTA_Y = 5; // смещение дельта y
         GameSetting.LEVEL = "Средний";
         MessageBox(IntPtr.Zero, "Уровень игры изменен на Средний.", "Информация", 0);
-        //Game.window.Size = new Vector2u(1024, 768);
       }
       else if (buttonMenu.AliasButton == "hard" && buttonMenu.GetColorButton() != Color.Green)
       {
-        buttonLevel[0].SetColorButton(Color.Blue);
-        buttonLevel[1].SetColorButton(Color.Blue);
-        buttonLevel[2].SetColorButton(Color.Green);
+        buttonList[0].SetColorButton(Color.Blue);
+        buttonList[1].SetColorButton(Color.Blue);
+        buttonList[2].SetColorButton(Color.Green);
         GameSetting.BALL_DELTA_X = 9; // смещение дельта х
         GameSetting.BALL_DELTA_Y = 8; // смещение дельта y
         GameSetting.LEVEL = "Тяжелый";
         MessageBox(IntPtr.Zero, "Уровень игры изменен на Тяжелый.", "Информация", 0);
+      }
+      else if (buttonMenu.AliasButton == "800" && buttonMenu.GetColorButton() != Color.Green)
+      {
+        buttonList[0].SetColorButton(Color.Blue);
+        buttonList[1].SetColorButton(Color.Blue);
+        buttonList[2].SetColorButton(Color.Green);
+        Game.window.Size = new Vector2u(800, 600);
+      }
+      else if (buttonMenu.AliasButton == "1152" && buttonMenu.GetColorButton() != Color.Green)
+      {
+        buttonList[0].SetColorButton(Color.Blue);
+        buttonList[1].SetColorButton(Color.Green);
+        buttonList[2].SetColorButton(Color.Blue);
+        Game.window.Size = new Vector2u(1152, 864);
+      }
+      else if (buttonMenu.AliasButton == "fullscreen" && buttonMenu.GetColorButton() != Color.Green)
+      {
+        buttonList[0].SetColorButton(Color.Blue);
+        buttonList[1].SetColorButton(Color.Blue);
+        buttonList[2].SetColorButton(Color.Green);
+        // Получение массива доступных разрешений экрана по убыванию
+        VideoMode[] modes = VideoMode.FullscreenModes;
+        //modes[0] - максимальное разрешение экрана
+        Game.window.Size = new Vector2u(modes[0].Width, modes[0].Height);
       }
       displayObject.SetSpeedDO();
     }
