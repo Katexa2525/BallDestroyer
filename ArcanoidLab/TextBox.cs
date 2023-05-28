@@ -4,6 +4,7 @@ using System.IO;
 
 namespace ArcanoidLab
 {
+  /// <summary> Класс для рисования поля для ввода и подписи этого поля </summary>
   public class TextBox
   {
     private readonly string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";

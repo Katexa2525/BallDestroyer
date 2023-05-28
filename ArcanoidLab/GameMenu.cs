@@ -8,8 +8,11 @@ using System.Runtime.InteropServices;
 
 namespace ArcanoidLab
 {
+  /// <summary> Класс для формирования меню и пунктов настроек игры </summary>
   public class GameMenu
   {
+    private Game Game;
+
     public List<ButtonMenu> ButtonMenus { get; set; } = new List<ButtonMenu>();
     public List<ButtonMenu> ButtonLevel { get; set; } = new List<ButtonMenu>();
     public TextBox TextBox { get; set; }
@@ -18,23 +21,24 @@ namespace ArcanoidLab
     [DllImport("user32.dll")]
     public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options); // объявляем метод на C#
 
-    public GameMenu(VideoMode mode)
+    public GameMenu(VideoMode mode, Game game)
     {
       // основное меню
-      ButtonMenus.Add(new ButtonMenu(100, 30, "Играть", "play", 20, "FreeMonospacedBold", 120, 5, Color.Red, Color.Green, mode));
-      ButtonMenus.Add(new ButtonMenu(140, 30, "Сохранить", "save", 20, "FreeMonospacedBold", 230, 5, Color.Red, Color.Green, mode));
-      ButtonMenus.Add(new ButtonMenu(140, 30, "Загрузить", "load", 20, "FreeMonospacedBold", 380, 5, Color.Red, Color.Green, mode));
-      ButtonMenus.Add(new ButtonMenu(100, 30, "Выход", "exit", 20, "FreeMonospacedBold", 530, 5, Color.Red, Color.Green, mode));
+      ButtonMenus.Add(new ButtonMenu(110, 30, "Играть F1", "play", 18, "FreeMonospacedBold", 120, 5, Color.Red, Color.Yellow, mode));
+      ButtonMenus.Add(new ButtonMenu(150, 30, "Сохранить F2", "save", 18, "FreeMonospacedBold", 230, 5, Color.Red, Color.Yellow, mode));
+      ButtonMenus.Add(new ButtonMenu(150, 30, "Загрузить F3", "load", 18, "FreeMonospacedBold", 380, 5, Color.Red, Color.Yellow, mode));
+      ButtonMenus.Add(new ButtonMenu(110, 30, "Выход F12", "exit", 18, "FreeMonospacedBold", 530, 5, Color.Red, Color.Yellow, mode));
 
       // кнопки для переключения уровня сложности
-      ButtonLevel.Add(new ButtonMenu(200, 30, "Легкий уровень ", "easy", 20, "FreeMonospacedBold", 80, 75, Color.Red, Color.Green, mode));
-      ButtonLevel.Add(new ButtonMenu(200, 30, "Средний уровень", "medium", 20, "FreeMonospacedBold", 300, 75, Color.Red, Color.Blue, mode));
-      ButtonLevel.Add(new ButtonMenu(200, 30, "Тяжелый уровень", "hard", 20, "FreeMonospacedBold", 520, 75, Color.Red, Color.Blue, mode));
+      ButtonLevel.Add(new ButtonMenu(210, 30, "Легкий уровень F6", "easy", 18, "FreeMonospacedBold", 80, 75, Color.Red, Color.Green, mode));
+      ButtonLevel.Add(new ButtonMenu(210, 30, "Средний уровень F7", "medium", 18, "FreeMonospacedBold", 300, 75, Color.Red, Color.Blue, mode));
+      ButtonLevel.Add(new ButtonMenu(210, 30, "Тяжелый уровень F8", "hard", 18, "FreeMonospacedBold", 520, 75, Color.Red, Color.Blue, mode));
 
       // рисую поле для ввода имени игрока
       TextBox = new TextBox("Игрок: ", "FreeMonospacedBold", 16, Color.White, 200, 152, //данные надписи
                             "FreeMonospacedBold", 16, Color.Black, 300, 152, // данные вводимого текста имени игрона
                             200, 30, 300, 150, Color.White); // данные прямоугольника
+      Game = game;
     }
 
     public void Update(RenderTarget window, DisplayObject displayObject)
@@ -61,6 +65,13 @@ namespace ArcanoidLab
     private void KeyHandler(RenderTarget window, DisplayObject displayObject)
     {
       Vector2i mousePosition = Mouse.GetPosition((Window)window); // координаты мыши
+
+      if (Keyboard.IsKeyPressed(Keyboard.Key.F6) && ButtonLevel[0].GetColorButton() != Color.Green) // продолжаем играть
+        SetColorPressLevel(ButtonLevel[0], ButtonLevel, displayObject);
+      else if (Keyboard.IsKeyPressed(Keyboard.Key.F7) && ButtonLevel[1].GetColorButton() != Color.Green)
+        SetColorPressLevel(ButtonLevel[1], ButtonLevel, displayObject);
+      else if (Keyboard.IsKeyPressed(Keyboard.Key.F8) && ButtonLevel[2].GetColorButton() != Color.Green)
+        SetColorPressLevel(ButtonLevel[2], ButtonLevel, displayObject);
 
       /////////////// Работа с кнопками уровней //////////////////////////////////////////
       // проверка, наведена ли мышь на кнопки изменения уровня
@@ -99,6 +110,7 @@ namespace ArcanoidLab
         GameSetting.BALL_DELTA_Y = 5; // смещение дельта y
         GameSetting.LEVEL = "Средний";
         MessageBox(IntPtr.Zero, "Уровень игры изменен на Средний.", "Информация", 0);
+        //Game.window.Size = new Vector2u(1024, 768);
       }
       else if (buttonMenu.AliasButton == "hard" && buttonMenu.GetColorButton() != Color.Green)
       {

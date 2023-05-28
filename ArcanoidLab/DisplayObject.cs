@@ -38,7 +38,7 @@ namespace ArcanoidLab
       x1 = xx1; y1 = yy1; x2 = xx2; y2 = yy2;
     }
 
-    public bool CheckIntersection(List<DisplayObject> staticDO, List<DisplayObject> dynamicDO)
+    public bool CheckIntersection(List<DisplayObject> staticDO, List<DisplayObject> dynamicDO, VideoMode mode)
     {
       for (int i = 0; i < dynamicDO.Count; i++)
       {
@@ -53,10 +53,10 @@ namespace ArcanoidLab
             return true;
           }
           else if ((dynamicDO[i].x1 < 0) || //столкновение о стенки игрового экрана слева 
-                   (dynamicDO[i].x2 > 800) || //столкновение о стенки игрового экрана справа
+                   (dynamicDO[i].x2 > mode.Width) || //столкновение о стенки игрового экрана справа
                    (dynamicDO[i].y1 < 0)) //столкновение о вверх игрового экрана
           {
-            ReboundAfterScreenCollision(dynamicDO[i]);
+            ReboundAfterScreenCollision(dynamicDO[i], mode);
             return true;
           }
         }
@@ -66,11 +66,11 @@ namespace ArcanoidLab
 
     /// <summary> Метод для определения смещения после отскока от рамок игрового экрана </summary>
     /// <param name="dynamicObject"></param>
-    private void ReboundAfterScreenCollision(DisplayObject dynamicObject)
+    private void ReboundAfterScreenCollision(DisplayObject dynamicObject, VideoMode mode)
     {
       if (dynamicObject.x1 < 0) // если столкновение о стенки игрового экрана слева 
         dx = dx < 0 ? -dx : dx;
-      if (dynamicObject.x2 > 800) // если столкновение о стенки игрового экрана справа
+      if (dynamicObject.x2 > mode.Width) // если столкновение о стенки игрового экрана справа
         dx = dx > 0 ? -dx : dx;
       if (dynamicObject.y1 < 0) // если столкновение о верх игрового экрана
         dy = -dy;
@@ -113,7 +113,7 @@ namespace ArcanoidLab
         List<DisplayObject> staticDO = blocks;
         staticDO.Add(platform);
 
-        bool checkInt = CheckIntersection(staticDO, dynamicDO);
+        bool checkInt = CheckIntersection(staticDO, dynamicDO, mode);
 
         // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
         if (ball.y2 > mode.Height || blocks.Count == 0)
