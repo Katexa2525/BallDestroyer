@@ -15,6 +15,10 @@ namespace ArcanoidLab
     public bool IsStart { get; set; }  // свойство, что игра запущена
     public bool IsVisibleMenu { get; set; } // свойство, что меню видно
     public int LifeCount { get; set; }  // начальное кол-во жизней в игре
+    public string Level { get; set; } // уровень игры
+    public string PlayerName { get; set; } // имя игрока
+    public int ScoreStep { get; set; } // шаг для подсчета очков
+    public int LifeTotal { get; set; } // общее кол-во жизней в игре
 
     public GameState(Ball ball, Platform platform, List<DisplayObject> blocks)
     {
@@ -33,6 +37,10 @@ namespace ArcanoidLab
       IsStart = GameSetting.IsStart;
       IsVisibleMenu = !GameSetting.IsVisibleMenu; // false - чтобы при загрузке не было меню, а сразу игра
       LifeCount = GameSetting.LifeCount;
+      Level = GameSetting.LEVEL;
+      PlayerName = GameSetting.PLAYER_NAME;
+      ScoreStep = GameSetting.SCORE_STEP;
+      LifeTotal = GameSetting.LIFE_TOTAL;
     }
   }
 }

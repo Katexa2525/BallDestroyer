@@ -8,7 +8,7 @@ namespace ArcanoidLab
   {
     static void Main(string[] args)
     {
-      Game game = new Game(800, 600, "Арканоид");
+      Game game = new Game(1024, 768, "Арканоид");
       //Game game = new Game();
       game.Run();
     }

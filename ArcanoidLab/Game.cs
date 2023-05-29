@@ -78,7 +78,7 @@ namespace ArcanoidLab
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
       // кнопка для вызова меню на главном окне 
-      buttonMainMenu = new ButtonMenu(70, 15, "Меню...", "main", 13, "FreeMonospacedBold", 620, 2, Color.Red, Color.Yellow, mode);
+      buttonMainMenu = new ButtonMenu(80, 15, "Меню Esc", "main", 13, "FreeMonospacedBold", 620, 2, Color.Red, Color.Yellow, mode);
     }
 
     // метод запуска игрового процесса
@@ -87,15 +87,6 @@ namespace ArcanoidLab
       while (this.window.IsOpen)
       {
         Secundomer.OnStart(); // запуск секундомера
-        // отрисовка элементов меню, если меню отображается
-        //if (GameSetting.IsVisibleMenu)
-        //{
-        //  HandleEvents();
-        //  KeyHandler();
-        //  window.Clear();
-        //  window.Display();
-        //}
-        //else 
         if (GameSetting.LifeCount > 0)
         {
           HandleEvents();
@@ -105,12 +96,6 @@ namespace ArcanoidLab
         }
         else
         {
-          //KeyHandler();
-          //string strFinish = "Игра окончена!\nДля новой игры нажмите F5\nВыход - F12";
-          //textManager.TypeText(strFinish, "", 20, Color.Red, new Vector2f(mode.Width / 2 - 150, mode.Height / 2 - 100));
-          //Draw();
-          //if (exitProgram) break; // выход из игры
-
           winForm.FormUser.ShowDialog();
         }
       }

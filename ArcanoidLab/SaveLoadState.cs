@@ -59,6 +59,10 @@ namespace ArcanoidLab
         GameSetting.IsStart = gameState.IsStart;
         //GameSetting.IsVisibleMenu = gameState.IsVisibleMenu;
         GameSetting.LifeCount = gameState.LifeCount;
+        GameSetting.LEVEL = gameState.Level;
+        GameSetting.PLAYER_NAME = gameState.PlayerName;
+        GameSetting.SCORE_STEP = gameState.ScoreStep;
+        GameSetting.LIFE_TOTAL = gameState.LifeTotal;
         MessageBox.Show("Состояние игры загружено!", "Информация");
       }
       catch (Exception ex)

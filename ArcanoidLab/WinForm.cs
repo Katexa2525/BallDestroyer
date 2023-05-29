@@ -189,8 +189,9 @@ namespace ArcanoidLab
       if (selectedIndex != -1) // если выбрано значение
       {
         //GameSetting.ChangeResolution(_game.window, new Vector2u(modes[selectedIndex].Width, modes[selectedIndex].Height)); // изменение разрешения
-        _game.window.Size = new Vector2u(modes[selectedIndex].Width, modes[selectedIndex].Height);
         //_game.mode = new VideoMode(modes[selectedIndex].Width, modes[selectedIndex].Height); // установка разрешения для игры окна
+        _game.window.Size = new Vector2u(modes[selectedIndex].Width, modes[selectedIndex].Height);
+        //var ga = _game.mode;
         HideForm();
       }
       else

@@ -9,9 +9,9 @@ namespace ArcanoidLab
     public static bool IsStart { get; set; } = false; // свойство, что игра запущена
     public static bool IsVisibleMenu { get; set; } = false; // свойство, что меню видно
 
-    public static int LIFE_TOTAL { get; } = 3; // общее кол-во жизней в игре
+    public static int LIFE_TOTAL { get; set; } = 3; // общее кол-во жизней в игре
     public static int LifeCount { get; set; } = 3; // начальное кол-во жизней в игре
-    public static int SCORE_STEP { get; } = 10; // шаг для подсчета очков
+    public static int SCORE_STEP { get; set; } = 10; // шаг для подсчета очков
 
     public static float PLATFORM_SPEED { get; set; } = 6f; // скорость движения платформы
 
