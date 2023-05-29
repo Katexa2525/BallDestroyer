@@ -63,6 +63,9 @@ namespace ArcanoidLab
         GameSetting.PLAYER_NAME = gameState.PlayerName;
         GameSetting.SCORE_STEP = gameState.ScoreStep;
         GameSetting.LIFE_TOTAL = gameState.LifeTotal;
+        GameSetting.BALL_DELTA_X = gameState.BallDeltaX;
+        GameSetting.BALL_DELTA_Y = gameState.BallDeltaY;
+
         MessageBox.Show("Состояние игры загружено!", "Информация");
       }
       catch (Exception ex)

@@ -167,6 +167,8 @@ namespace ArcanoidLab
     private void buttonLoad_Click(object sender, EventArgs e)
     {
       _gameState = _saveLoadState.LoadState(_ball, _platform, _block, _mode);
+      comboBoxLevel.SelectedIndex = comboBoxLevel.FindString(GameSetting.LEVEL); // установка значения по умолчанию из настроек игры
+      _ball.SetSpeedDO(); // установка значений скорости шарика
       HideForm();
       //MessageBox.Show("Привет загрузка!");
     }

@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System.Windows.Forms;
 
 namespace ArcanoidLab
 {
@@ -10,7 +11,6 @@ namespace ArcanoidLab
     private const int WIDTH = 640;
     private const int HEIGHT = 480;
     private const string TITLE = "АРКАНОИД";
-    private bool exitProgram = false; // признак выхода из игры
     private Sprite background;
 
     private Platform platform;
@@ -54,7 +54,8 @@ namespace ArcanoidLab
 
       this.window.Closed += (sender, args) =>
       {
-        this.window.Close();
+        if (MessageBox.Show("Выйти из игры", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+          this.window.Close();
       };
 
       // экземпляр класса для работы с текстом
@@ -96,7 +97,10 @@ namespace ArcanoidLab
         }
         else
         {
-          winForm.FormUser.ShowDialog();
+          if (MessageBox.Show("Игра окончена! Начать новую игру?", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            StartNewGame();
+          else
+            this.window.Close();
         }
       }
     }
@@ -158,14 +162,7 @@ namespace ArcanoidLab
 
       if (Keyboard.IsKeyPressed(Keyboard.Key.F5)) // новая игра
       {
-        GameSetting.IsStart = true;
-        GameSetting.LifeCount = GameSetting.LIFE_TOTAL;
-        GameSetting.Score = 0;
-        block.Update(mode);
-      }
-      else if (Keyboard.IsKeyPressed(Keyboard.Key.F12)) // выход
-      {
-        exitProgram = true;
+        StartNewGame();
       }
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) // вызов меню
       {
@@ -195,6 +192,14 @@ namespace ArcanoidLab
     private void UpdateScore()
     {
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
+    }
+
+    private void StartNewGame()
+    {
+      GameSetting.IsStart = true;
+      GameSetting.LifeCount = GameSetting.LIFE_TOTAL;
+      GameSetting.Score = 0;
+      block.Update(mode);
     }
 
   }
