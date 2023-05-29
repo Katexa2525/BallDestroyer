@@ -1,11 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
-using System.Globalization;
-using System.Text;
-// подключаем атрибут DllImport
-using System.Runtime.InteropServices;
 
 namespace ArcanoidLab
 {
@@ -15,29 +10,21 @@ namespace ArcanoidLab
     private const int WIDTH = 640;
     private const int HEIGHT = 480;
     private const string TITLE = "АРКАНОИД";
-    //private RenderWindow window;
-    //private VideoMode mode; //размер игрового окна
+    private bool exitProgram = false; // признак выхода из игры
     private Sprite background;
-    private bool exitProgram = false;
 
     private Platform platform;
     private Block block;
     private Ball ball;
     private HeartScull heartScull;
     private TextManager textManager;
-    private Secundomer secundomer;
-    private GameMenu gameMenu;
-    private GameState gameState;
     private ButtonMenu buttonMainMenu;
-    private SaveLoadState saveLoadState;
-    //private WinForm winForm;
+    private WinForm winForm;
 
     public RenderWindow window { get; set; }
     public VideoMode mode { get; set; } //размер игрового окна
 
-    // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
-    [DllImport("user32.dll")]
-    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options); // объявляем метод на C#
+    public Secundomer Secundomer { get; set; }
 
     // конструктор по умолчанию
     public Game()
@@ -57,10 +44,10 @@ namespace ArcanoidLab
       this.window = new RenderWindow(this.mode, title/*, Styles.Fullscreen*/);
 
       // Создание области просмотра, начинающейся с (0, 0) и размером 800x600
-      View view = new View(new FloatRect(0, 0, width, height));
+      //View view = new View(new FloatRect(0, 0, width, height));
 
       // Установка области просмотра в окно
-      window.SetView(view);
+      //window.SetView(view);
 
       this.window.SetVerticalSyncEnabled(true);
       this.window.SetFramerateLimit(60);
@@ -68,27 +55,6 @@ namespace ArcanoidLab
       this.window.Closed += (sender, args) =>
       {
         this.window.Close();
-      };
-
-      // проверка ввода символов
-      this.window.TextEntered += (sender, args) =>
-      {
-        //преобразовать unicode в ascii, чтобы позже проверить диапазон
-        string hexValue = (Encoding.ASCII.GetBytes(args.Unicode)[0].ToString("X"));
-        int ascii = (int.Parse(hexValue, NumberStyles.HexNumber));
-
-        if (args.Unicode == "\b" && gameMenu.TextBox.ContentText.Length > 0)
-        {
-          gameMenu.TextBox.ContentText = gameMenu.TextBox.ContentText.Remove(gameMenu.TextBox.ContentText.Length-1);
-        }
-        //добавлять в строку имени, если фактический символ
-        else if (ascii >= 32 && ascii < 128 && gameMenu.TextBox.ContentText.Length < 15) 
-        {
-          gameMenu.TextBox.ContentText += args.Unicode;
-        }
-        gameMenu.TextBox.SetContentText(gameMenu.TextBox.ContentText, "FreeMonospacedBold", 16, Color.Black, 300, 152);
-        gameMenu.Draw(window, ball);
-        GameSetting.PLAYER_NAME = gameMenu.TextBox.ContentText;
       };
 
       // экземпляр класса для работы с текстом
@@ -106,10 +72,8 @@ namespace ArcanoidLab
       block = new Block(mode);
       ball = new Ball(mode);
       heartScull = new HeartScull();
-      secundomer = new Secundomer();
-      gameMenu = new GameMenu(mode, this);
-      saveLoadState = new SaveLoadState();
-      //winForm = new WinForm(ball, platform, block, mode);
+      Secundomer = new Secundomer();
+      winForm = new WinForm(ball, platform, block, mode, this);
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
@@ -122,17 +86,17 @@ namespace ArcanoidLab
     {
       while (this.window.IsOpen)
       {
-        secundomer.OnStart(); // запуск секундомера
+        Secundomer.OnStart(); // запуск секундомера
         // отрисовка элементов меню, если меню отображается
-        if (GameSetting.IsVisibleMenu)
-        {
-          HandleEvents();
-          KeyHandler();
-          window.Clear();
-          gameMenu.Draw(window, ball);
-          window.Display();
-        }
-        else if (GameSetting.LifeCount > 0)
+        //if (GameSetting.IsVisibleMenu)
+        //{
+        //  HandleEvents();
+        //  KeyHandler();
+        //  window.Clear();
+        //  window.Display();
+        //}
+        //else 
+        if (GameSetting.LifeCount > 0)
         {
           HandleEvents();
           KeyHandler();
@@ -141,11 +105,13 @@ namespace ArcanoidLab
         }
         else
         {
-          KeyHandler();
-          string strFinish = "Игра окончена!\nДля новой игры нажмите F5\nВыход - F12";
-          textManager.TypeText(strFinish, "", 20, Color.Red, new Vector2f(mode.Width / 2 - 150, mode.Height / 2 - 100));
-          Draw();
-          if (exitProgram) break; // выход из игры
+          //KeyHandler();
+          //string strFinish = "Игра окончена!\nДля новой игры нажмите F5\nВыход - F12";
+          //textManager.TypeText(strFinish, "", 20, Color.Red, new Vector2f(mode.Width / 2 - 150, mode.Height / 2 - 100));
+          //Draw();
+          //if (exitProgram) break; // выход из игры
+
+          winForm.FormUser.ShowDialog();
         }
       }
     }
@@ -176,7 +142,7 @@ namespace ArcanoidLab
       this.window.Clear(Color.Blue);
       // доп данные
       textManager.TypeText("Игрок: ", GameSetting.PLAYER_NAME, 14, Color.Yellow, new Vector2f(100f, 0f));
-      textManager.TypeText("", secundomer.GetElapsedTime("Время:"), 14, Color.Yellow, new Vector2f(320f, 0f));
+      textManager.TypeText("", Secundomer.GetElapsedTime("Время:"), 14, Color.Yellow, new Vector2f(320f, 0f));
       textManager.TypeText("Уровень: ", GameSetting.LEVEL, 14, Color.Yellow, new Vector2f(450f, 0f));
 
       this.platform.Draw(this.window, mode);
@@ -218,8 +184,7 @@ namespace ArcanoidLab
       }
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) // вызов меню
       {
-        GameSetting.IsVisibleMenu = true;
-        //winForm.FormUser.ShowDialog();
+        winForm.FormUser.ShowDialog();
       }
 
       // проверяю, находится ли курсор мыши над прямоугольником главной кнопки меню
@@ -231,64 +196,13 @@ namespace ArcanoidLab
         // проверяю, было ли нажатие, тогда вызов экрана с пунктами меню
         if (Mouse.IsButtonPressed(Mouse.Button.Left) && buttonMainMenu.AliasButton == "main")
         {
-          GameSetting.IsVisibleMenu = true;
+          winForm.FormUser.ShowDialog();
         }
       }
       else
       {
         buttonMainMenu.SetColorButton(Color.Yellow);
         buttonMainMenu.SetColorTextButton(Color.Red);
-      }
-
-      /////////////// Работа с кнопками меню //////////////////////////////////////////
-      // проверка, наведена ли мышь на пункт меню
-      for (int i = 0; i < gameMenu.ButtonMenus.Count; i++)
-      {
-        if (Keyboard.IsKeyPressed(Keyboard.Key.F1)) // продолжаем играть
-          GameSetting.IsVisibleMenu = false;
-        else if (Keyboard.IsKeyPressed(Keyboard.Key.F2))
-        {
-          gameState = new GameState(ball, platform, block.Blocks);
-          saveLoadState.SaveState(gameState);
-        }
-        else if (Keyboard.IsKeyPressed(Keyboard.Key.F3))
-        {
-          gameState = saveLoadState.LoadState(ball, platform, block, mode);
-        }
-        else if (Keyboard.IsKeyPressed(Keyboard.Key.F12) && MessageBox(IntPtr.Zero, "Желаете выйти из игры?", "Вопрос", 1) == 1)
-        {
-          window.Close();
-        }
-
-        // проверяю, находится ли курсор мыши над прямоугольником меню
-        if (gameMenu.ButtonMenus[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
-        {
-          // курсор мыши находится над прямоугольником пункта меню 
-          gameMenu.ButtonMenus[i].SetColorButton(Color.Magenta); // меняю цвет пункта
-          gameMenu.ButtonMenus[i].SetColorTextButton(Color.Black); // меняю цвет текста
-          if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "play") // проверяю, было ли нажатие, тогда начало игры
-          {
-            GameSetting.IsVisibleMenu = false;
-          }
-          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "exit" && 
-                   MessageBox(IntPtr.Zero, "Желаете выйти из игры?", "Вопрос", 1) == 1) // выход из игры через меню
-            window.Close();
-          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "save") // сохранение в json состояния игры
-          {
-            gameState = new GameState(ball, platform, block.Blocks);
-            saveLoadState.SaveState(gameState);
-          }
-          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "load") // загрузка из json состояния игры
-          {
-            gameState = saveLoadState.LoadState(ball, platform, block, mode);
-          }
-        }
-        else
-        {
-          gameMenu.ButtonMenus[i].SetColorButton(Color.Yellow);
-          gameMenu.ButtonMenus[i].SetColorTextButton(Color.Red);
-        }
-        gameMenu.ButtonMenus[i].Draw(window);
       }
     }
 

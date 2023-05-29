@@ -5,7 +5,7 @@ using System.IO;
 namespace ArcanoidLab
 {
   /// <summary> Класс для рисования поля для ввода и подписи этого поля </summary>
-  public class TextBox
+  public class TextBoxLabel
   {
     private readonly string FONT_PATH = Directory.GetCurrentDirectory() + @"\Assets\Fonts\FreeMono\";
     private readonly Text LabelText;
@@ -14,7 +14,7 @@ namespace ArcanoidLab
     public RectangleShape ItemRect { get; set; }
     public string ContentText { get; set; } = GameSetting.PLAYER_NAME;
 
-    public TextBox(string textLabel, string fontNameLabel, uint fontSizeLabel, Color colorTextLabel, float coorXLabel, float coorYLabel,
+    public TextBoxLabel(string textLabel, string fontNameLabel, uint fontSizeLabel, Color colorTextLabel, float coorXLabel, float coorYLabel,
                    string fontNameText, uint fontSizeText, Color colorTextText, float coorXText, float coorYText,
                    float sizeXRect, float sizeYRect, float coorXRect, float coorYRect, Color OutlineRect)
     {

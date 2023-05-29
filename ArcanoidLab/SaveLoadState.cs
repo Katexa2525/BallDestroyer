@@ -2,8 +2,7 @@
 using SFML.Window;
 using System;
 using System.IO;
-// подключаем атрибут DllImport
-using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace ArcanoidLab
 {
@@ -12,11 +11,7 @@ namespace ArcanoidLab
   {
     private readonly string jsonFilePath = Directory.GetCurrentDirectory() + @"\ball.json";
     private readonly string txtFilePath = Directory.GetCurrentDirectory() + @"\ball.txt";
-
-    // Импортирую библиотку user32.dll (содержит WinAPI функцию MessageBox)
-    [DllImport("user32.dll")]
-    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options); // объявляем метод на C#
-    
+   
     /// <summary> Метод сохранения в json и txt файлы состояния игры </summary>
     /// <param name="gameState">Экземпляр класса для состояния</param>
     public void SaveState(GameState gameState)
@@ -31,14 +26,11 @@ namespace ArcanoidLab
         //Запись JSON-строки в файл
         File.WriteAllText(jsonFilePath, json);
         File.WriteAllText(txtFilePath, json);
-        // Вызываю MessageBox (вызовется функция Windows WinAPI)
-        //MessageBox(IntPtr.Zero, "Сохранено!", "Информация", 0);
-        System.Windows.Forms.MessageBox.Show("Сохранено!");
-        //WinForm winForm = new WinForm();
+        MessageBox.Show("Сохранено!");
       }
       catch (Exception ex)
       {
-        MessageBox(IntPtr.Zero, "Ошибка сохранения: " + ex.Message, "Ошибка", 0);
+        MessageBox.Show("Ошибка сохранения: " + ex.Message, "Ошибка");
       }
     }
 
@@ -67,13 +59,11 @@ namespace ArcanoidLab
         GameSetting.IsStart = gameState.IsStart;
         //GameSetting.IsVisibleMenu = gameState.IsVisibleMenu;
         GameSetting.LifeCount = gameState.LifeCount;
-        // Вызываю MessageBox (вызовется функция Windows WinAPI)
-        //MessageBox(IntPtr.Zero, "Состояние игры загружено!", "Информация", 0);
-        System.Windows.Forms.MessageBox.Show("Состояние игры загружено!", "Информация");
+        MessageBox.Show("Состояние игры загружено!", "Информация");
       }
       catch (Exception ex)
       {
-        MessageBox(IntPtr.Zero, "Ошибка восстановления: " + ex.Message, "Ошибка", 0);
+        MessageBox.Show("Ошибка восстановления: " + ex.Message, "Ошибка");
       }
       return gameState;
     }
