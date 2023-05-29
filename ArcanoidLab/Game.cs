@@ -30,6 +30,7 @@ namespace ArcanoidLab
     private GameState gameState;
     private ButtonMenu buttonMainMenu;
     private SaveLoadState saveLoadState;
+    //private WinForm winForm;
 
     public RenderWindow window { get; set; }
     public VideoMode mode { get; set; } //размер игрового окна
@@ -54,6 +55,12 @@ namespace ArcanoidLab
     {
       mode = new VideoMode(width, height);
       this.window = new RenderWindow(this.mode, title/*, Styles.Fullscreen*/);
+
+      // Создание области просмотра, начинающейся с (0, 0) и размером 800x600
+      View view = new View(new FloatRect(0, 0, width, height));
+
+      // Установка области просмотра в окно
+      window.SetView(view);
 
       this.window.SetVerticalSyncEnabled(true);
       this.window.SetFramerateLimit(60);
@@ -102,6 +109,7 @@ namespace ArcanoidLab
       secundomer = new Secundomer();
       gameMenu = new GameMenu(mode, this);
       saveLoadState = new SaveLoadState();
+      //winForm = new WinForm(ball, platform, block, mode);
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
@@ -211,6 +219,7 @@ namespace ArcanoidLab
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) // вызов меню
       {
         GameSetting.IsVisibleMenu = true;
+        //winForm.FormUser.ShowDialog();
       }
 
       // проверяю, находится ли курсор мыши над прямоугольником главной кнопки меню

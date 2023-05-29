@@ -32,7 +32,9 @@ namespace ArcanoidLab
         File.WriteAllText(jsonFilePath, json);
         File.WriteAllText(txtFilePath, json);
         // Вызываю MessageBox (вызовется функция Windows WinAPI)
-        MessageBox(IntPtr.Zero, "Сохранено!", "Информация", 0);
+        //MessageBox(IntPtr.Zero, "Сохранено!", "Информация", 0);
+        System.Windows.Forms.MessageBox.Show("Сохранено!");
+        //WinForm winForm = new WinForm();
       }
       catch (Exception ex)
       {
@@ -63,10 +65,11 @@ namespace ArcanoidLab
         }
         GameSetting.Score = gameState.Score;
         GameSetting.IsStart = gameState.IsStart;
-        GameSetting.IsVisibleMenu = gameState.IsVisibleMenu;
+        //GameSetting.IsVisibleMenu = gameState.IsVisibleMenu;
         GameSetting.LifeCount = gameState.LifeCount;
         // Вызываю MessageBox (вызовется функция Windows WinAPI)
-        MessageBox(IntPtr.Zero, "Состояние игры загружено!", "Информация", 0);
+        //MessageBox(IntPtr.Zero, "Состояние игры загружено!", "Информация", 0);
+        System.Windows.Forms.MessageBox.Show("Состояние игры загружено!", "Информация");
       }
       catch (Exception ex)
       {

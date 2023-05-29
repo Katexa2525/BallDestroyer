@@ -22,6 +22,7 @@ namespace ArcanoidLab
     [DllImport("user32.dll")]
     public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options); // объявляем метод на C#
 
+
     public GameMenu(VideoMode mode, Game game)
     {
       // основное меню
@@ -164,6 +165,10 @@ namespace ArcanoidLab
         buttonList[1].SetColorButton(Color.Green);
         buttonList[2].SetColorButton(Color.Blue);
         Game.window.Size = new Vector2u(1152, 864);
+        float aspectRatio = (float)1152 / 864;
+        //buttonList[0].MenuItemRect.Size.Y = buttonList[0].MenuItemRect.Size.Y * aspectRatio;
+        GameSetting.ChangeResolution(Game.window, new Vector2u(1152, 864));
+        
       }
       else if (buttonMenu.AliasButton == "fullscreen" && buttonMenu.GetColorButton() != Color.Green)
       {
@@ -173,7 +178,9 @@ namespace ArcanoidLab
         // Получение массива доступных разрешений экрана по убыванию
         VideoMode[] modes = VideoMode.FullscreenModes;
         //modes[0] - максимальное разрешение экрана
-        Game.window.Size = new Vector2u(modes[0].Width, modes[0].Height);
+        //Game.window.Size = new Vector2u(modes[0].Width, modes[0].Height);
+        GameSetting.ChangeResolution(Game.window, new Vector2u(modes[0].Width, modes[0].Height));
+        //Game.window = new RenderWindow(new VideoMode(modes[0].Width, modes[0].Height), "Арканоид", Styles.Fullscreen);
       }
       displayObject.SetSpeedDO();
     }
