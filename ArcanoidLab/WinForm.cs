@@ -168,7 +168,8 @@ namespace ArcanoidLab
     {
       _gameState = _saveLoadState.LoadState(_ball, _platform, _block, _mode);
       comboBoxLevel.SelectedIndex = comboBoxLevel.FindString(GameSetting.LEVEL); // установка значения по умолчанию из настроек игры
-      _ball.SetSpeedDO(); // установка значений скорости шарика
+      //_ball.SetSpeedDO(GameSetting.BALL_DELTA_X, GameSetting.BALL_DELTA_Y); // установка значений скорости шарика
+      _ball.Update(_mode);
       HideForm();
       //MessageBox.Show("Привет загрузка!");
     }
@@ -224,7 +225,8 @@ namespace ArcanoidLab
             GameSetting.LEVEL = "Тяжелый";
             break;
         }
-        _ball.SetSpeedDO(); // установка значений скорости шарика
+        //_ball.SetSpeedDO(GameSetting.BALL_DELTA_X, GameSetting.BALL_DELTA_Y); // установка значений скорости шарика
+        _ball.Update(_mode);
         HideForm();
       }
       else

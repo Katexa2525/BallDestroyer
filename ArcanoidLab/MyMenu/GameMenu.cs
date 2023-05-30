@@ -182,7 +182,7 @@ namespace ArcanoidLab
         GameSetting.ChangeResolution(Game.window, new Vector2u(modes[0].Width, modes[0].Height));
         //Game.window = new RenderWindow(new VideoMode(modes[0].Width, modes[0].Height), "Арканоид", Styles.Fullscreen);
       }
-      displayObject.SetSpeedDO();
+      displayObject.SetSpeedDO(GameSetting.BALL_DELTA_X, GameSetting.BALL_DELTA_Y);
     }
 
   }

@@ -1,6 +1,8 @@
-﻿using SFML.Graphics;
+﻿using ArcanoidLab.EventClass;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System;
 using System.Windows.Forms;
 
 namespace ArcanoidLab
@@ -72,6 +74,7 @@ namespace ArcanoidLab
       platform = new Platform(mode);
       block = new Block(mode);
       ball = new Ball(mode);
+      ball.DeltaChanged += HandleDeltaChanged; // подписка на событие 
       heartScull = new HeartScull();
       Secundomer = new Secundomer();
       winForm = new WinForm(ball, platform, block, mode, this);
@@ -80,6 +83,13 @@ namespace ArcanoidLab
       ball.positionObject = ball.Sprite.Position;
       // кнопка для вызова меню на главном окне 
       buttonMainMenu = new ButtonMenu(80, 15, "Меню Esc", "main", 13, "FreeMonospacedBold", 620, 2, Color.Red, Color.Yellow, mode);
+    }
+
+    // обработчик события
+    private void HandleDeltaChanged(object sender, DeltaEventArgs e)
+    {
+      if (sender is Ball _ball)
+        _ball.SetSpeedDO(e.DX, e.DY);
     }
 
     // метод запуска игрового процесса

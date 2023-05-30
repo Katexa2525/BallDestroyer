@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using ArcanoidLab.EventClass;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
@@ -34,6 +35,12 @@ namespace ArcanoidLab
       StartPosition(mode);
     }
 
+    protected override void OnDeltaChanged(DeltaEventArgs e)
+    {
+      // Метод вызова события базового класса.
+      base.OnDeltaChanged(e);
+    }
+
     public override void StartPosition(VideoMode mode)
     {
       // ставлю мячик в середину игрового поля
@@ -44,7 +51,11 @@ namespace ArcanoidLab
       Coordinates();
     }
 
-    public override void Update(VideoMode mode) {  }
+    public override void Update(VideoMode mode) 
+    {
+      // запись состояния события скорости шарика в класс DeltaEventArgs
+      OnDeltaChanged(new DeltaEventArgs(GameSetting.BALL_DELTA_X, GameSetting.BALL_DELTA_Y));
+    }
 
     public override void Draw(RenderTarget window)
     {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ArcanoidLab.EventClass;
+using Newtonsoft.Json;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -31,6 +32,15 @@ namespace ArcanoidLab
     public abstract void Update(VideoMode mode);
     public abstract void Draw(RenderTarget window);
     public abstract void Draw(RenderTarget window, VideoMode mode);
+
+    //Событие на изменение скорости шарика. При использовании общего типа события EventHandler<T> не нужно объявлять отдельный тип делегата.
+    public event EventHandler<DeltaEventArgs> DeltaChanged;
+
+    //Метод вызова события, который производные классы могут переопределить.
+    protected virtual void OnDeltaChanged(DeltaEventArgs e)
+    {
+      DeltaChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+    }
 
     /// <summary> Устанавливаю координаты фигуры  </summary>
     public virtual void SetCoordinates(int xx1, int yy1, int xx2, int yy2)
@@ -132,7 +142,7 @@ namespace ArcanoidLab
     }
 
     /// <summary> Установка новых координат объекта </summary>
-    public void SetNewSetCoordinates(int x1, int y1, DisplayObject displayObject)
+    private void SetNewSetCoordinates(int x1, int y1, DisplayObject displayObject)
     {
       positionObject = new Vector2f(x1, y1);
       int xx1 = Convert.ToInt32(positionObject.X);
@@ -143,11 +153,10 @@ namespace ArcanoidLab
     }
 
     /// <summary>Установка скорости движения объекта </summary>
-    /// <param name="displayObject">объект - шарик например</param>
-    public void SetSpeedDO()
+    public void SetSpeedDO(int _x, int _y)
     {
-      dx = GameSetting.BALL_DELTA_X;
-      dy = GameSetting.BALL_DELTA_Y;
+      dx = _x;
+      dy = _y;
     }
   }
 }
