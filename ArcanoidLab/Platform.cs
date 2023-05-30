@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using ArcanoidLab.EventArgsClass;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
@@ -9,6 +10,12 @@ namespace ArcanoidLab
   public class Platform : DisplayObject
   {
     private Vector2f position;
+
+    public bool IsMove { get; set; } // признак, если было движение 
+    public bool MoveLeft { get; set; } // признак, если было движение влево
+    public bool MoveRight { get; set;  } // признак, если было движение вправо
+    public bool MoveUp { get; set; } // признак, если было движение вверх 
+    public bool MoveDown { get; set; } // признак, если было движение вниз
 
     public Platform(VideoMode mode)
     {
@@ -30,6 +37,12 @@ namespace ArcanoidLab
       // начальная позиция платформы
       StartPosition(mode);
     }
+
+    public override void OnPlatformMoveChanged(PlatformEventArgs e)
+    {
+      base.OnPlatformMoveChanged(e);  // Метод вызова события базового класса.
+    }
+
     public override void StartPosition(VideoMode mode)
     {
       position.X = (mode.Width / 2) - (this.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине платформа была
@@ -57,16 +70,29 @@ namespace ArcanoidLab
 
     public void KeyHandler(VideoMode mode)
     {
-      bool moveLeft = Keyboard.IsKeyPressed(Keyboard.Key.A) || Keyboard.IsKeyPressed(Keyboard.Key.Left);
-      bool moveRight = Keyboard.IsKeyPressed(Keyboard.Key.D) || Keyboard.IsKeyPressed(Keyboard.Key.Right);
-      bool moveUp = Keyboard.IsKeyPressed(Keyboard.Key.W);
-      bool moveDown = Keyboard.IsKeyPressed(Keyboard.Key.S);
+      MoveLeft = Keyboard.IsKeyPressed(Keyboard.Key.A) || Keyboard.IsKeyPressed(Keyboard.Key.Left);
+      MoveRight = Keyboard.IsKeyPressed(Keyboard.Key.D) || Keyboard.IsKeyPressed(Keyboard.Key.Right);
+      MoveUp = Keyboard.IsKeyPressed(Keyboard.Key.W);
+      MoveDown = Keyboard.IsKeyPressed(Keyboard.Key.S);
 
-      bool isMove = moveLeft || moveRight || moveUp || moveDown;
+      IsMove = MoveLeft || MoveRight || MoveUp || MoveDown;
 
+      OnPlatformMoveChanged(new PlatformEventArgs(IsMove, MoveLeft, MoveRight, mode, GameSetting.PLATFORM_SPEED, SpriteWidth));
+
+      //if (isMove)
+      //{
+      //  if (moveLeft && position.X - GameSetting.PLATFORM_SPEED >= 0) 
+      //    position.X -= GameSetting.PLATFORM_SPEED;
+      //  if (moveRight && position.X + GameSetting.PLATFORM_SPEED < mode.Width - this.SpriteWidth)
+      //    position.X += GameSetting.PLATFORM_SPEED;
+      //}
+    }
+
+    public void PlatformMove(bool isMove, bool moveLeft, bool moveRight, VideoMode mode, float platformSpeed, int spriteWidth)
+    {
       if (isMove)
       {
-        if (moveLeft && position.X - GameSetting.PLATFORM_SPEED >= 0) 
+        if (moveLeft && position.X - GameSetting.PLATFORM_SPEED >= 0)
           position.X -= GameSetting.PLATFORM_SPEED;
         if (moveRight && position.X + GameSetting.PLATFORM_SPEED < mode.Width - this.SpriteWidth)
           position.X += GameSetting.PLATFORM_SPEED;

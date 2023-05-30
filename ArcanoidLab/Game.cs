@@ -72,6 +72,7 @@ namespace ArcanoidLab
 
       // создаю экземпляры классов
       platform = new Platform(mode);
+      platform.PlatformMoveChanged += HandlePlatformMoveChanged;
       block = new Block(mode);
       ball = new Ball(mode);
       ball.DeltaChanged += HandleDeltaChanged; // подписка на событие 
@@ -106,6 +107,12 @@ namespace ArcanoidLab
     {
       if (sender is HeartScull _heartScull)
         _heartScull.HeartScullPositionScreen(GameSetting.LIFE_TOTAL, GameSetting.LifeCount, mode);
+    }
+    // обработчик события движения платформы
+    private void HandlePlatformMoveChanged(object sender, PlatformEventArgs e)
+    {
+      if (sender is Platform _platform)
+        _platform.PlatformMove(_platform.IsMove, _platform.MoveLeft, _platform.MoveRight, mode, GameSetting.PLATFORM_SPEED, _platform.SpriteWidth);
     }
 
     // метод запуска игрового процесса
