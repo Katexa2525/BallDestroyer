@@ -76,13 +76,13 @@ namespace ArcanoidLab
       int countItem = 0; // кол-во элементов добавленных в выпадающий список
       for (int i = 0; i < modes.Length; i++)
       {
-        if (modes[i].Width >= _game.mode.Width)
+        if (modes[i].Width >= 1000/*_game.mode.Width*/)
         {
           comboBoxResol.Items.Insert(i, modes[i].Width.ToString() + "x" + modes[i].Height.ToString());// формирую список разрешений экрана
           countItem++;
         }
       }
-      comboBoxResol.SelectedIndex = countItem - 1; // максимальное значение это наше разрешение, его и вывожу на экран на форме
+      comboBoxResol.SelectedIndex = 0; //countItem - 1; // максимальное значение это наше разрешение, его и вывожу на экран на форме
 
       buttonOkResolt.Text = "Применить";
       buttonOkResolt.Location = new Point(comboBoxResol.Right, comboBoxResol.Width + 18);

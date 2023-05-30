@@ -10,8 +10,8 @@ namespace ArcanoidLab
   /// <summary> Класс главного игрового процесса </summary>
   public class Game
   {
-    private const int WIDTH = 640;
-    private const int HEIGHT = 480;
+    private const int WIDTH = 1024;
+    private const int HEIGHT = 768;
     private const string TITLE = "АРКАНОИД";
     private Sprite background;
 
@@ -43,7 +43,7 @@ namespace ArcanoidLab
     private void GameCreate(uint width, uint height, string title)
     {
       mode = new VideoMode(width, height);
-      this.window = new RenderWindow(this.mode, title/*, Styles.Fullscreen*/);
+      this.window = new RenderWindow(this.mode, title, Styles.Fullscreen);
 
       // Создание области просмотра, начинающейся с (0, 0) и размером 800x600
       //View view = new View(new FloatRect(0, 0, width, height));

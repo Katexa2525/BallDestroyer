@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 using System;
 using System.Timers;
 
@@ -8,7 +9,8 @@ namespace ArcanoidLab
   {
     static void Main(string[] args)
     {
-      Game game = new Game(1024, 768, "Арканоид");
+      VideoMode[] modes = VideoMode.FullscreenModes;
+      Game game = new Game(modes[0].Width, modes[0].Height, "Арканоид");
       //Game game = new Game();
       game.Run();
     }
