@@ -17,6 +17,7 @@ namespace ArcanoidLab
     public string Level { get; set; } // уровень игры
     public string PlayerName { get; set; } // имя игрока
     public int ScoreStep { get; set; } // шаг для подсчета очков
+    public int ScoreBonusStep { get; set; } // шаг для подсчета очков
     public int LifeTotal { get; set; } // общее кол-во жизней в игре
     public int BallDeltaX { get; set; } // смещение шарика по оси х
     public int BallDeltaY { get; set; } // смещение шарика по оси у
@@ -40,6 +41,7 @@ namespace ArcanoidLab
       Level = GameSetting.LEVEL;
       PlayerName = GameSetting.PLAYER_NAME;
       ScoreStep = GameSetting.SCORE_STEP;
+      ScoreBonusStep = GameSetting.SCORE_BONUS_STEP;
       LifeTotal = GameSetting.LIFE_TOTAL;
       BallDeltaX = GameSetting.BALL_DELTA_X;
       BallDeltaY = GameSetting.BALL_DELTA_Y;

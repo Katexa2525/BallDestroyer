@@ -17,6 +17,19 @@ namespace ArcanoidLab.EventArgsClass
     public RenderTarget Window { get; }
     public DisplayObject StaticObject { get; }
     public DisplayObject DynamicObject { get; }
+    public Dictionary<DisplayObject, int> DOBonus { get; }
+
+    public IntersectionEventArgs(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
+                                 Dictionary<DisplayObject, int> doBonus, VideoMode mode, RenderTarget window)
+    {
+      Ball = ball;
+      Blocks = blocks;
+      Platform = platform;
+      HeartScull = heartScull;
+      Mode = mode;
+      Window = window;
+      DOBonus = doBonus;
+    }
 
     public IntersectionEventArgs(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
                                  VideoMode mode, RenderTarget window)

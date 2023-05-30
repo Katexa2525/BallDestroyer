@@ -3,6 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace ArcanoidLab
@@ -107,7 +108,7 @@ namespace ArcanoidLab
     private void HandleIntersectionChanged(object sender, IntersectionEventArgs e)
     {
       if (sender is Ball _ball)
-        _ball.ObjectIntersection(e.Ball, e.Blocks, e.Platform, e.HeartScull, e.Mode, e.Window);
+        _ball.ObjectIntersection(e.Ball, e.Blocks, e.Platform, e.HeartScull, e.DOBonus, e.Mode, e.Window);
     }
 
     // обработчик события обновления жизни игрока
@@ -179,7 +180,7 @@ namespace ArcanoidLab
       KeyHandler();
       UpdateScore();
       // вызываю проверку коллизии, т.е. пересечения фигур
-      ball.OnIntersectionChanged(new IntersectionEventArgs(ball, block.Blocks, platform, heartScull, mode, window)); // через событие
+      ball.OnIntersectionChanged(new IntersectionEventArgs(ball, block.Blocks, platform, heartScull, block.BlocksBonus, mode, window)); // через событие
       //ball.ObjectIntersection(ball, block.Blocks, platform, heartScull, mode, window);
       // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
       if (!GameSetting.IsStart) 
@@ -258,7 +259,19 @@ namespace ArcanoidLab
     private void UpdateScore()
     {
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
-      textManager.OnTextBonusChanged(new TextBonusEventArgs("+10", "", 16, Color.Red, new Vector2f(450f, 400f)));
+      if (ball.IsBonus_1)
+      {
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("     " , "", 26, Color.Blue, new Vector2f(450f, 400f)));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, new Vector2f(460f, 410f)));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("     ", "", 26, Color.Blue, new Vector2f(460f, 410f)));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, new Vector2f(470f, 420f)));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("     ", "", 26, Color.Blue, new Vector2f(470f, 420f)));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, new Vector2f(480f, 430f)));
+        //textManager.OnTextBonusChanged(new TextBonusEventArgs("    ", "", 26, Color.Blue, new Vector2f(480f, 430f)));
+      }
+      //else
+        //textManager.OnTextBonusChanged(new TextBonusEventArgs("", "", 16, Color.Red, new Vector2f(450f, 400f)));
     }
 
     private void StartNewGame()

@@ -76,13 +76,17 @@ namespace ArcanoidLab
       int countItem = 0; // кол-во элементов добавленных в выпадающий список
       for (int i = 0; i < modes.Length; i++)
       {
-        if (modes[i].Width >= 1000/*_game.mode.Width*/)
+        if (modes[i].Width >= 1000 /*_game.mode.Width*/)
         {
-          comboBoxResol.Items.Insert(i, modes[i].Width.ToString() + "x" + modes[i].Height.ToString());// формирую список разрешений экрана
-          countItem++;
+          string strRes = modes[i].Width.ToString() + "x" + modes[i].Height.ToString();
+          if (comboBoxResol.FindString(strRes) == -1) // поиск в комбобоксе ,а не было ли уже такого значения
+          {
+            comboBoxResol.Items.Insert(countItem, strRes);// формирую список разрешений экрана
+            countItem++;
+          }
         }
       }
-      comboBoxResol.SelectedIndex = 0; //countItem - 1; // максимальное значение это наше разрешение, его и вывожу на экран на форме
+      comboBoxResol.SelectedIndex = 0; // максимальное значение это наше разрешение, его и вывожу на экран на форме
 
       buttonOkResolt.Text = "Применить";
       buttonOkResolt.Location = new Point(comboBoxResol.Right, comboBoxResol.Width + 18);
@@ -95,9 +99,11 @@ namespace ArcanoidLab
 
       comboBoxLevel.Location = new Point(labelComboLevel.Left, labelComboLevel.Height + labelComboLevel.Top + 1);
       comboBoxLevel.Size = new Size(180, 30);
-      comboBoxLevel.Items.Insert(0, "Лёгкий");
-      comboBoxLevel.Items.Insert(1, "Средний");
-      comboBoxLevel.Items.Insert(2, "Тяжелый");
+      comboBoxLevel.Items.Insert(0, "Уровень 1");
+      comboBoxLevel.Items.Insert(1, "Уровень 2");
+      comboBoxLevel.Items.Insert(2, "Уровень 3");
+      comboBoxLevel.Items.Insert(3, "Уровень 4");
+      comboBoxLevel.Items.Insert(4, "Уровень 5");
       comboBoxLevel.SelectedIndex = comboBoxLevel.FindString(GameSetting.LEVEL); // установка значения по умолчанию из настроек игры
 
       buttonOkLevel.Text = "Применить";
@@ -213,17 +219,32 @@ namespace ArcanoidLab
           case 0:
             GameSetting.BALL_DELTA_X = 2; // смещение дельта х
             GameSetting.BALL_DELTA_Y = 1; // смещение дельта y
-            GameSetting.LEVEL = "Лёгкий";
+            GameSetting.PLATFORM_SPEED = 15f; // скорость платформы
+            GameSetting.LEVEL = "Уровень 1";
             break;
           case 1:
-            GameSetting.BALL_DELTA_X = 6; // смещение дельта х
-            GameSetting.BALL_DELTA_Y = 5; // смещение дельта y
-            GameSetting.LEVEL = "Средний";
+            GameSetting.BALL_DELTA_X = 4; // смещение дельта х
+            GameSetting.BALL_DELTA_Y = 3; // смещение дельта y
+            GameSetting.PLATFORM_SPEED = 12f; // скорость платформы
+            GameSetting.LEVEL = "Уровень 2";
             break;
           case 2:
-            GameSetting.BALL_DELTA_X = 9; // смещение дельта х
-            GameSetting.BALL_DELTA_Y = 8; // смещение дельта y
-            GameSetting.LEVEL = "Тяжелый";
+            GameSetting.BALL_DELTA_X = 6; // смещение дельта х
+            GameSetting.BALL_DELTA_Y = 5; // смещение дельта y
+            GameSetting.PLATFORM_SPEED = 10f; // скорость платформы
+            GameSetting.LEVEL = "Уровень 3";
+            break;
+          case 3:
+            GameSetting.BALL_DELTA_X = 8; // смещение дельта х
+            GameSetting.BALL_DELTA_Y = 7; // смещение дельта y
+            GameSetting.PLATFORM_SPEED = 9f; // скорость платформы
+            GameSetting.LEVEL = "Уровень 4";
+            break;
+          case 4:
+            GameSetting.BALL_DELTA_X = 10; // смещение дельта х
+            GameSetting.BALL_DELTA_Y = 9; // смещение дельта y
+            GameSetting.PLATFORM_SPEED = 8f; // скорость платформы
+            GameSetting.LEVEL = "Уровень 5";
             break;
         }
         //_ball.SetSpeedDO(GameSetting.BALL_DELTA_X, GameSetting.BALL_DELTA_Y); // установка значений скорости шарика

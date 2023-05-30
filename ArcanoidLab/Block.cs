@@ -15,6 +15,8 @@ namespace ArcanoidLab
 
     [JsonIgnore]
     public List<DisplayObject> Blocks { get; set; } = new List<DisplayObject>();
+    [JsonIgnore]
+    public Dictionary<DisplayObject, int> BlocksBonus { get; set; } = new Dictionary<DisplayObject, int>();  // словарь для с объектами обычными и бонусными (блоки) 
 
     public Block()
     {
@@ -59,7 +61,22 @@ namespace ArcanoidLab
           // заполняю Sprite объектом из рисунка
           Blocks[n].Sprite = new Sprite(TextureManager.BlockTexture);
           Blocks[n].Sprite.Position = new Vector2f(i * Math.Abs(Blocks[n].x1 - Blocks[n].x2), j * Math.Abs(Blocks[n].y1 - Blocks[n].y2));
+          BlocksBonus.Add(Blocks[n], 0);
           n++;
+        }
+      }
+      // разукрашиваю блоки с бонусами
+      // 1 - бонус +100 очков, 2 - бонус увеличение платформы
+      Random random = new Random();
+      for (int i = 0; i < 12; i++)
+      {
+        int randomBlock = random.Next(0, n-1);
+        Blocks[randomBlock].Sprite.Texture = TextureManager.BlockBonus1Texture;
+        BlocksBonus[Blocks[randomBlock]] = 1;
+        if (i > 9)
+        {
+          Blocks[randomBlock].Sprite.Texture = TextureManager.BlockBonus2Texture;
+          BlocksBonus[Blocks[randomBlock]] = 2;
         }
       }
     }

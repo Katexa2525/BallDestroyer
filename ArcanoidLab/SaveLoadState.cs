@@ -61,6 +61,7 @@ namespace ArcanoidLab
         GameSetting.LEVEL = gameState.Level;
         GameSetting.PLAYER_NAME = gameState.PlayerName;
         GameSetting.SCORE_STEP = gameState.ScoreStep;
+        GameSetting.SCORE_BONUS_STEP = gameState.ScoreBonusStep;
         GameSetting.LIFE_TOTAL = gameState.LifeTotal;
         GameSetting.BALL_DELTA_X = gameState.BallDeltaX;
         GameSetting.BALL_DELTA_Y = gameState.BallDeltaY;

@@ -5,8 +5,6 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ArcanoidLab
 {
@@ -22,14 +20,19 @@ namespace ArcanoidLab
     public int SpriteHeight { get; set; } = 0; // свойство высоты объекта
     public float Scale { get; set; } = 1; // масштаб фигуры во сколько раз увеличить
     public bool SmoothTexture { get; set; } = false; // сглаживание текстуры по умолчанию
+    public bool IsIntersection { get; set; } = false; // есть пересечение
+    public bool IsBonus_1 { get; set; } = false; // есть пересечение
+    public bool IsBonus_2 { get; set; } = false; // есть пересечение
     [JsonIgnore]
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
     [JsonIgnore]
-    public DisplayObject DynamicDOCurrent { get; set; }
+    public DisplayObject DynamicDOCurrent { get; set; } // динамический объект, с которым было пересечение, нужно для событий
     [JsonIgnore]
-    public DisplayObject StaticDOCurrent { get; set; }
+    public DisplayObject StaticDOCurrent { get; set; } // статический объект, с которым было пересечение, нужно для событий
     [JsonIgnore]
-    public List<DisplayObject> StaticDOList { get; set; }
+    public List<DisplayObject> StaticDOList { get; set; } // статические объекты, с которыми подразумевается пересечение, нужно для событий
+    [JsonIgnore]
+    public Dictionary<DisplayObject, int> DOBonus { get; set; } = new Dictionary<DisplayObject, int>();  // словарь для с объектами обычными и бонусными (блоки) 
 
     public int x1 { get; set; } = 0;  // координата х1 фигуры верхнего левого угла
     public int y1 { get; set; } =  0; // координата у1 фигуры верхнего левого угла
@@ -149,7 +152,7 @@ namespace ArcanoidLab
     public void ReboundAfterCollisionExec(DisplayObject staticObject, DisplayObject dynamicObject, List<DisplayObject> staticDO)
     {
       Random random = new Random();
-      if (staticObject is Block)
+      if (staticObject is Block staticBlock)
       {
         staticObject.Sprite.Position = new Vector2f(-100, 0);
         if (dynamicObject.x1 < staticObject.x1) // левая стенка блока
@@ -158,9 +161,17 @@ namespace ArcanoidLab
           dx = dx < 0 ? -dx : dx;
         if (dynamicObject.y1 < staticObject.y2) // если столкновение о нижнюю часть блока
           dy = -dy;
+        // проверяю, является ли блок бонусным
+        IsBonus_1 = (this.DOBonus[staticObject] == 1);
+        if (IsBonus_1)
+          IsBonus_2 = (this.DOBonus[staticObject] == 2);
         // удаляю блок после столкновения из массива
         staticDO.Remove(staticObject);
-        GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
+        // считаю очки
+        if (this.IsBonus_1)
+          GameSetting.Score += GameSetting.SCORE_BONUS_STEP; // добавление к результату бонусных очков
+        else 
+          GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
       }
       else if (staticObject is Platform)
         dy = (random.Next() % 5 + GameSetting.BALL_DELTA_Y); // отскок шарика от платформы по оси у
@@ -168,7 +179,7 @@ namespace ArcanoidLab
 
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
     public virtual void ObjectIntersection(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
-                                           VideoMode mode, RenderTarget window)
+                                           Dictionary<DisplayObject, int> doBonus, VideoMode mode, RenderTarget window)
     {
       if (GameSetting.IsStart)
       {
@@ -181,13 +192,9 @@ namespace ArcanoidLab
         dynamicDO.Add(ball);
         List<DisplayObject> staticDO = blocks;
         staticDO.Add(platform);
+        DOBonus = doBonus;
 
-        bool checkInt = CheckIntersection(staticDO, dynamicDO, mode);
-        //if (checkInt)
-        //{
-        //  var TextBoxLabel = new TextBoxLabel("+10", "FreeMonospacedBold", 16, Color.Red, 400, 452);
-        //  TextBoxLabel.Draw(window);
-        //}
+        IsIntersection = CheckIntersection(staticDO, dynamicDO, mode);
 
         OnRoundGameChanged(new IntersectionEventArgs(ball, blocks, platform, heartScull, mode, window));
       }
