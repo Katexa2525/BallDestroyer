@@ -141,12 +141,12 @@ namespace ArcanoidLab
 
     private void FormUser_FormClosing(object sender, FormClosingEventArgs e)
     {
-      GameSetting.PLAYER_NAME = textBoxPlayer.Text;
+      GameSetting.PLAYER_NAME = textBoxPlayer.Text; // имя игрока из вин формы на игровое поле
     }
 
     private void HideForm()
     {
-      GameSetting.PLAYER_NAME = textBoxPlayer.Text;
+      GameSetting.PLAYER_NAME = textBoxPlayer.Text; // имя игрока из вин формы на игровое поле
       FormUser.Hide();
     }
 
@@ -169,6 +169,7 @@ namespace ArcanoidLab
       _gameState = _saveLoadState.LoadState(_ball, _platform, _block, _mode);
       comboBoxLevel.SelectedIndex = comboBoxLevel.FindString(GameSetting.LEVEL); // установка значения по умолчанию из настроек игры
       //_ball.SetSpeedDO(GameSetting.BALL_DELTA_X, GameSetting.BALL_DELTA_Y); // установка значений скорости шарика
+      textBoxPlayer.Text = _gameState.PlayerName; // устанавливаю имя игрока после загрузке на вин форме
       _ball.Update(_mode);
       HideForm();
       //MessageBox.Show("Привет загрузка!");

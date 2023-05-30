@@ -22,6 +22,12 @@ namespace ArcanoidLab
     public bool SmoothTexture { get; set; } = false; // сглаживание текстуры по умолчанию
     [JsonIgnore]
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
+    [JsonIgnore]
+    public DisplayObject DynamicDOCurrent { get; set; }
+    [JsonIgnore]
+    public DisplayObject StaticDOCurrent { get; set; }
+    [JsonIgnore]
+    public List<DisplayObject> StaticDOList { get; set; }
 
     public int x1 { get; set; } = 0;  // координата х1 фигуры верхнего левого угла
     public int y1 { get; set; } =  0; // координата у1 фигуры верхнего левого угла
@@ -38,6 +44,9 @@ namespace ArcanoidLab
     public event EventHandler<IntersectionEventArgs> IntersectionChanged; //Событие на пересечение объектов
     public event EventHandler<HeartScullEventArgs> HeartScullChanged; //Событие на изменение жизни, перерисовка
     public event EventHandler<PlatformEventArgs> PlatformMoveChanged; //Событие на изменение положения платформы
+    public event EventHandler<IntersectionEventArgs> RoundGameChanged; //Событие на окончание раунда игры или всей игры
+    public event EventHandler<IntersectionEventArgs> ReboundAfterScreenCollisionChanged; //Событие на определение смещения после отскока от рамок игрового экрана
+    public event EventHandler<IntersectionEventArgs> ReboundAfterCollisionChanged; // Событие на определение отскока после столкновения
 
     //Методы вызова события, который производные классы могут переопределить.
     public virtual void OnDeltaChanged(DeltaEventArgs e)
@@ -55,6 +64,18 @@ namespace ArcanoidLab
     public virtual void OnPlatformMoveChanged(PlatformEventArgs e)
     {
       PlatformMoveChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+    }
+    public virtual void OnRoundGameChanged(IntersectionEventArgs e)
+    {
+      RoundGameChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+    }
+    public virtual void OnReboundAfterScreenCollisionChanged(IntersectionEventArgs e)
+    {
+      ReboundAfterScreenCollisionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+    }
+    public virtual void OnReboundAfterCollisionChanged(IntersectionEventArgs e)
+    {
+      ReboundAfterCollisionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
     }
     //
 
@@ -75,6 +96,9 @@ namespace ArcanoidLab
               (dynamicDO[i].x2 >= staticDO[k].x1 && dynamicDO[i].x2 <= staticDO[k].x2 && dynamicDO[i].y1 >= staticDO[k].y1 && dynamicDO[i].y1 <= staticDO[k].y2) || // подлет к левой стенке объекту
               (dynamicDO[i].y2 >= staticDO[k].y1 && dynamicDO[i].y2 <= staticDO[k].y2 && dynamicDO[i].x2 >= staticDO[k].x1 && dynamicDO[i].x2 <= staticDO[k].x2))   // подлет сверху в вверх объекту
           {
+            DynamicDOCurrent = dynamicDO[i];
+            StaticDOCurrent = staticDO[k];
+            StaticDOList = staticDO;
             ReboundAfterCollision(staticDO[k], dynamicDO[i], staticDO);
             return true;
           }
@@ -82,6 +106,7 @@ namespace ArcanoidLab
                    (dynamicDO[i].x2 > mode.Width) || //столкновение о стенки игрового экрана справа
                    (dynamicDO[i].y1 < 0)) //столкновение о вверх игрового экрана
           {
+            DynamicDOCurrent = dynamicDO[i];
             ReboundAfterScreenCollision(dynamicDO[i], mode);
             return true;
           }
@@ -91,8 +116,13 @@ namespace ArcanoidLab
     }
 
     /// <summary> Метод для определения смещения после отскока от рамок игрового экрана </summary>
-    /// <param name="dynamicObject"></param>
     private void ReboundAfterScreenCollision(DisplayObject dynamicObject, VideoMode mode)
+    {
+      OnReboundAfterScreenCollisionChanged(new IntersectionEventArgs(dynamicObject, mode));
+    }
+
+    /// <summary> Метод для определения смещения после отскока от рамок игрового экрана </summary>
+    public void ReboundAfterScreenCollisionExec(DisplayObject dynamicObject, VideoMode mode)
     {
       if (dynamicObject.x1 < 0) // если столкновение о стенки игрового экрана слева 
         dx = dx < 0 ? -dx : dx;
@@ -104,6 +134,12 @@ namespace ArcanoidLab
 
     /// <summary> Метод для определения отскока после столкновения </summary>
     private void ReboundAfterCollision(DisplayObject staticObject, DisplayObject dynamicObject, List<DisplayObject> staticDO)
+    {
+      OnReboundAfterCollisionChanged(new IntersectionEventArgs(staticObject, dynamicObject, staticDO));
+    }
+
+    /// <summary> Метод для определения отскока после столкновения </summary>
+    public void ReboundAfterCollisionExec(DisplayObject staticObject, DisplayObject dynamicObject, List<DisplayObject> staticDO)
     {
       Random random = new Random();
       if (staticObject is Block)
@@ -119,7 +155,7 @@ namespace ArcanoidLab
         staticDO.Remove(staticObject);
         GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата
       }
-      else if (staticObject is Platform) 
+      else if (staticObject is Platform)
         dy = (random.Next() % 5 + GameSetting.BALL_DELTA_Y); // отскок шарика от платформы по оси у
     }
 
@@ -141,19 +177,24 @@ namespace ArcanoidLab
 
         bool checkInt = CheckIntersection(staticDO, dynamicDO, mode);
 
-        // если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана
-        if (ball.y2 > mode.Height || blocks.Count == 0)
-        {
-          GameSetting.IsStart = false;
-          dx = GameSetting.BALL_DELTA_X; 
-          dy = GameSetting.BALL_DELTA_Y;
-          // ставлю мячик в середину игрового поля
-          ball.x1 = (int)(mode.Width / 2) - (ball.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
-          ball.y1 = (int)mode.Height - platform.SpriteHeight - ball.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
-          // минус жизнь
-          GameSetting.LifeCount--;
-          heartScull.Draw(window, mode); // перерисовываю после минусования жизни
-        }
+        OnRoundGameChanged(new IntersectionEventArgs(ball, blocks, platform, heartScull, mode, window));
+      }
+    }
+
+    /// <summary> Метод действия для события, если выбиты все блоки, или промах мимо платформы, т.е. столкновение о низ игрового экрана </summary>
+    public void RoundGameEndBegin(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
+                                  VideoMode mode, RenderTarget window)
+    {
+      if (ball.y2 > mode.Height || blocks.Count == 0)
+      {
+        GameSetting.IsStart = false;
+        dx = GameSetting.BALL_DELTA_X;
+        dy = GameSetting.BALL_DELTA_Y;
+        // ставлю мячик в середину игрового поля
+        ball.x1 = (int)(mode.Width / 2) - (ball.SpriteWidth / 2); // вычисляю позицию по оси Х, чтобы посередине мячик был
+        ball.y1 = (int)mode.Height - platform.SpriteHeight - ball.SpriteHeight; // вычисляю позицию по оси Y, чтобы мячик над платформой был
+        GameSetting.LifeCount--; // минус жизнь
+        heartScull.Draw(window, mode); // перерисовываю после минусования жизни
       }
     }
 
@@ -171,8 +212,7 @@ namespace ArcanoidLab
     /// <summary>Установка скорости движения объекта </summary>
     public void SetSpeedDO(int _x, int _y)
     {
-      dx = _x;
-      dy = _y;
+      dx = _x; dy = _y;
     }
   }
 }

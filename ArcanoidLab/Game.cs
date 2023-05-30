@@ -73,12 +73,19 @@ namespace ArcanoidLab
       // создаю экземпляры классов
       platform = new Platform(mode);
       platform.PlatformMoveChanged += HandlePlatformMoveChanged;
+
       block = new Block(mode);
+
       ball = new Ball(mode);
       ball.DeltaChanged += HandleDeltaChanged; // подписка на событие 
       ball.IntersectionChanged += HandleIntersectionChanged; // подписка на событие
+      ball.RoundGameChanged += HandleRoundGameChanged;
+      ball.ReboundAfterScreenCollisionChanged += HandleReboundAfterScreenCollisionChanged; // подписка на событие определения смещения после отскока от рамок игрового экрана
+      ball.ReboundAfterCollisionChanged += HandleReboundAfterCollisionChanged; // подписка на событие определения отскока после столкновения
+
       heartScull = new HeartScull();
       heartScull.HeartScullChanged += HandleHeartScullChanged;
+
       Secundomer = new Secundomer();
       winForm = new WinForm(ball, platform, block, mode, this);
 
@@ -113,6 +120,24 @@ namespace ArcanoidLab
     {
       if (sender is Platform _platform)
         _platform.PlatformMove(_platform.IsMove, _platform.MoveLeft, _platform.MoveRight, mode, GameSetting.PLATFORM_SPEED, _platform.SpriteWidth);
+    }
+    // обработчик события столкновения
+    private void HandleRoundGameChanged(object sender, IntersectionEventArgs e)
+    {
+      if (sender is Ball _ball)
+        _ball.RoundGameEndBegin(e.Ball, e.Blocks, e.Platform, e.HeartScull, e.Mode, e.Window);
+    }
+    // обработчик определения смещения после отскока от рамок игрового экрана
+    private void HandleReboundAfterScreenCollisionChanged(object sender, IntersectionEventArgs e)
+    {
+      if (sender is Ball _ball)
+        _ball.ReboundAfterScreenCollisionExec(_ball.DynamicDOCurrent, e.Mode);
+    }
+    // обработчик определения отскока после столкновения
+    private void HandleReboundAfterCollisionChanged(object sender, IntersectionEventArgs e)
+    {
+      if (sender is Ball _ball)
+        _ball.ReboundAfterCollisionExec(_ball.StaticDOCurrent, _ball.DynamicDOCurrent, _ball.StaticDOList);
     }
 
     // метод запуска игрового процесса
