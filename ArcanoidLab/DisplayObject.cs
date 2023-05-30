@@ -33,14 +33,20 @@ namespace ArcanoidLab
     public abstract void Draw(RenderTarget window);
     public abstract void Draw(RenderTarget window, VideoMode mode);
 
-    //Событие на изменение скорости шарика. При использовании общего типа события EventHandler<T> не нужно объявлять отдельный тип делегата.
+    //Событие на изменение скорости шарика. 
     public event EventHandler<DeltaEventArgs> DeltaChanged;
+    public event EventHandler<IntersectionEventArgs> IntersectionChanged;
 
-    //Метод вызова события, который производные классы могут переопределить.
-    protected virtual void OnDeltaChanged(DeltaEventArgs e)
+    //Методы вызова события, который производные классы могут переопределить.
+    public virtual void OnDeltaChanged(DeltaEventArgs e)
     {
       DeltaChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
     }
+    public virtual void OnIntersectionChanged(IntersectionEventArgs e)
+    {
+      IntersectionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+    }
+    //
 
     /// <summary> Устанавливаю координаты фигуры  </summary>
     public virtual void SetCoordinates(int xx1, int yy1, int xx2, int yy2)
@@ -109,7 +115,7 @@ namespace ArcanoidLab
 
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
     public virtual void ObjectIntersection(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
-                                             VideoMode mode, RenderTarget window)
+                                           VideoMode mode, RenderTarget window)
     {
       if (GameSetting.IsStart)
       {

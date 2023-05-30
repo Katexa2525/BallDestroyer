@@ -75,6 +75,7 @@ namespace ArcanoidLab
       block = new Block(mode);
       ball = new Ball(mode);
       ball.DeltaChanged += HandleDeltaChanged; // подписка на событие 
+      ball.IntersectionChanged += HandleIntersectionChanged; // подписка на событие
       heartScull = new HeartScull();
       Secundomer = new Secundomer();
       winForm = new WinForm(ball, platform, block, mode, this);
@@ -85,11 +86,18 @@ namespace ArcanoidLab
       buttonMainMenu = new ButtonMenu(80, 15, "Меню Esc", "main", 13, "FreeMonospacedBold", 620, 2, Color.Red, Color.Yellow, mode);
     }
 
-    // обработчик события
+    // обработчик события изменения скорости шарика
     private void HandleDeltaChanged(object sender, DeltaEventArgs e)
     {
       if (sender is Ball _ball)
         _ball.SetSpeedDO(e.DX, e.DY);
+    }
+
+    // обработчик события столкновения
+    private void HandleIntersectionChanged(object sender, IntersectionEventArgs e)
+    {
+      if (sender is Ball _ball)
+        _ball.ObjectIntersection(e.Ball, e.Blocks, e.Platform, e.HeartScull, e.Mode, e.Window);
     }
 
     // метод запуска игрового процесса
@@ -124,7 +132,8 @@ namespace ArcanoidLab
       KeyHandler();
       UpdateScore();
       // вызываю проверку коллизии, т.е. пересечения фигур
-      ball.ObjectIntersection(ball, block.Blocks, platform, heartScull, mode, window);
+      ball.OnIntersectionChanged(new IntersectionEventArgs(ball, block.Blocks, platform, heartScull, mode, window));
+      //ball.ObjectIntersection(ball, block.Blocks, platform, heartScull, mode, window);
       // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
       if (!GameSetting.IsStart) 
       {

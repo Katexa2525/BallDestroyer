@@ -35,10 +35,13 @@ namespace ArcanoidLab
       StartPosition(mode);
     }
 
-    protected override void OnDeltaChanged(DeltaEventArgs e)
+    public override void OnDeltaChanged(DeltaEventArgs e)
     {
-      // Метод вызова события базового класса.
-      base.OnDeltaChanged(e);
+      base.OnDeltaChanged(e); // Метод вызова события базового класса.
+    }
+    public override void OnIntersectionChanged(IntersectionEventArgs e)
+    {
+      base.OnIntersectionChanged(e);  // Метод вызова события базового класса.
     }
 
     public override void StartPosition(VideoMode mode)
@@ -56,6 +59,7 @@ namespace ArcanoidLab
       // запись состояния события скорости шарика в класс DeltaEventArgs
       OnDeltaChanged(new DeltaEventArgs(GameSetting.BALL_DELTA_X, GameSetting.BALL_DELTA_Y));
     }
+
 
     public override void Draw(RenderTarget window)
     {
