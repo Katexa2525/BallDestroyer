@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ArcanoidLab.EventClass
+namespace ArcanoidLab.EventArgsClass
 {
   /// <summary> Класс EventArgs для хранения информации скорости смещения dx, dy </summary>
   public class DeltaEventArgs : EventArgs

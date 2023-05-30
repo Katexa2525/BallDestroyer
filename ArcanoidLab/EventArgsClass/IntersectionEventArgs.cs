@@ -3,7 +3,7 @@ using SFML.Window;
 using System;
 using System.Collections.Generic;
 
-namespace ArcanoidLab.EventClass
+namespace ArcanoidLab.EventArgsClass
 {
   // <summary> Класс EventArgs для хранения информации о объектах для пересечения (столкновения) </summary>
   public class IntersectionEventArgs : EventArgs

@@ -1,4 +1,4 @@
-﻿using ArcanoidLab.EventClass;
+﻿using ArcanoidLab.EventArgsClass;
 using Newtonsoft.Json;
 using SFML.Graphics;
 using SFML.System;

@@ -1,6 +1,6 @@
 ﻿using SFML.Window;
 
-namespace ArcanoidLab.EventClass
+namespace ArcanoidLab.EventArgsClass
 {
   // <summary> Класс EventArgs для хранения информации о объектах для рисования жизней </summary>
   public class HeartScullEventArgs

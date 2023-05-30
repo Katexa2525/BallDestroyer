@@ -1,4 +1,4 @@
-﻿using ArcanoidLab.EventClass;
+﻿using ArcanoidLab.EventArgsClass;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
