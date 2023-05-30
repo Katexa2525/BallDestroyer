@@ -33,9 +33,10 @@ namespace ArcanoidLab
     public abstract void Draw(RenderTarget window);
     public abstract void Draw(RenderTarget window, VideoMode mode);
 
-    //Событие на изменение скорости шарика. 
-    public event EventHandler<DeltaEventArgs> DeltaChanged;
-    public event EventHandler<IntersectionEventArgs> IntersectionChanged;
+    //События базового класса 
+    public event EventHandler<DeltaEventArgs> DeltaChanged; //Событие на изменение скорости шарика
+    public event EventHandler<IntersectionEventArgs> IntersectionChanged; //Событие на пересечение объектов
+    public event EventHandler<HeartScullEventArgs> HeartScullChanged; //Событие на изменение жизни, перерисовка
 
     //Методы вызова события, который производные классы могут переопределить.
     public virtual void OnDeltaChanged(DeltaEventArgs e)
@@ -45,6 +46,10 @@ namespace ArcanoidLab
     public virtual void OnIntersectionChanged(IntersectionEventArgs e)
     {
       IntersectionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+    }
+    public virtual void OnHeartScullChanged(HeartScullEventArgs e)
+    {
+      HeartScullChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
     }
     //
 

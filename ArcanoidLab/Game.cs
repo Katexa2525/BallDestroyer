@@ -77,6 +77,7 @@ namespace ArcanoidLab
       ball.DeltaChanged += HandleDeltaChanged; // подписка на событие 
       ball.IntersectionChanged += HandleIntersectionChanged; // подписка на событие
       heartScull = new HeartScull();
+      heartScull.HeartScullChanged += HandleHeartScullChanged;
       Secundomer = new Secundomer();
       winForm = new WinForm(ball, platform, block, mode, this);
 
@@ -98,6 +99,13 @@ namespace ArcanoidLab
     {
       if (sender is Ball _ball)
         _ball.ObjectIntersection(e.Ball, e.Blocks, e.Platform, e.HeartScull, e.Mode, e.Window);
+    }
+
+    // обработчик события обновления жизни игрока
+    private void HandleHeartScullChanged(object sender, HeartScullEventArgs e)
+    {
+      if (sender is HeartScull _heartScull)
+        _heartScull.HeartScullPositionScreen(GameSetting.LIFE_TOTAL, GameSetting.LifeCount, mode);
     }
 
     // метод запуска игрового процесса

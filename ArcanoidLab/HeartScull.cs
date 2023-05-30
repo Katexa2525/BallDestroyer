@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using ArcanoidLab.EventClass;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System.Collections.Generic;
@@ -11,12 +12,17 @@ namespace ArcanoidLab
     private List<Sprite> sprite;
     private Vector2f position;
 
+    public override void OnHeartScullChanged(HeartScullEventArgs e)
+    {
+      base.OnHeartScullChanged(e);  // Метод вызова события базового класса.
+    }
+
     public override void StartPosition(VideoMode mode) { }
 
-    private Sprite HeartScullPosition(VideoMode mode, int pos)
+    private Sprite HeartScullPosition(VideoMode mode, int pos, int lifeTotal, int lifeCount)
     {
       Sprite spriteHS = new Sprite();
-      if (GameSetting.LIFE_TOTAL - GameSetting.LifeCount == 0 || GameSetting.LIFE_TOTAL - GameSetting.LifeCount < pos)
+      if (lifeTotal - lifeCount == 0 || lifeTotal - lifeCount < pos)
         spriteHS.Texture = TextureManager.HeartTexture; // рисунок сердца
       else
         spriteHS.Texture = TextureManager.ScullTexture; // рисунок черепа
@@ -28,10 +34,16 @@ namespace ArcanoidLab
 
     public override void Update(VideoMode mode)
     {
+      // запись состояния жизни игрока в класс HeartScullEventArgs
+      OnHeartScullChanged(new HeartScullEventArgs(GameSetting.LIFE_TOTAL, GameSetting.LifeCount, mode));
+    }
+
+    public void HeartScullPositionScreen(int lifeTotal, int lifeCount, VideoMode mode)
+    {
       sprite = new List<Sprite>();
-      for (int i = 1; i <= GameSetting.LIFE_TOTAL; i++)
+      for (int i = 1; i <= lifeTotal; i++)
       {
-        sprite.Add(HeartScullPosition(mode, i));
+        sprite.Add(HeartScullPosition(mode, i, lifeTotal, lifeCount));
       }
     }
 
