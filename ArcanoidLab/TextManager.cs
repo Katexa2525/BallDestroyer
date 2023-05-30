@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using ArcanoidLab.EventArgsClass;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System.Collections.Generic;
@@ -13,6 +14,11 @@ namespace ArcanoidLab
     private Font Font;
 
     private List<Text> texts = new List<Text>();
+
+    public override void OnTextBonusChanged(TextBonusEventArgs e)
+    {
+      base.OnTextBonusChanged(e); // Метод вызова события базового класса.
+    }
 
     public void LoadFont(string fontFamily)
     {

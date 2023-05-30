@@ -5,6 +5,8 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ArcanoidLab
 {
@@ -47,6 +49,7 @@ namespace ArcanoidLab
     public event EventHandler<IntersectionEventArgs> RoundGameChanged; //Событие на окончание раунда игры или всей игры
     public event EventHandler<IntersectionEventArgs> ReboundAfterScreenCollisionChanged; //Событие на определение смещения после отскока от рамок игрового экрана
     public event EventHandler<IntersectionEventArgs> ReboundAfterCollisionChanged; // Событие на определение отскока после столкновения
+    public event EventHandler<TextBonusEventArgs> TextBonusChanged; // Событие на столкновение показом текстового бонуса
 
     //Методы вызова события, который производные классы могут переопределить.
     public virtual void OnDeltaChanged(DeltaEventArgs e)
@@ -76,6 +79,10 @@ namespace ArcanoidLab
     public virtual void OnReboundAfterCollisionChanged(IntersectionEventArgs e)
     {
       ReboundAfterCollisionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+    }
+    public virtual void OnTextBonusChanged(TextBonusEventArgs e)
+    {
+      TextBonusChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
     }
     //
 
@@ -176,6 +183,11 @@ namespace ArcanoidLab
         staticDO.Add(platform);
 
         bool checkInt = CheckIntersection(staticDO, dynamicDO, mode);
+        //if (checkInt)
+        //{
+        //  var TextBoxLabel = new TextBoxLabel("+10", "FreeMonospacedBold", 16, Color.Red, 400, 452);
+        //  TextBoxLabel.Draw(window);
+        //}
 
         OnRoundGameChanged(new IntersectionEventArgs(ball, blocks, platform, heartScull, mode, window));
       }

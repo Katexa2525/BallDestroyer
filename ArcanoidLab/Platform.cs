@@ -78,14 +78,6 @@ namespace ArcanoidLab
       IsMove = MoveLeft || MoveRight || MoveUp || MoveDown;
 
       OnPlatformMoveChanged(new PlatformEventArgs(IsMove, MoveLeft, MoveRight, mode, GameSetting.PLATFORM_SPEED, SpriteWidth));
-
-      //if (isMove)
-      //{
-      //  if (moveLeft && position.X - GameSetting.PLATFORM_SPEED >= 0) 
-      //    position.X -= GameSetting.PLATFORM_SPEED;
-      //  if (moveRight && position.X + GameSetting.PLATFORM_SPEED < mode.Width - this.SpriteWidth)
-      //    position.X += GameSetting.PLATFORM_SPEED;
-      //}
     }
 
     public void PlatformMove(bool isMove, bool moveLeft, bool moveRight, VideoMode mode, float platformSpeed, int spriteWidth)

@@ -69,6 +69,7 @@ namespace ArcanoidLab
       // загрузка для работы со шрифтами
       TextureManager.LoadTexture();
       textManager.LoadFont("FreeMonospacedBold");
+      textManager.TextBonusChanged += HandleTextBonusChanged;
 
       // создаю экземпляры классов
       platform = new Platform(mode);
@@ -138,6 +139,12 @@ namespace ArcanoidLab
     {
       if (sender is Ball _ball)
         _ball.ReboundAfterCollisionExec(_ball.StaticDOCurrent, _ball.DynamicDOCurrent, _ball.StaticDOList);
+    }
+    // обработчик определения отскока после столкновения
+    private void HandleTextBonusChanged(object sender, TextBonusEventArgs e)
+    {
+      if (sender is TextManager _textManager)
+        _textManager.TypeText(e.Text, e.Value, e.FontSize, e.FontColor, e.Position);
     }
 
     // метод запуска игрового процесса
@@ -251,6 +258,7 @@ namespace ArcanoidLab
     private void UpdateScore()
     {
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
+      textManager.OnTextBonusChanged(new TextBonusEventArgs("+10", "", 16, Color.Red, new Vector2f(450f, 400f)));
     }
 
     private void StartNewGame()
