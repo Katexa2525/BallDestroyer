@@ -50,8 +50,16 @@ namespace ArcanoidLab
         platform.Sprite.Position = gameState.Platform.positionObject;
         platform.StartPosition(mode);
         block.Blocks.Clear();
-        foreach (var item in gameState.Blocks)
+        block.BlocksBonus.Clear();
+        foreach (Block item in gameState.Blocks)
         {
+          if (item.IsBonusBlock) // если бонусный блок, то подсовываю ему картинку нужную
+          {
+            item.Sprite.Texture = TextureManager.BlockBonus1Texture;
+            block.BlocksBonus.Add(item, 1);
+          }
+          else
+            block.BlocksBonus.Add(item, 0);
           item.Sprite.Position = item.positionObject;
           block.Blocks.Add(item);
         }

@@ -21,18 +21,21 @@ namespace ArcanoidLab
     public int LifeTotal { get; set; } // общее кол-во жизней в игре
     public int BallDeltaX { get; set; } // смещение шарика по оси х
     public int BallDeltaY { get; set; } // смещение шарика по оси у
+    
 
-    public GameState(Ball ball, Platform platform, List<DisplayObject> blocks)
+    public GameState(Ball ball, Platform platform, List<DisplayObject> blocks, Dictionary<DisplayObject, int> blocksBonus)
     {
       Ball = ball;
       Platform = platform;
       Platform.positionObject = new Vector2f(platform.x1, platform.y1); // положение на экране платформы
       foreach (DisplayObject item in blocks)
       {
-        if (item is Block)
+        if (item is Block block)
         {
-          item.positionObject = new Vector2f(item.x1, item.y1); // положение на экране блока
-          Blocks.Add(item);
+          if (blocksBonus != null && blocksBonus[block] == 1)
+            block.IsBonusBlock = true;
+          block.positionObject = new Vector2f(item.x1, item.y1); // положение на экране блока
+          Blocks.Add(block);
         }
       }
       Score = GameSetting.Score;

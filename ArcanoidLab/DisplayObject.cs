@@ -162,13 +162,13 @@ namespace ArcanoidLab
         if (dynamicObject.y1 < staticObject.y2) // если столкновение о нижнюю часть блока
           dy = -dy;
         // проверяю, является ли блок бонусным
-        IsBonus_1 = (this.DOBonus[staticObject] == 1);
+        IsBonus_1 = (DOBonus.ContainsKey(staticObject) && DOBonus[staticObject] == 1);
         if (IsBonus_1)
-          IsBonus_2 = (this.DOBonus[staticObject] == 2);
+          IsBonus_2 = (DOBonus[staticObject] == 2);
         // удаляю блок после столкновения из массива
         staticDO.Remove(staticObject);
         // считаю очки
-        if (this.IsBonus_1)
+        if (IsBonus_1)
           GameSetting.Score += GameSetting.SCORE_BONUS_STEP; // добавление к результату бонусных очков
         else 
           GameSetting.Score += GameSetting.SCORE_STEP; // вывод результата

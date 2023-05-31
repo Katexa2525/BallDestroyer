@@ -262,13 +262,6 @@ namespace ArcanoidLab
       if (ball.IsBonus_1)
       {
         textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("     " , "", 26, Color.Blue, new Vector2f(450f, 400f)));
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, new Vector2f(460f, 410f)));
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("     ", "", 26, Color.Blue, new Vector2f(460f, 410f)));
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, new Vector2f(470f, 420f)));
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("     ", "", 26, Color.Blue, new Vector2f(470f, 420f)));
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, new Vector2f(480f, 430f)));
-        //textManager.OnTextBonusChanged(new TextBonusEventArgs("    ", "", 26, Color.Blue, new Vector2f(480f, 430f)));
       }
       //else
         //textManager.OnTextBonusChanged(new TextBonusEventArgs("", "", 16, Color.Red, new Vector2f(450f, 400f)));

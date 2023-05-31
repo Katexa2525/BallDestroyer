@@ -12,6 +12,7 @@ namespace ArcanoidLab
   {
     private Vector2f position;
     public string Alias { set; get; } = "bl";
+    public bool IsBonusBlock { set; get; } = false;
 
     [JsonIgnore]
     public List<DisplayObject> Blocks { get; set; } = new List<DisplayObject>();

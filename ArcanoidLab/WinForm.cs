@@ -165,7 +165,7 @@ namespace ArcanoidLab
     private void buttonSave_Click(object sender, EventArgs e)
     {
       //MessageBox.Show("Привет сохранение!");
-      _gameState = new GameState(_ball, _platform, _block.Blocks);
+      _gameState = new GameState(_ball, _platform, _block.Blocks, _block.BlocksBonus);
       _saveLoadState.SaveState(_gameState);
       HideForm();
     }
