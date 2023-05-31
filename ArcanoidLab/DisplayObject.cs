@@ -163,8 +163,7 @@ namespace ArcanoidLab
           dy = -dy;
         // проверяю, является ли блок бонусным
         IsBonus_1 = (DOBonus.ContainsKey(staticObject) && DOBonus[staticObject] == 1);
-        if (IsBonus_1)
-          IsBonus_2 = (DOBonus[staticObject] == 2);
+        IsBonus_2 = (DOBonus.ContainsKey(staticObject) && DOBonus[staticObject] == 2);
         // удаляю блок после столкновения из массива
         staticDO.Remove(staticObject);
         // считаю очки
@@ -195,6 +194,12 @@ namespace ArcanoidLab
         DOBonus = doBonus;
 
         IsIntersection = CheckIntersection(staticDO, dynamicDO, mode);
+
+        if (IsBonus_2) // бонус для платформы, умножаю маштаб в 1.5 раз
+        {
+          platform.Scale += GameSetting.BONUS_PLATFORM;
+          platform.Sprite.Scale = new Vector2f(platform.Scale, platform.Scale);
+        }
 
         OnRoundGameChanged(new IntersectionEventArgs(ball, blocks, platform, heartScull, mode, window));
       }

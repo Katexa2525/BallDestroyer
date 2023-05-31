@@ -259,12 +259,14 @@ namespace ArcanoidLab
     private void UpdateScore()
     {
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
-      if (ball.IsBonus_1)
+      if (ball.IsBonus_1) // в блок для бонусных очков попал шар
       {
         textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
       }
-      //else
-        //textManager.OnTextBonusChanged(new TextBonusEventArgs("", "", 16, Color.Red, new Vector2f(450f, 400f)));
+      if (ball.IsBonus_2) // в блок для бонуса платформы попал шар
+      {
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("x" + GameSetting.BONUS_PLATFORM.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
+      }
     }
 
     private void StartNewGame()

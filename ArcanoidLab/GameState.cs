@@ -17,7 +17,8 @@ namespace ArcanoidLab
     public string Level { get; set; } // уровень игры
     public string PlayerName { get; set; } // имя игрока
     public int ScoreStep { get; set; } // шаг для подсчета очков
-    public int ScoreBonusStep { get; set; } // шаг для подсчета очков
+    public int ScoreBonusStep { get; set; } // бонус для очков
+    public float BonusPlatform { get; set; } // шаг для подсчета очков
     public int LifeTotal { get; set; } // общее кол-во жизней в игре
     public int BallDeltaX { get; set; } // смещение шарика по оси х
     public int BallDeltaY { get; set; } // смещение шарика по оси у
@@ -33,7 +34,9 @@ namespace ArcanoidLab
         if (item is Block block)
         {
           if (blocksBonus != null && blocksBonus[block] == 1)
-            block.IsBonusBlock = true;
+            block.BonusBlockId = 1;
+          else if (blocksBonus != null && blocksBonus[block] == 2)
+            block.BonusBlockId = 2;
           block.positionObject = new Vector2f(item.x1, item.y1); // положение на экране блока
           Blocks.Add(block);
         }
@@ -45,6 +48,7 @@ namespace ArcanoidLab
       PlayerName = GameSetting.PLAYER_NAME;
       ScoreStep = GameSetting.SCORE_STEP;
       ScoreBonusStep = GameSetting.SCORE_BONUS_STEP;
+      BonusPlatform = GameSetting.BONUS_PLATFORM;
       LifeTotal = GameSetting.LIFE_TOTAL;
       BallDeltaX = GameSetting.BALL_DELTA_X;
       BallDeltaY = GameSetting.BALL_DELTA_Y;

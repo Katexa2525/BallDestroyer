@@ -53,10 +53,15 @@ namespace ArcanoidLab
         block.BlocksBonus.Clear();
         foreach (Block item in gameState.Blocks)
         {
-          if (item.IsBonusBlock) // если бонусный блок, то подсовываю ему картинку нужную
+          if (item.BonusBlockId == 1) // если бонусный блок, то подсовываю ему картинку нужную
           {
-            item.Sprite.Texture = TextureManager.BlockBonus1Texture;
+            item.Sprite.Texture = TextureManager.BlockBonus1Texture; // картинка бонуса для блока
             block.BlocksBonus.Add(item, 1);
+          }
+          else if (item.BonusBlockId == 2) // если бонусный блок, то подсовываю ему картинку нужную
+          {
+            item.Sprite.Texture = TextureManager.BlockBonus2Texture; // картинка бонуса для платформы
+            block.BlocksBonus.Add(item, 2);
           }
           else
             block.BlocksBonus.Add(item, 0);
@@ -70,6 +75,7 @@ namespace ArcanoidLab
         GameSetting.PLAYER_NAME = gameState.PlayerName;
         GameSetting.SCORE_STEP = gameState.ScoreStep;
         GameSetting.SCORE_BONUS_STEP = gameState.ScoreBonusStep;
+        GameSetting.BONUS_PLATFORM = gameState.BonusPlatform;
         GameSetting.LIFE_TOTAL = gameState.LifeTotal;
         GameSetting.BALL_DELTA_X = gameState.BallDeltaX;
         GameSetting.BALL_DELTA_Y = gameState.BallDeltaY;
