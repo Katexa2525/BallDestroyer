@@ -15,19 +15,26 @@ namespace ArcanoidLab
     public string ContentText { get; set; } = GameSetting.PLAYER_NAME;
 
     public TextBoxLabel(string textLabel, string fontNameLabel, uint fontSizeLabel, Color colorTextLabel, float coorXLabel, float coorYLabel)
-                   //string fontNameText, uint fontSizeText, Color colorTextText, float coorXText, float coorYText,
-                   //float sizeXRect, float sizeYRect, float coorXRect, float coorYRect, Color OutlineRect)
+    {
+      LabelText = new Text(textLabel, new Font(FONT_PATH + fontNameLabel + ".ttf"), fontSizeLabel);
+      LabelText.Position = new Vector2f(coorXLabel, coorYLabel);
+      LabelText.FillColor = colorTextLabel;
+    }
+
+    public TextBoxLabel(string textLabel, string fontNameLabel, uint fontSizeLabel, Color colorTextLabel, float coorXLabel, float coorYLabel,
+                        string fontNameText, uint fontSizeText, Color colorTextText, float coorXText, float coorYText,
+                        float sizeXRect, float sizeYRect, float coorXRect, float coorYRect, Color OutlineRect)
     {
       LabelText = new Text(textLabel, new Font(FONT_PATH + fontNameLabel + ".ttf"), fontSizeLabel);
       LabelText.Position = new Vector2f(coorXLabel, coorYLabel);
       LabelText.FillColor = colorTextLabel;
 
-      //ItemRect = new RectangleShape(new Vector2f(sizeXRect, sizeYRect));
-      //ItemRect.Position = new Vector2f(coorXRect, coorYRect);
-      //ItemRect.OutlineColor = OutlineRect;
-      //ItemRect.OutlineThickness = 1;
+      ItemRect = new RectangleShape(new Vector2f(sizeXRect, sizeYRect));
+      ItemRect.Position = new Vector2f(coorXRect, coorYRect);
+      ItemRect.OutlineColor = OutlineRect;
+      ItemRect.OutlineThickness = 1;
 
-      //NameText = SetContentText(ContentText, fontNameText, fontSizeText, colorTextText, coorXText, coorYText);
+      NameText = SetContentText(ContentText, fontNameText, fontSizeText, colorTextText, coorXText, coorYText);
     }
 
     /// <summary> Устанавливаю новый текст для элемента Text </summary>
@@ -44,8 +51,8 @@ namespace ArcanoidLab
     public void Draw(RenderTarget window)
     {
       // Рисую прямоугольник и текст на кнопке
-      //window.Draw(ItemRect);
-      //window.Draw(NameText);
+      window.Draw(ItemRect);
+      window.Draw(NameText);
       window.Draw(LabelText);
     }
 

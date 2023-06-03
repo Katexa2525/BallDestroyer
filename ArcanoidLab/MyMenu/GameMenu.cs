@@ -37,9 +37,9 @@ namespace ArcanoidLab
       ButtonLevel.Add(new ButtonMenu(210, 30, "Тяжелый уровень F8", "hard", 18, "FreeMonospacedBold", 520, 75, Color.Red, Color.Blue, mode));
 
       //// рисую поле для ввода имени игрока
-      //TextBox = new TextBoxLabel("Игрок: ", "FreeMonospacedBold", 16, Color.White, 200, 152, //данные надписи
-      //                      "FreeMonospacedBold", 16, Color.Black, 300, 152, // данные вводимого текста имени игрона
-      //                      200, 30, 300, 150, Color.White); // данные прямоугольника
+      TextBox = new TextBoxLabel("Игрок: ", "FreeMonospacedBold", 16, Color.White, 200, 152, //данные надписи
+                            "FreeMonospacedBold", 16, Color.Black, 300, 152, // данные вводимого текста имени игрона
+                            200, 30, 300, 150, Color.White); // данные прямоугольника
 
       // кнопки для переключения разрешения экрана
       ButtonResol.Add(new ButtonMenu(210, 30, "800х600 F9", "800", 18, "FreeMonospacedBold", 80, 230, Color.Red, Color.Green, mode));
