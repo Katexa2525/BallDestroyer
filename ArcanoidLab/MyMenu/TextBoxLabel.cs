@@ -51,8 +51,10 @@ namespace ArcanoidLab
     public void Draw(RenderTarget window)
     {
       // Рисую прямоугольник и текст на кнопке
-      window.Draw(ItemRect);
-      window.Draw(NameText);
+      if (ItemRect != null)
+        window.Draw(ItemRect);
+      if (NameText != null)
+        window.Draw(NameText);
       window.Draw(LabelText);
     }
 

@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 
 namespace ArcanoidLab
 {
@@ -8,6 +9,7 @@ namespace ArcanoidLab
     public static int Score { get; set; } = 0; // свойство для подсчета очков
     public static bool IsStart { get; set; } = false; // свойство, что игра запущена
     public static bool IsVisibleMenu { get; set; } = false; // свойство, что меню видно
+    public static bool IsVisibleMessageForm { get; set; } = false; // свойство, видно ли форма с вопросом
 
     public static int LIFE_TOTAL { get; set; } = 3; // общее кол-во жизней в игре
     public static int LifeCount { get; set; } = 3; // начальное кол-во жизней в игре
@@ -26,6 +28,10 @@ namespace ArcanoidLab
     public static void ChangeResolution(RenderWindow window, Vector2u resolution)
     {
       window.Size = resolution;
+      // Пересчет координат фигуры с использованием MapPixelToCoords
+      //Vector2i mousePosition = Mouse.GetPosition(window);
+      //Vector2f worldCoords = window.MapPixelToCoords(mousePosition);
+      //window.Position = (Vector2i)worldCoords;
 
       // Получение текущей области просмотра
       View currentView = window.GetView();

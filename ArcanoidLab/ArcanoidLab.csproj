@@ -24,13 +24,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\Fonts\FreeMono\FreeMonospaced.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Fonts\FreeMono\FreeMonospaced.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Fonts\FreeMono\FreeMonospacedBold.otf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Fonts\FreeMono\FreeMonospacedBold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Fonts\FreeMono\FreeMonospacedBoldOblique.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Fonts\FreeMono\FreeMonospacedBoldOblique.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Fonts\FreeMono\FreeMonospacedOblique.otf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Fonts\FreeMono\FreeMonospacedOblique.ttf">

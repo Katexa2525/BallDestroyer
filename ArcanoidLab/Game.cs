@@ -30,6 +30,9 @@ namespace ArcanoidLab
     private GameMenu gameMenu;
     private GameState gameState;
     private SaveLoadState saveLoadState;
+    private MessageForm messageForm, messageFormSave, messageFormLoad, messageFormNew;
+    private enum MessEnum { form, save, load, newgame};
+    private MessEnum messEnum = MessEnum.form; 
 
     public RenderWindow window { get; set; }
     public VideoMode mode { get; set; } //размер игрового окна
@@ -53,23 +56,26 @@ namespace ArcanoidLab
       mode = new VideoMode(width, height);
       this.window = new RenderWindow(this.mode, title, Styles.Fullscreen);
       // создание области просмотра для главного окна
-      viewWindow = new SFML.Graphics.View(new FloatRect(0, 0, mode.Width, mode.Height));
-      viewWindow.Viewport = new FloatRect(0, 0, 1, 1); // Отображение на всю область окна
+      //viewWindow = new SFML.Graphics.View(new FloatRect(0, 0, mode.Width, mode.Height));
+      //viewWindow.Viewport = new FloatRect(0, 0, 1, 1); // Отображение на всю область окна
 
       // создание области просмотра для главного окна
-      viewMenu = new SFML.Graphics.View(new FloatRect(0, 0, mode.Width, mode.Height));
-      viewMenu.Viewport = new FloatRect(0, 0, 1, 1); // Отображение на всю область окна
+      //viewMenu = new SFML.Graphics.View(new FloatRect(0, 0, mode.Width, mode.Height));
+      //viewMenu.Viewport = new FloatRect(0, 0, 1, 1); // Отображение на всю область окна
 
       // Установка области просмотра в окно
-      window.SetView(viewWindow);
+      //window.SetView(viewWindow);
 
       this.window.SetVerticalSyncEnabled(true);
       this.window.SetFramerateLimit(60);
 
       this.window.Closed += (sender, args) =>
       {
-        if (MessageBox.Show("Выйти из игры", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-          this.window.Close();
+        //if (MessageBox.Show("Выйти из игры", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        //  this.window.Close();
+        messEnum = MessEnum.form;
+        GameSetting.IsVisibleMenu = false;
+        GameSetting.IsVisibleMessageForm = true;
       };
 
       // проверка ввода символов
@@ -88,13 +94,19 @@ namespace ArcanoidLab
         {
           gameMenu.TextBox.ContentText += args.Unicode;
         }
-        gameMenu.TextBox.SetContentText(gameMenu.TextBox.ContentText, "FreeMonospacedBold", 16, Color.Black, 300, 152);
+        gameMenu.TextBox.SetContentText(gameMenu.TextBox.ContentText, "FreeMonospacedBold", 16, Color.Black, 1010, 370);
         gameMenu.Draw(window, ball);
         GameSetting.PLAYER_NAME = gameMenu.TextBox.ContentText;
       };
-
+      // игровое меню
       gameMenu = new GameMenu(mode, this);
       saveLoadState = new SaveLoadState();
+
+      // Экземпляр для вывода формы с вопросом
+      messageForm = new MessageForm(mode, "Выйти из игры?", "Да(Y)", "Нет(N)", this);
+      messageFormNew = new MessageForm(mode, "Новая игра?", "Да(Y)", "Нет", this);
+      messageFormSave = new MessageForm(mode, "Cохранено!", "Ok(Y)", this);
+      messageFormLoad = new MessageForm(mode, "Загружено!", "Ok(Y)", this);
 
       // экземпляр класса для работы с текстом
       textManager = new TextManager();
@@ -194,14 +206,28 @@ namespace ArcanoidLab
           HandleEvents();
           KeyHandler();
           // Установка области просмотра меню в окно
-          window.SetView(viewMenu);
+          //window.SetView(viewMenu);
           gameMenu.Draw(window, ball);
+          window.Display();
+        }
+        else if (GameSetting.IsVisibleMessageForm)
+        {
+          HandleEvents();
+          KeyHandler();
+          if (messEnum == MessEnum.form)
+            messageForm.Draw(window);
+          else if (messEnum == MessEnum.save)
+            messageFormSave.Draw(window);
+          else if (messEnum == MessEnum.load)
+            messageFormLoad.Draw(window);
+          else if (messEnum == MessEnum.newgame)
+            messageFormNew.Draw(window);
           window.Display();
         }
         else if (GameSetting.LifeCount > 0)
         {
           // Установка области просмотра главного игрового окна
-          window.SetView(viewWindow);
+          //window.SetView(viewWindow);
           HandleEvents();
           KeyHandler();
           Update();
@@ -209,10 +235,14 @@ namespace ArcanoidLab
         }
         else
         {
-          if (MessageBox.Show("Игра окончена! Начать новую игру?", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            StartNewGame();
-          else
-            this.window.Close();
+          //if (MessageBox.Show("Игра окончена! Начать новую игру?", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+          //  StartNewGame();
+          //else
+          //  this.window.Close();
+          // отображаю сообщение
+          messEnum = MessEnum.newgame;
+          GameSetting.IsVisibleMenu = false;
+          GameSetting.IsVisibleMessageForm = false;
         }
       }
     }
@@ -279,10 +309,11 @@ namespace ArcanoidLab
       }
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Q)) // вызов меню в виде windows form
       {
-        winForm.FormUser.ShowDialog();
+        winForm.FormUser.Show();
       }
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) // вызов разработанного меню 
       {
+        messEnum = MessEnum.form;
         GameSetting.IsVisibleMenu = true;
       }
 
@@ -295,7 +326,7 @@ namespace ArcanoidLab
         // проверяю, было ли нажатие, тогда вызов экрана с пунктами меню
         if (Mouse.IsButtonPressed(Mouse.Button.Left) && buttonMainMenu.AliasButton == "main")
         {
-          winForm.FormUser.ShowDialog();
+          GameSetting.IsVisibleMenu = true;
         }
       }
       else
@@ -314,15 +345,34 @@ namespace ArcanoidLab
         {
           gameState = new GameState(ball, platform, block.Blocks, block.BlocksBonus);
           saveLoadState.SaveState(gameState);
+          // отображаю сообщение
+          messEnum = MessEnum.save;
+          GameSetting.IsVisibleMenu = false;
+          GameSetting.IsVisibleMessageForm = true;
         }
         else if (Keyboard.IsKeyPressed(Keyboard.Key.F3))
         {
           gameState = saveLoadState.LoadState(ball, platform, block, mode);
+          // отображаю сообщение
+          messEnum = MessEnum.load;
+          GameSetting.IsVisibleMenu = false;
+          GameSetting.IsVisibleMessageForm = true;
         }
-        else if (Keyboard.IsKeyPressed(Keyboard.Key.F12) && 
-                 MessageBox.Show("Выйти из игры", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        else if (Keyboard.IsKeyPressed(Keyboard.Key.F12))
         {
-          window.Close();
+          messEnum = MessEnum.form;
+          GameSetting.IsVisibleMenu = false;
+          GameSetting.IsVisibleMessageForm = true;
+        }
+        else if (Keyboard.IsKeyPressed(Keyboard.Key.N))
+        {
+          messEnum = MessEnum.form;
+          GameSetting.IsVisibleMenu = false;
+          GameSetting.IsVisibleMessageForm = false;
+        }
+        else if (Keyboard.IsKeyPressed(Keyboard.Key.Y))
+        {
+          this.window.Close(); // выход из игры GameSetting
         }
 
         // проверяю, находится ли курсор мыши над прямоугольником меню
@@ -335,17 +385,28 @@ namespace ArcanoidLab
           {
             GameSetting.IsVisibleMenu = false;
           }
-          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "exit" &&
-                   MessageBox.Show("Выйти из игры", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) // выход из игры через меню
-            window.Close();
+          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "exit")
+          {
+            messEnum = MessEnum.form;
+            GameSetting.IsVisibleMenu = false;
+            GameSetting.IsVisibleMessageForm = true;
+          }
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "save") // сохранение в json состояния игры
           {
             gameState = new GameState(ball, platform, block.Blocks, block.BlocksBonus);
             saveLoadState.SaveState(gameState);
+            // отображаю сообщение
+            messEnum = MessEnum.save;
+            GameSetting.IsVisibleMenu = false;
+            GameSetting.IsVisibleMessageForm = true;
           }
           else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "load") // загрузка из json состояния игры
           {
             gameState = saveLoadState.LoadState(ball, platform, block, mode);
+            // отображаю сообщение
+            messEnum = MessEnum.load;
+            GameSetting.IsVisibleMenu = false;
+            GameSetting.IsVisibleMessageForm = true;
           }
         }
         else

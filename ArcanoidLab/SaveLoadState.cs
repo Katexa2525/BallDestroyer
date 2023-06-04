@@ -26,7 +26,7 @@ namespace ArcanoidLab
         //Запись JSON-строки в файл
         File.WriteAllText(jsonFilePath, json);
         File.WriteAllText(txtFilePath, json);
-        MessageBox.Show("Сохранено!");
+        //MessageBox.Show("Сохранено!");
       }
       catch (Exception ex)
       {
@@ -80,11 +80,11 @@ namespace ArcanoidLab
         GameSetting.BALL_DELTA_X = gameState.BallDeltaX;
         GameSetting.BALL_DELTA_Y = gameState.BallDeltaY;
 
-        MessageBox.Show("Состояние игры загружено!", "Информация");
+        //MessageBox.Show("Состояние игры загружено!", "Информация");
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Ошибка восстановления: " + ex.Message, "Ошибка");
+        //MessageBox.Show("Ошибка восстановления: " + ex.Message, "Ошибка");
       }
       return gameState;
     }
