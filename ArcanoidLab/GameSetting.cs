@@ -15,7 +15,7 @@ namespace ArcanoidLab
     public static int LifeCount { get; set; } = 3; // начальное кол-во жизней в игре
     public static int SCORE_STEP { get; set; } = 10; // шаг для подсчета очков
     public static int SCORE_BONUS_STEP { get; set; } = 100; // бонус для очков
-    public static float BONUS_PLATFORM { get; set; } = 0.5f; // бонус для платформы
+    public static float BONUS_PLATFORM { get; set; } = 1.05f; // бонус для платформы
 
     public static float PLATFORM_SPEED { get; set; } = 15f; // скорость движения платформы
 
@@ -24,30 +24,5 @@ namespace ArcanoidLab
     public static string LEVEL { get; set; } = "Уровень 1"; // начальный уровень игры
     public static string PLAYER_NAME { get; set; } = "Катя"; // имя игрока
 
-    // Метод для изменения разрешения и обновления области просмотра
-    public static void ChangeResolution(RenderWindow window, Vector2u resolution)
-    {
-      window.Size = resolution;
-      // Пересчет координат фигуры с использованием MapPixelToCoords
-      //Vector2i mousePosition = Mouse.GetPosition(window);
-      //Vector2f worldCoords = window.MapPixelToCoords(mousePosition);
-      //window.Position = (Vector2i)worldCoords;
-
-      // Получение текущей области просмотра
-      View currentView = window.GetView();
-
-      // Вычисление новых границ области просмотра с учетом нового разрешения
-      float aspectRatio = (float)resolution.X / resolution.Y;
-      float viewWidth = currentView.Size.Y * aspectRatio;
-      float viewHeight = currentView.Size.Y;
-      float viewLeft = (currentView.Size.X - viewWidth) / 2;
-      float viewTop = 0;
-
-      // Создание новой области просмотра
-      View newView = new View(new FloatRect(viewLeft, viewTop, viewWidth, viewHeight));
-
-      // Установка новой области просмотра в окно
-      window.SetView(newView);
-    }
   }
 }

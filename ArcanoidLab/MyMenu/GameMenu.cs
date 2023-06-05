@@ -32,6 +32,7 @@ namespace ArcanoidLab
       ButtonMenus.Add(new ButtonMenu(150, 30, "Сохранить F2", "save", 18, "FreeMonospacedBold", 770, 270, Color.Red, Color.Yellow, mode));
       ButtonMenus.Add(new ButtonMenu(150, 30, "Загрузить F3", "load", 18, "FreeMonospacedBold", 930, 270, Color.Red, Color.Yellow, mode));
       ButtonMenus.Add(new ButtonMenu(110, 30, "Выход F12", "exit", 18, "FreeMonospacedBold", 1090, 270, Color.Red, Color.Yellow, mode));
+      ButtonMenus.Add(new ButtonMenu(130, 30, "Новая игра", "newGame", 18, "FreeMonospacedBold", 1070, 490, Color.Red, Color.Yellow, mode));
 
       // кнопки для переключения уровня сложности
       ButtonLevel.Add(new ButtonMenu(130, 30, "Уровень 1(F4)", "level1", 15, "FreeMonospacedBold", 650, 330, Color.Red, Color.Green, mode));
@@ -85,7 +86,10 @@ namespace ArcanoidLab
 
     private void KeyHandler(RenderTarget window, DisplayObject displayObject)
     {
+      // Пересчет координат фигуры с использованием MapPixelToCoords
       Vector2i mousePosition = Mouse.GetPosition((Window)window); // координаты мыши
+      Vector2f worldMouseCoords = window.MapPixelToCoords(mousePosition);
+      FloatRect localBounds, globalBounds;
 
       if (Keyboard.IsKeyPressed(Keyboard.Key.F4) && ButtonLevel[0].GetColorButton() != Color.Green) // продолжаем играть
         SetColorPressLevel(ButtonLevel[0], ButtonLevel, displayObject);
@@ -113,8 +117,13 @@ namespace ArcanoidLab
       // проверка, наведена ли мышь на кнопки изменения уровня
       for (int i = 0; i < ButtonLevel.Count; i++)
       {
+        // Пересчет границ фигуры с использованием TransformRect
+        localBounds = ButtonLevel[i].MenuItemRect.GetLocalBounds();
+        globalBounds = ButtonLevel[i].MenuItemRect.Transform.TransformRect(localBounds);
         // проверяю, находится ли курсор мыши над прямоугольником меню
-        if (ButtonLevel[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y) &&
+        //if (ButtonLevel[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y) &&
+        //    Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonLevel[i].GetColorButton() != Color.Green)
+        if (globalBounds.Contains(worldMouseCoords.X, worldMouseCoords.Y) &&
             Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonLevel[i].GetColorButton() != Color.Green)
         {
           // проверяю, было ли нажатие, тогда меняю цвета кнопок - одна нажата (зеленый), другие нет (синий)
@@ -126,8 +135,10 @@ namespace ArcanoidLab
       // проверка, наведена ли мышь на кнопки изменения уровня
       for (int i = 0; i < ButtonResol.Count; i++)
       {
+        localBounds = ButtonResol[i].MenuItemRect.GetLocalBounds();
+        globalBounds = ButtonResol[i].MenuItemRect.Transform.TransformRect(localBounds);
         // проверяю, находится ли курсор мыши над прямоугольником меню
-        if (ButtonResol[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y) &&
+        if (globalBounds.Contains(worldMouseCoords.X, worldMouseCoords.Y) &&
             Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonResol[i].GetColorButton() != Color.Green)
         {
           // проверяю, было ли нажатие, тогда меняю цвета кнопок - одна нажата (зеленый), другие нет (синий)
@@ -233,6 +244,7 @@ namespace ArcanoidLab
         GameSetting.IsVisibleMenu = false;
         GameSetting.IsVisibleMessageForm = false;
         Game.window.Size = new Vector2u(1280, 960);
+
         //float aspectRatio = (float)1280 / 960;
         //GameSetting.ChangeResolution(Game.window, new Vector2u(1280, 960));
       }

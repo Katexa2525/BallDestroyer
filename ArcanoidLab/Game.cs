@@ -103,10 +103,10 @@ namespace ArcanoidLab
       saveLoadState = new SaveLoadState();
 
       // Экземпляр для вывода формы с вопросом
-      messageForm = new MessageForm(mode, "Выйти из игры?", "Да(Y)", "Нет(N)", this);
-      messageFormNew = new MessageForm(mode, "Новая игра?", "Да(Y)", "Нет", this);
-      messageFormSave = new MessageForm(mode, "Cохранено!", "Ok(Y)", this);
-      messageFormLoad = new MessageForm(mode, "Загружено!", "Ok(Y)", this);
+      messageForm = new MessageForm(mode, "Выйти из игры?", "Да", "Нет", this, "yes");
+      messageFormNew = new MessageForm(mode, "Новая игра?", "Да", "Нет", this, "newGame");
+      messageFormSave = new MessageForm(mode, "Cохранено!", "Ok", this);
+      messageFormLoad = new MessageForm(mode, "Загружено!", "Ok", this);
 
       // экземпляр класса для работы с текстом
       textManager = new TextManager();
@@ -235,14 +235,10 @@ namespace ArcanoidLab
         }
         else
         {
-          //if (MessageBox.Show("Игра окончена! Начать новую игру?", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-          //  StartNewGame();
-          //else
-          //  this.window.Close();
           // отображаю сообщение
           messEnum = MessEnum.newgame;
           GameSetting.IsVisibleMenu = false;
-          GameSetting.IsVisibleMessageForm = false;
+          GameSetting.IsVisibleMessageForm = true ;
         }
       }
     }
@@ -298,14 +294,18 @@ namespace ArcanoidLab
     // метод обработчик нажатия клавиш
     private void KeyHandler()
     {
+      // Пересчет координат фигуры с использованием MapPixelToCoords
       Vector2i mousePosition = Mouse.GetPosition(window); // координаты мыши
+      Vector2f worldMouseCoords = window.MapPixelToCoords(mousePosition);
+      FloatRect localBounds;
+      FloatRect globalBounds;
 
       if (!GameSetting.IsStart) // если игра не началась, то проверяем нажатие, иначе нет
         GameSetting.IsStart = Keyboard.IsKeyPressed(Keyboard.Key.Space);
 
       if (Keyboard.IsKeyPressed(Keyboard.Key.F5)) // новая игра
       {
-        StartNewGame();
+        StartNewGame(mode);
       }
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Q)) // вызов меню в виде windows form
       {
@@ -317,8 +317,12 @@ namespace ArcanoidLab
         GameSetting.IsVisibleMenu = true;
       }
 
+      // Пересчет границ фигуры с использованием TransformRect
+      localBounds = buttonMainMenu.MenuItemRect.GetLocalBounds();
+      globalBounds = buttonMainMenu.MenuItemRect.Transform.TransformRect(localBounds);
       // проверяю, находится ли курсор мыши над прямоугольником главной кнопки меню
-      if (buttonMainMenu.MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
+      //if (buttonMainMenu.MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
+      if (globalBounds.Contains(worldMouseCoords.X, worldMouseCoords.Y))
       {
         // курсор мыши находится над прямоугольником пункта меню 
         buttonMainMenu.SetColorButton(Color.Magenta); // меняю цвет пункта
@@ -339,6 +343,10 @@ namespace ArcanoidLab
       // проверка, наведена ли мышь на пункт меню
       for (int i = 0; i < gameMenu.ButtonMenus.Count; i++)
       {
+        // Пересчет границ фигуры с использованием TransformRect
+        localBounds = gameMenu.ButtonMenus[i].MenuItemRect.GetLocalBounds();
+        globalBounds = gameMenu.ButtonMenus[i].MenuItemRect.Transform.TransformRect(localBounds);
+
         if (Keyboard.IsKeyPressed(Keyboard.Key.F1)) // продолжаем играть
           GameSetting.IsVisibleMenu = false;
         else if (Keyboard.IsKeyPressed(Keyboard.Key.F2))
@@ -364,19 +372,10 @@ namespace ArcanoidLab
           GameSetting.IsVisibleMenu = false;
           GameSetting.IsVisibleMessageForm = true;
         }
-        else if (Keyboard.IsKeyPressed(Keyboard.Key.N))
-        {
-          messEnum = MessEnum.form;
-          GameSetting.IsVisibleMenu = false;
-          GameSetting.IsVisibleMessageForm = false;
-        }
-        else if (Keyboard.IsKeyPressed(Keyboard.Key.Y))
-        {
-          this.window.Close(); // выход из игры GameSetting
-        }
 
         // проверяю, находится ли курсор мыши над прямоугольником меню
-        if (gameMenu.ButtonMenus[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
+        //if (gameMenu.ButtonMenus[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y))
+        if (globalBounds.Contains(worldMouseCoords.X, worldMouseCoords.Y))
         {
           // курсор мыши находится над прямоугольником пункта меню 
           gameMenu.ButtonMenus[i].SetColorButton(Color.Magenta); // меняю цвет пункта
@@ -408,6 +407,13 @@ namespace ArcanoidLab
             GameSetting.IsVisibleMenu = false;
             GameSetting.IsVisibleMessageForm = true;
           }
+          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && gameMenu.ButtonMenus[i].AliasButton == "newGame") // загрузка из json состояния игры
+          {
+            // отображаю сообщение
+            GameSetting.IsVisibleMenu = false;
+            GameSetting.IsVisibleMessageForm = false;
+            StartNewGame(mode);
+          }
         }
         else
         {
@@ -426,18 +432,21 @@ namespace ArcanoidLab
       {
         textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
       }
-      if (ball.IsBonus_2) // в блок для бонуса платформы попал шар
+      else if (ball.IsBonus_2) // в блок для бонуса платформы попал шар
       {
         textManager.OnTextBonusChanged(new TextBonusEventArgs("x" + GameSetting.BONUS_PLATFORM.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
       }
+      //else
+      //  textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_STEP.ToString(), "", 26, Color.Green, ball.positionObject));
     }
 
-    private void StartNewGame()
+    public void StartNewGame(VideoMode mode)
     {
       GameSetting.IsStart = true;
       GameSetting.LifeCount = GameSetting.LIFE_TOTAL;
       GameSetting.Score = 0;
       block.Update(mode);
+      platform.StartPosition(mode);
     }
 
   }

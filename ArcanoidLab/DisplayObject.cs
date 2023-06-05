@@ -195,10 +195,11 @@ namespace ArcanoidLab
 
         IsIntersection = CheckIntersection(staticDO, dynamicDO, mode);
 
-        if (IsBonus_2) // бонус для платформы, умножаю маштаб в 1.5 раз
+        if (IsBonus_2) // бонус для платформы
         {
           platform.Scale += GameSetting.BONUS_PLATFORM;
           platform.Sprite.Scale = new Vector2f(platform.Scale, platform.Scale);
+          IsBonus_2 = false; // чтобы бесконечно не увеличивалось
         }
 
         OnRoundGameChanged(new IntersectionEventArgs(ball, blocks, platform, heartScull, mode, window));
