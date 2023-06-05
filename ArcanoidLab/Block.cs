@@ -70,12 +70,12 @@ namespace ArcanoidLab
       // разукрашиваю блоки с бонусами
       // 1 - бонус +100 очков, 2 - бонус увеличение платформы
       Random random = new Random();
-      for (int i = 0; i < 13; i++)
+      for (int i = 0; i < 33; i++)
       {
         int randomBlock = random.Next(0, n-1);
         Blocks[randomBlock].Sprite.Texture = TextureManager.BlockBonus1Texture;
         BlocksBonus[Blocks[randomBlock]] = 1; // бонус для блока
-        if (i > 9)
+        if (i > 29)
         {
           Blocks[randomBlock].Sprite.Texture = TextureManager.BlockBonus2Texture;
           BlocksBonus[Blocks[randomBlock]] = 2; // бонус для платформы

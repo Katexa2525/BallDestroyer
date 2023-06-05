@@ -13,18 +13,18 @@ namespace ArcanoidLab
     public void OnStart()
     {
       // Подписываюсь на событие Elapsed таймера
-      timer.Elapsed += OnTimerElapsed;
+      //timer.Elapsed += OnTimerElapsed;
 
       // Запускаю таймер
       timer.Start();
     }
 
     // Событие таймера
-    static void OnTimerElapsed(object sender, ElapsedEventArgs e)
-    {
-      // Вычисляю прошедшее время
-      elapsedTime = DateTime.Now - startTime;
-    }
+    //static void OnTimerElapsed(object sender, ElapsedEventArgs e)
+    //{
+    //  // Вычисляю прошедшее время
+    //  elapsedTime = DateTime.Now - startTime;
+    //}
 
     /// <summary> Вывод прошедшего времени по-секундно</summary>
     public string GetElapsedTime(string label)

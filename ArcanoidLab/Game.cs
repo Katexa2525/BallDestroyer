@@ -2,8 +2,10 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System;
 using System.Globalization;
 using System.Text;
+using System.Timers;
 
 namespace ArcanoidLab
 {
@@ -27,7 +29,9 @@ namespace ArcanoidLab
     private SaveLoadState saveLoadState;
     private MessageForm messageForm, messageFormSave, messageFormLoad, messageFormNew;
     private enum MessEnum { form, save, load, newgame};
-    private MessEnum messEnum = MessEnum.form; 
+    private MessEnum messEnum = MessEnum.form;
+
+    public static Events events = new Events();
 
     public RenderWindow window { get; set; }
     public VideoMode mode { get; set; } //размер игрового окна
@@ -100,31 +104,39 @@ namespace ArcanoidLab
       // загрузка для работы со шрифтами
       TextureManager.LoadTexture();
       textManager.LoadFont("FreeMonospacedBold");
-      textManager.TextBonusChanged += HandleTextBonusChanged;
+      textManager.Events.TextBonusChanged += HandleTextBonusChanged;
 
       // создаю экземпляры классов
       platform = new Platform(mode);
-      platform.PlatformMoveChanged += HandlePlatformMoveChanged;
+      platform.Events.PlatformMoveChanged += HandlePlatformMoveChanged;
 
       block = new Block(mode);
 
       ball = new Ball(mode);
-      ball.DeltaChanged += HandleDeltaChanged; // подписка на событие 
-      ball.IntersectionChanged += HandleIntersectionChanged; // подписка на событие
-      ball.RoundGameChanged += HandleRoundGameChanged;
-      ball.ReboundAfterScreenCollisionChanged += HandleReboundAfterScreenCollisionChanged; // подписка на событие определения смещения после отскока от рамок игрового экрана
-      ball.ReboundAfterCollisionChanged += HandleReboundAfterCollisionChanged; // подписка на событие определения отскока после столкновения
+      ball.Events.DeltaChanged += HandleDeltaChanged; // подписка на событие 
+      ball.Events.IntersectionChanged += HandleIntersectionChanged; // подписка на событие
+      ball.Events.RoundGameChanged += HandleRoundGameChanged;
+      ball.Events.ReboundAfterScreenCollisionChanged += HandleReboundAfterScreenCollisionChanged; // подписка на событие определения смещения после отскока от рамок игрового экрана
+      ball.Events.ReboundAfterCollisionChanged += HandleReboundAfterCollisionChanged; // подписка на событие определения отскока после столкновения
 
       heartScull = new HeartScull();
-      heartScull.HeartScullChanged += HandleHeartScullChanged;
+      heartScull.Events.HeartScullChanged += HandleHeartScullChanged;
 
       Secundomer = new Secundomer();
+      Secundomer.timer.Elapsed += HandleTimerElapsed;
+
       winForm = new WinForm(ball, platform, block, mode, this);
 
       // в поле positionObject объекта DisplayObject заношу координаты шара
       ball.positionObject = ball.Sprite.Position;
       // кнопка для вызова меню на главном окне 
       buttonMainMenu = new ButtonMenu(80, 15, "Меню Esc", "main", 13, "FreeMonospacedBold", 620, 2, Color.Red, Color.Yellow, mode);
+    }
+
+    private void HandleTimerElapsed(object sender, ElapsedEventArgs e)
+    {
+      // Вычисляю прошедшее время
+      Secundomer.elapsedTime = DateTime.Now - Secundomer.startTime;
     }
 
     // обработчик события изменения скорости шарика

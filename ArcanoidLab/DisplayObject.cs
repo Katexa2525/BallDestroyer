@@ -44,48 +44,49 @@ namespace ArcanoidLab
     public abstract void Draw(RenderTarget window);
     public abstract void Draw(RenderTarget window, VideoMode mode);
 
-    //События базового класса 
-    public event EventHandler<DeltaEventArgs> DeltaChanged; //Событие на изменение скорости шарика
-    public event EventHandler<IntersectionEventArgs> IntersectionChanged; //Событие на пересечение объектов
-    public event EventHandler<HeartScullEventArgs> HeartScullChanged; //Событие на изменение жизни, перерисовка
-    public event EventHandler<PlatformEventArgs> PlatformMoveChanged; //Событие на изменение положения платформы
-    public event EventHandler<IntersectionEventArgs> RoundGameChanged; //Событие на окончание раунда игры или всей игры
-    public event EventHandler<IntersectionEventArgs> ReboundAfterScreenCollisionChanged; //Событие на определение смещения после отскока от рамок игрового экрана
-    public event EventHandler<IntersectionEventArgs> ReboundAfterCollisionChanged; // Событие на определение отскока после столкновения
-    public event EventHandler<TextBonusEventArgs> TextBonusChanged; // Событие на столкновение показом текстового бонуса
+    /// <summary> События базового класса  </summary>
+    public Events Events { get; set; } = new Events();
 
     //Методы вызова события, который производные классы могут переопределить.
     public virtual void OnDeltaChanged(DeltaEventArgs e)
     {
-      DeltaChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //DeltaChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnDeltaChanged(this, e);
     }
     public virtual void OnIntersectionChanged(IntersectionEventArgs e)
     {
-      IntersectionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //IntersectionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnIntersectionChanged(this, e);
     }
     public virtual void OnHeartScullChanged(HeartScullEventArgs e)
     {
-      HeartScullChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //HeartScullChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnHeartScullChanged(this, e);
     }
     public virtual void OnPlatformMoveChanged(PlatformEventArgs e)
     {
-      PlatformMoveChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //PlatformMoveChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnPlatformMoveChanged(this, e);
     }
     public virtual void OnRoundGameChanged(IntersectionEventArgs e)
     {
-      RoundGameChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //RoundGameChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnRoundGameChanged(this, e);
     }
     public virtual void OnReboundAfterScreenCollisionChanged(IntersectionEventArgs e)
     {
-      ReboundAfterScreenCollisionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //ReboundAfterScreenCollisionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnReboundAfterScreenCollisionChanged (this, e);
     }
     public virtual void OnReboundAfterCollisionChanged(IntersectionEventArgs e)
     {
-      ReboundAfterCollisionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //ReboundAfterCollisionChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnReboundAfterCollisionChanged (this, e);
     }
     public virtual void OnTextBonusChanged(TextBonusEventArgs e)
     {
-      TextBonusChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      //TextBonusChanged?.Invoke(this, e);  // Безопасно поднять событие для всех подписчиков
+      this.Events.OnTextBonusChanged (this, e);
     }
     //
 

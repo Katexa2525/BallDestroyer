@@ -9,7 +9,7 @@ namespace ArcanoidLab
   /// <summary> Класс для создание картинок жизни и потери жизни в виде сердца и черепа соответсвенно </summary>
   public class HeartScull : DisplayObject
   {
-    private List<Sprite> sprite;
+    private List<Sprite> sprite = new List<Sprite>();
     private Vector2f position;
 
     public override void OnHeartScullChanged(HeartScullEventArgs e)
