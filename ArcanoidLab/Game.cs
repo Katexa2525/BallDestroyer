@@ -2,11 +2,8 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Windows.Forms;
 
 namespace ArcanoidLab
 {
@@ -17,8 +14,6 @@ namespace ArcanoidLab
     private const int HEIGHT = 768;
     private const string TITLE = "АРКАНОИД";
     private Sprite background;
-    private SFML.Graphics.View viewWindow;
-    private SFML.Graphics.View viewMenu;
 
     private Platform platform;
     private Block block;
@@ -55,24 +50,12 @@ namespace ArcanoidLab
     {
       mode = new VideoMode(width, height);
       this.window = new RenderWindow(this.mode, title, Styles.Fullscreen);
-      // создание области просмотра для главного окна
-      //viewWindow = new SFML.Graphics.View(new FloatRect(0, 0, mode.Width, mode.Height));
-      //viewWindow.Viewport = new FloatRect(0, 0, 1, 1); // Отображение на всю область окна
-
-      // создание области просмотра для главного окна
-      //viewMenu = new SFML.Graphics.View(new FloatRect(0, 0, mode.Width, mode.Height));
-      //viewMenu.Viewport = new FloatRect(0, 0, 1, 1); // Отображение на всю область окна
-
-      // Установка области просмотра в окно
-      //window.SetView(viewWindow);
 
       this.window.SetVerticalSyncEnabled(true);
       this.window.SetFramerateLimit(60);
 
       this.window.Closed += (sender, args) =>
       {
-        //if (MessageBox.Show("Выйти из игры", "Вопрос...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-        //  this.window.Close();
         messEnum = MessEnum.form;
         GameSetting.IsVisibleMenu = false;
         GameSetting.IsVisibleMessageForm = true;
@@ -206,7 +189,6 @@ namespace ArcanoidLab
           HandleEvents();
           KeyHandler();
           // Установка области просмотра меню в окно
-          //window.SetView(viewMenu);
           gameMenu.Draw(window, ball);
           window.Display();
         }
@@ -227,7 +209,6 @@ namespace ArcanoidLab
         else if (GameSetting.LifeCount > 0)
         {
           // Установка области просмотра главного игрового окна
-          //window.SetView(viewWindow);
           HandleEvents();
           KeyHandler();
           Update();
@@ -447,6 +428,8 @@ namespace ArcanoidLab
       GameSetting.Score = 0;
       block.Update(mode);
       platform.StartPosition(mode);
+      platform.Scale = 1.5f;
+      platform.Sprite.Scale = new Vector2f(platform.Scale, platform.Scale);
     }
 
   }

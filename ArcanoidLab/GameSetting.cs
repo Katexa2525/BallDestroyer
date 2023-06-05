@@ -1,8 +1,4 @@
-﻿using SFML.Graphics;
-using SFML.System;
-using SFML.Window;
-
-namespace ArcanoidLab
+﻿namespace ArcanoidLab
 {
   public static class GameSetting
   {

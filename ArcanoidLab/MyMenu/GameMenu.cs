@@ -1,10 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
 using System.Collections.Generic;
-// подключаем атрибут DllImport
-using System.Runtime.InteropServices;
 
 namespace ArcanoidLab
 {
@@ -12,11 +9,7 @@ namespace ArcanoidLab
   public class GameMenu
   {
     private Game Game;
-    RectangleShape rectangleForm;
-    RectangleShape rectangleFormShadow;
-    GameForm gameFormMess;
     GameForm gameForm;
-    MessageForm messageFormOK;
 
     public List<ButtonMenu> ButtonMenus { get; set; } = new List<ButtonMenu>();
     public List<ButtonMenu> ButtonLevel { get; set; } = new List<ButtonMenu>();
@@ -121,8 +114,6 @@ namespace ArcanoidLab
         localBounds = ButtonLevel[i].MenuItemRect.GetLocalBounds();
         globalBounds = ButtonLevel[i].MenuItemRect.Transform.TransformRect(localBounds);
         // проверяю, находится ли курсор мыши над прямоугольником меню
-        //if (ButtonLevel[i].MenuItemRect.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y) &&
-        //    Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonLevel[i].GetColorButton() != Color.Green)
         if (globalBounds.Contains(worldMouseCoords.X, worldMouseCoords.Y) &&
             Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonLevel[i].GetColorButton() != Color.Green)
         {

@@ -81,7 +81,7 @@ namespace ArcanoidLab
           ButtonMenus[i].SetColorButton(Color.Magenta); // меняю цвет пункта
           ButtonMenus[i].SetColorTextButton(Color.Black); // меняю цвет текста
           // проверяю, было ли нажатие, тогда вызов экрана с пунктами меню
-          if ((Mouse.IsButtonPressed(Mouse.Button.Left) || Keyboard.IsKeyPressed(Keyboard.Key.Y)) && ButtonMenus[i].AliasButton == "yes")
+          if (Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonMenus[i].AliasButton == "yes")
           {
             Game.window.Close(); // выход из игры GameSetting
           }
@@ -91,7 +91,7 @@ namespace ArcanoidLab
             GameSetting.IsVisibleMessageForm = false;
             Game.StartNewGame(Game.mode); // запуск новой игры
           }
-          else if ((Mouse.IsButtonPressed(Mouse.Button.Left) || Keyboard.IsKeyPressed(Keyboard.Key.N)) && ButtonMenus[i].AliasButton == "no")
+          else if (Mouse.IsButtonPressed(Mouse.Button.Left) && ButtonMenus[i].AliasButton == "no")
           {
             GameSetting.IsVisibleMenu = false;
             GameSetting.IsVisibleMessageForm = false;
