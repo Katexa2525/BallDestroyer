@@ -10,16 +10,23 @@ namespace ArcanoidLab
     public delegate void TimerHandler(object sender, ElapsedEventArgs e);
     public event TimerHandler TimerElapsed; // Cобытие Elapsed таймера
 
-    //public event EventHandler TimerElapsed; // Cобытие Elapsed таймера
+    public delegate void DeltaHandler(object sender, DeltaEventArgs e);
+    public event DeltaHandler DeltaChanged; //Событие на изменение скорости шарика
 
-    public event EventHandler<DeltaEventArgs> DeltaChanged; //Событие на изменение скорости шарика
-    public event EventHandler<IntersectionEventArgs> IntersectionChanged; //Событие на пересечение объектов
-    public event EventHandler<HeartScullEventArgs> HeartScullChanged; //Событие на изменение жизни, перерисовка
-    public event EventHandler<PlatformEventArgs> PlatformMoveChanged; //Событие на изменение положения платформы
-    public event EventHandler<IntersectionEventArgs> RoundGameChanged; //Событие на окончание раунда игры или всей игры
-    public event EventHandler<IntersectionEventArgs> ReboundAfterScreenCollisionChanged; //Событие на определение смещения после отскока от рамок игрового экрана
-    public event EventHandler<IntersectionEventArgs> ReboundAfterCollisionChanged; // Событие на определение отскока после столкновения
-    public event EventHandler<TextBonusEventArgs> TextBonusChanged; // Событие на столкновение показом текстового бонуса
+    public delegate void IntersectionHandler(object sender, IntersectionEventArgs e);
+    public event IntersectionHandler IntersectionChanged; //Событие на пересечение объектов
+    public event IntersectionHandler RoundGameChanged; //Событие на окончание раунда игры или всей игры
+    public event IntersectionHandler ReboundAfterScreenCollisionChanged; //Событие на определение смещения после отскока от рамок игрового экрана
+    public event IntersectionHandler ReboundAfterCollisionChanged; // Событие на определение отскока после столкновения
+
+    public delegate void HeartScullHandler(object sender, HeartScullEventArgs e);
+    public event HeartScullHandler HeartScullChanged; //Событие на изменение жизни, перерисовка
+
+    public delegate void PlatformHandler(object sender, PlatformEventArgs e);
+    public event PlatformHandler PlatformMoveChanged; //Событие на изменение положения платформы
+
+    public delegate void TextBonusHandler(object sender, TextBonusEventArgs e);
+    public event TextBonusHandler TextBonusChanged; // Событие на столкновение показом текстового бонуса
 
     /// <summary> Cобытие Elapsed таймера </summary>
     /// <param name="e"></param>

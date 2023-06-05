@@ -423,11 +423,11 @@ namespace ArcanoidLab
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
       if (ball.IsBonus_1) // в блок для бонусных очков попал шар
       {
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, ball.positionObject ));
       }
       else if (ball.IsBonus_2) // в блок для бонуса платформы попал шар
       {
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("x" + GameSetting.BONUS_PLATFORM.ToString(), "", 26, Color.Red, ball.positionObject /*new Vector2f(450f, 400f)*/));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("x" + GameSetting.BONUS_PLATFORM.ToString(), "", 26, Color.Red, ball.positionObject));
       }
       //else
       //  textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_STEP.ToString(), "", 26, Color.Green, ball.positionObject));
