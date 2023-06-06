@@ -5,6 +5,7 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace ArcanoidLab
 {
@@ -21,8 +22,8 @@ namespace ArcanoidLab
     public float Scale { get; set; } = 1; // масштаб фигуры во сколько раз увеличить
     public bool SmoothTexture { get; set; } = false; // сглаживание текстуры по умолчанию
     public bool IsIntersection { get; set; } = false; // есть пересечение
-    public bool IsBonus_1 { get; set; } = false; // есть пересечение
-    public bool IsBonus_2 { get; set; } = false; // есть пересечение
+    public bool IsBonus_1 { get; set; } = false; 
+    public bool IsBonus_2 { get; set; } = false; 
     [JsonIgnore]
     public Sprite Sprite { get; set; } = new Sprite(); // сам объект (блок, шарик, платформа)
     [JsonIgnore]
@@ -33,6 +34,9 @@ namespace ArcanoidLab
     public List<DisplayObject> StaticDOList { get; set; } // статические объекты, с которыми подразумевается пересечение, нужно для событий
     [JsonIgnore]
     public Dictionary<DisplayObject, int> DOBonus { get; set; } = new Dictionary<DisplayObject, int>();  // словарь для с объектами обычными и бонусными (блоки) 
+    public bool IsBonus { get; set; } = false; // признак, что есть ли вообще бонус, или нет
+    public bool IsBonusShow { get; set; } = false; // признак, что бонус отображается, или нет
+    public int BonusPoint { get; set; } = 0; // кол-во очков за бонус, может быть и отрицательным
 
     public int x1 { get; set; } = 0;  // координата х1 фигуры верхнего левого угла
     public int y1 { get; set; } =  0; // координата у1 фигуры верхнего левого угла
@@ -100,7 +104,7 @@ namespace ArcanoidLab
     {
       for (int i = 0; i < dynamicDO.Count; i++)
       {
-        for (int k = 0; k < staticDO.Count; k++)
+        for (int k = 0; k < staticDO.Count-1; k++)
         {
           if ((dynamicDO[i].y1 <= staticDO[k].y2 && dynamicDO[i].y1 >= staticDO[k].y1 && dynamicDO[i].x1 >= staticDO[k].x1 && dynamicDO[i].x1 <= staticDO[k].x2) || // подлет снизу к объекту
               (dynamicDO[i].x1 <= staticDO[k].x2 && dynamicDO[i].x1 >= staticDO[k].x1 && dynamicDO[i].y1 >= staticDO[k].y1 && dynamicDO[i].y1 <= staticDO[k].y2) || // подлет к правой стенке объекту
@@ -153,9 +157,11 @@ namespace ArcanoidLab
     public void ReboundAfterCollisionExec(DisplayObject staticObject, DisplayObject dynamicObject, List<DisplayObject> staticDO)
     {
       Random random = new Random();
-      if (staticObject is Block staticBlock)
+      if (staticObject is Block)
       {
-        staticObject.Sprite.Position = new Vector2f(-100, 0);
+        // устанавливаю позицию бонуса в позицию блока
+        staticDO[staticDO.Count - 1].positionObject = new Vector2f(staticObject.Sprite.Position.X, staticObject.Sprite.Position.Y);
+        staticObject.Sprite.Position = new Vector2f(-100, 0); // исчезновение блока
         if (dynamicObject.x1 < staticObject.x1) // левая стенка блока
           dx = dx > 0 ? -dx : dx;
         if (dynamicObject.x2 > staticObject.x2) // правая стенка блока
@@ -163,7 +169,7 @@ namespace ArcanoidLab
         if (dynamicObject.y1 < staticObject.y2) // если столкновение о нижнюю часть блока
           dy = -dy;
         // проверяю, является ли блок бонусным
-        IsBonus_1 = (DOBonus.ContainsKey(staticObject) && DOBonus[staticObject] == 1);
+        IsBonus_1 = staticObject.IsBonus; //(DOBonus.ContainsKey(staticObject) && DOBonus[staticObject] == 1);
         IsBonus_2 = (DOBonus.ContainsKey(staticObject) && DOBonus[staticObject] == 2);
         // удаляю блок после столкновения из массива
         staticDO.Remove(staticObject);
@@ -179,7 +185,7 @@ namespace ArcanoidLab
 
     /// <summary> Метод проверки пересечения объектов шара с блоками, платформой, стенками игрового экрана </summary>
     public virtual void ObjectIntersection(DisplayObject ball, List<DisplayObject> blocks, DisplayObject platform, DisplayObject heartScull,
-                                           Dictionary<DisplayObject, int> doBonus, VideoMode mode, RenderTarget window)
+                                           Dictionary<DisplayObject, int> doBonus, DisplayObject bonus, VideoMode mode, RenderTarget window)
     {
       if (GameSetting.IsStart)
       {
@@ -192,14 +198,14 @@ namespace ArcanoidLab
         dynamicDO.Add(ball);
         List<DisplayObject> staticDO = blocks;
         staticDO.Add(platform);
+        staticDO.Add(bonus); 
         DOBonus = doBonus;
 
         IsIntersection = CheckIntersection(staticDO, dynamicDO, mode);
 
         if (IsBonus_2) // бонус для платформы
         {
-          platform.Scale += GameSetting.BONUS_PLATFORM;
-          platform.Sprite.Scale = new Vector2f(platform.Scale, platform.Scale);
+          platform.ChangeSize(GameSetting.BONUS_PLATFORM, "*", platform);
           IsBonus_2 = false; // чтобы бесконечно не увеличивалось
         }
 
@@ -239,6 +245,31 @@ namespace ArcanoidLab
     public void SetSpeedDO(int _x, int _y)
     {
       dx = _x; dy = _y;
+    }
+
+    /// <summary> Метод для увеличения объекта, например, если в бонусный блок попал </summary>
+    /// <param name="scale">на сколько увеличить</param>
+    public void ChangeSize(float size, string znak, DisplayObject displayObject)
+    {
+      if (znak == "+")
+        displayObject.Scale += size;
+      else if (znak == "-")
+        displayObject.Scale -= size;
+      else if (znak == "*")
+        displayObject.Scale *= size;
+      else if (znak == "/")
+        displayObject.Scale /= size;
+      else
+        displayObject.Scale *= 1;
+      displayObject.Sprite.Scale = new Vector2f(displayObject.Scale, displayObject.Scale);
+      // первоначально платформа в левом нижнем углу игрового поля
+      displayObject.x1 = 0;
+      displayObject.y1 = (int)(displayObject.Sprite.Texture.Size.Y * displayObject.Scale); // координаты левого верхнего угла
+      displayObject.x2 = (int)(displayObject.Sprite.Texture.Size.X * displayObject.Scale);
+      displayObject.y2 = 0; // координаты правого нижнего угла
+
+      displayObject.SpriteWidth = Math.Abs(displayObject.x1 - displayObject.x2); // ширина блока
+      displayObject.SpriteHeight = Math.Abs(displayObject.y1 - displayObject.y2); // высота блока
     }
   }
 }

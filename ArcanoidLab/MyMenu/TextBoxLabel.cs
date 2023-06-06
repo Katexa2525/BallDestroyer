@@ -58,5 +58,10 @@ namespace ArcanoidLab
       window.Draw(LabelText);
     }
 
+    public void SetPositionLabelText(Vector2f position)
+    {
+      LabelText.Position = position;
+    }
+
   }
 }

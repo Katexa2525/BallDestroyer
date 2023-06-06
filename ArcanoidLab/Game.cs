@@ -3,6 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Timers;
@@ -16,12 +17,14 @@ namespace ArcanoidLab
     private const int HEIGHT = 768;
     private const string TITLE = "АРКАНОИД";
     private Sprite background;
+    private DateTime deltaTime; // время, прошедшее с предыдущего кадра
 
     private Platform platform;
     private Block block;
     private Ball ball;
     private HeartScull heartScull;
     private TextManager textManager;
+    private Bonus bonus;
     private ButtonMenu buttonMainMenu;
     private WinForm winForm;
     private GameMenu gameMenu;
@@ -111,6 +114,8 @@ namespace ArcanoidLab
       platform.Events.PlatformMoveChanged += HandlePlatformMoveChanged;
 
       block = new Block(mode);
+      //bonus = new Bonus(mode, "+100", 36, Color.Black, (mode.Width / 2) - 150, (mode.Height / 2) - 152);
+      bonus = new Bonus();
 
       ball = new Ball(mode);
       ball.Events.DeltaChanged += HandleDeltaChanged; // подписка на событие 
@@ -150,7 +155,7 @@ namespace ArcanoidLab
     private void HandleIntersectionChanged(object sender, IntersectionEventArgs e)
     {
       if (sender is Ball _ball)
-        _ball.ObjectIntersection(e.Ball, e.Blocks, e.Platform, e.HeartScull, e.DOBonus, e.Mode, e.Window);
+        _ball.ObjectIntersection(e.Ball, e.Blocks, e.Platform, e.HeartScull, e.DOBonus, e.Bonus, e.Mode, e.Window);
     }
 
     // обработчик события обновления жизни игрока
@@ -195,6 +200,7 @@ namespace ArcanoidLab
     {
       while (this.window.IsOpen)
       {
+        deltaTime = DateTime.Now;
         Secundomer.OnStart(); // запуск секундомера
         if (GameSetting.IsVisibleMenu)
         {
@@ -245,7 +251,7 @@ namespace ArcanoidLab
       KeyHandler();
       UpdateScore();
       // вызываю проверку коллизии, т.е. пересечения фигур
-      ball.OnIntersectionChanged(new IntersectionEventArgs(ball, block.Blocks, platform, heartScull, block.BlocksBonus, mode, window)); // через событие
+      ball.OnIntersectionChanged(new IntersectionEventArgs(ball, block.Blocks, platform, heartScull, block.BlocksBonus, bonus, mode, window)); // через событие
       //ball.ObjectIntersection(ball, block.Blocks, platform, heartScull, mode, window);
       // если шарик не попал в платформу, то стартовые позиции объектов шарик и платформа
       if (!GameSetting.IsStart) 
@@ -253,6 +259,7 @@ namespace ArcanoidLab
         ball.StartPosition(mode);
         platform.StartPosition(mode);
         ball.positionObject = ball.Sprite.Position;
+        bonus.StartPosition(mode);
       }
       ball.Sprite.Position = ball.positionObject; // новые координаты шарика
     }
@@ -423,14 +430,17 @@ namespace ArcanoidLab
       textManager.TypeText("Очки: ", GameSetting.Score.ToString(), 14, Color.White, new Vector2f(5f, 0f));
       if (ball.IsBonus_1) // в блок для бонусных очков попал шар
       {
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, ball.positionObject ));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_BONUS_STEP.ToString(), "", 26, Color.Red, bonus.positionObject ));
       }
       else if (ball.IsBonus_2) // в блок для бонуса платформы попал шар
       {
-        textManager.OnTextBonusChanged(new TextBonusEventArgs("x" + GameSetting.BONUS_PLATFORM.ToString(), "", 26, Color.Red, ball.positionObject));
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("x" + GameSetting.BONUS_PLATFORM.ToString(), "", 26, Color.Red, bonus.positionObject));
       }
-      //else
-      //  textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_STEP.ToString(), "", 26, Color.Green, ball.positionObject));
+      else
+        textManager.OnTextBonusChanged(new TextBonusEventArgs("+" + GameSetting.SCORE_STEP.ToString(), "", 26, Color.Green, bonus.positionObject));
+      
+      bonus.positionObject += new Vector2f(0, GameSetting.BONUS_SPEED * (DateTime.Now - deltaTime).Milliseconds + 1);
+      
     }
 
     public void StartNewGame(VideoMode mode)
@@ -442,6 +452,7 @@ namespace ArcanoidLab
       platform.StartPosition(mode);
       platform.Scale = 1.5f;
       platform.Sprite.Scale = new Vector2f(platform.Scale, platform.Scale);
+      bonus.StartPosition(mode);
     }
 
   }
