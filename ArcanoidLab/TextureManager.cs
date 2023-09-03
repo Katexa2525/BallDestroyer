@@ -34,7 +34,7 @@ namespace ArcanoidLab
     public static void LoadTexture()
     {
       playerTexture = new Texture(ASSETS_PATH + "platform.png");
-      ballTexture = new Texture(ASSETS_PATH + "ball.png");
+      ballTexture = new Texture(ASSETS_PATH + "ball1.png");
       backgroundTexture = new Texture(ASSETS_PATH + "Asf3.png");
       blockTexture = new Texture(ASSETS_PATH + "block01.png");
       blockBonus1Texture = new Texture(ASSETS_PATH + "block04.png");

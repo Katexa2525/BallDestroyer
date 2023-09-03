@@ -7,6 +7,9 @@ namespace ArcanoidLab
   /// <summary> Событийный класс игры </summary>
   public class Events
   {
+    public delegate void GameNewHandler(object sender, GameEventArgs e);
+    public event GameNewHandler GameNewChanged; // Cобытие новой игры
+
     public delegate void TimerHandler(object sender, ElapsedEventArgs e);
     public event TimerHandler TimerElapsed; // Cобытие Elapsed таймера
 
@@ -27,6 +30,11 @@ namespace ArcanoidLab
 
     public delegate void TextBonusHandler(object sender, TextBonusEventArgs e);
     public event TextBonusHandler TextBonusChanged; // Событие на столкновение показом текстового бонуса
+
+    public void OnGameNewChanged(object sender, GameEventArgs e)
+    {
+      GameNewChanged?.Invoke(sender, e);  // Безопасно поднять событие для всех подписчиков
+    }
 
     /// <summary> Cобытие Elapsed таймера </summary>
     /// <param name="e"></param>

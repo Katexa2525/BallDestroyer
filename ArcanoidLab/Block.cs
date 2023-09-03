@@ -80,7 +80,7 @@ namespace ArcanoidLab
         Blocks[randomBlock].BonusPoint = 100;
         // признак, что бонус для блока
         BlocksBonus[Blocks[randomBlock]] = 1; 
-        if (i > n-24)
+        if (i > n-50)
         {
           Blocks[randomBlock].Sprite.Texture = TextureManager.BlockBonus2Texture;
           BlocksBonus[Blocks[randomBlock]] = 2; // признак, что бонус для платформы

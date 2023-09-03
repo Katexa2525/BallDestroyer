@@ -14,7 +14,7 @@ namespace ArcanoidLab
 
     public Ball(VideoMode mode)
     {
-      this.Scale = 2.0f;
+      this.Scale = 0.6f;
       this.SmoothTexture = true;
       this.Sprite.Texture = TextureManager.BallTexture; // рисунок мячика
       this.Sprite.Texture.Smooth = this.SmoothTexture; // сглаживание краев текстуры

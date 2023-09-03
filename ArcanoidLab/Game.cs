@@ -34,7 +34,7 @@ namespace ArcanoidLab
     private enum MessEnum { form, save, load, newgame};
     private MessEnum messEnum = MessEnum.form;
 
-    public static Events events = new Events();
+    private Events Events = new Events();
 
     public RenderWindow window { get; set; }
     public VideoMode mode { get; set; } //размер игрового окна
@@ -88,6 +88,9 @@ namespace ArcanoidLab
         gameMenu.Draw(window, ball);
         GameSetting.PLAYER_NAME = gameMenu.TextBox.ContentText;
       };
+      // подписка на событие новой игры
+      this.Events.GameNewChanged += HandleGameNewChanged;
+
       // игровое меню
       gameMenu = new GameMenu(mode, this);
       saveLoadState = new SaveLoadState();
@@ -136,6 +139,11 @@ namespace ArcanoidLab
       ball.positionObject = ball.Sprite.Position;
       // кнопка для вызова меню на главном окне 
       buttonMainMenu = new ButtonMenu(80, 15, "Меню Esc", "main", 13, "FreeMonospacedBold", 620, 2, Color.Red, Color.Yellow, mode);
+    }
+
+    private void HandleGameNewChanged(object sender, GameEventArgs e)
+    {
+      StartNewGame(e.Mode);
     }
 
     private void HandleTimerElapsed(object sender, ElapsedEventArgs e)
@@ -305,7 +313,8 @@ namespace ArcanoidLab
 
       if (Keyboard.IsKeyPressed(Keyboard.Key.F5)) // новая игра
       {
-        StartNewGame(mode);
+        //StartNewGame(mode);
+        this.Events.OnGameNewChanged(this, new GameEventArgs(mode));
       }
       else if (Keyboard.IsKeyPressed(Keyboard.Key.Q)) // вызов меню в виде windows form
       {
@@ -412,7 +421,8 @@ namespace ArcanoidLab
             // отображаю сообщение
             GameSetting.IsVisibleMenu = false;
             GameSetting.IsVisibleMessageForm = false;
-            StartNewGame(mode);
+            //StartNewGame(mode);
+            this.Events.OnGameNewChanged(this, new GameEventArgs(mode));
           }
         }
         else
